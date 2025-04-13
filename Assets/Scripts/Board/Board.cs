@@ -45,9 +45,20 @@ public class Board : MonoBehaviour
     {
         int roll = RollTheDice();
 
-        BoardTile boardTile = GetTileAhead( roll );
+        AdvancePlayer(roll);
+    }
+
+    public void AdvancePlayer(int amount)
+    {
+        BoardTile boardTile = GetTileAhead(amount);
 
         Debug.Log(boardTile);
+
+        MovePlayerToTile(boardTile);
+    }
+
+    public void MovePlayerToTile(BoardTile boardTile)
+    {
 
         player.transform.position = boardTile.transform.position;
 

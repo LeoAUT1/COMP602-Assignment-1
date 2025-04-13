@@ -8,8 +8,15 @@ public class Encounter : MonoBehaviour
 
     [SerializeField] private int experience; //experience to grant the player
 
+    [SerializeField] private int coins; //coins to grant the player
+
     public int getExperience()
     {
         return experience;
+    }
+
+    public int getCoins()
+    {
+        return coins;
     }
 }
