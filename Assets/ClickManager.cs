@@ -35,19 +35,9 @@ public class ClickManager : MonoBehaviour
                 BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
                 if (boardTile != null)
                 {
-                    Debug.Log("board tile");
-                    // Option 1: If BoardTile implements IClickable
-                    IClickable clickable = boardTile as IClickable;
-                    if (clickable != null)
-                        clickable.OnClick();
+                    board.MovePlayerToTile(boardTile);
                 }
             }
         }
     }
-}
-
-// Interface for clickable objects
-public interface IClickable
-{
-    void OnClick();
 }

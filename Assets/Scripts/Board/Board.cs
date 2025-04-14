@@ -59,10 +59,23 @@ public class Board : MonoBehaviour
 
     public void MovePlayerToTile(BoardTile boardTile)
     {
+        if ( boardTile != null)
+        {
+            player.transform.position = boardTile.transform.position;
+            currentTile = boardTile;
 
-        player.transform.position = boardTile.transform.position;
+            Encounter encounter = currentTile.GetEncounter();
 
-        currentTile = boardTile;
+            if (encounter != null)
+            {
+                StartEncounter(encounter);
+            }
+        }
+    }
+
+    private void StartEncounter(Encounter encounter)
+    {
+        Debug.Log($"Starting encounter: {encounter}");
     }
 
     //Traverse the tiles

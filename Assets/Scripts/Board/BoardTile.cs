@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardTile : MonoBehaviour, IClickable
+public class BoardTile : MonoBehaviour
 {
     [SerializeField] public List<BoardTile> nextTiles; // Outgoing connections
     [SerializeField] private Encounter encounter; // Gameplay properties
@@ -13,15 +13,8 @@ public class BoardTile : MonoBehaviour, IClickable
         return pathChoice < nextTiles.Count ? nextTiles[pathChoice] : null;
     }
 
-    // Implementation of IClickable interface
-    public void OnClick()
+    public Encounter GetEncounter()
     {
-
-        Debug.Log($"Tile clicked: {gameObject.name}");
-
-        if (encounter != null)
-        {
-            // encounter.Trigger();
-        }
+        return encounter;
     }
 }

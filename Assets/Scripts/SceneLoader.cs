@@ -1,37 +1,23 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader : Singleton<SceneLoader>
 {
-    // Persistent Scene Loader for the entire game
-
-    public static SceneLoader Instance;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+    // Include one SceneLoader prefab per scene
+    // The singleton pattern will ensure that any duplicates self-destruct
 
     public void LoadGameScene()
     {
-        SceneManager.LoadScene("GameBoard"); // Replace with your game scene name
+        SceneManager.LoadScene("GameBoard");
     }
 
     public void LoadCombatScene()
     {
-        SceneManager.LoadScene("Combat"); // Replace with your menu scene name
+        SceneManager.LoadScene("Combat");
     }
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene("MainMenu"); // Replace with your menu scene name
+        SceneManager.LoadScene("MainMenu");
     }
 }
