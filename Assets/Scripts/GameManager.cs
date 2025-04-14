@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public SceneLoader sceneLoader;
-
     [SerializeField] private Player player;
 
     [SerializeField] private EncounterData currentEncounter;
@@ -15,7 +13,6 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
-        sceneLoader = FindAnyObjectByType<SceneLoader>();
 
         // Register for scene load notifications
         SceneManager.sceneLoaded += OnSceneLoaded;

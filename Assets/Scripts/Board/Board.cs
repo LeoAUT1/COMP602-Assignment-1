@@ -18,8 +18,8 @@ public class Board : MonoBehaviour
 
 
     [SerializeField] private Player player;// The first game tile
-
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private GameObject playerPiecePrefab; // The prefab in the Inspector
+    private GameObject playerPiece; // Reference to the instantiated object //Player's representation on the game board
 
     private void Start()
     {
@@ -33,6 +33,9 @@ public class Board : MonoBehaviour
         {
             Debug.Log("No Start Tile");
         }
+
+        playerPiece = Instantiate(this.playerPiecePrefab);
+        MovePlayerToTile(this.player.GetCurrentBoardTile());
     }
 
     private int RollTheDice()
@@ -58,11 +61,16 @@ public class Board : MonoBehaviour
         MovePlayerToTile(boardTile);
     }
 
+    public void MovePlayerPieceToTile(GameObject playerPiece, BoardTile boardTile)
+    {
+        playerPiece.transform.position = boardTile.transform.position;
+    }
+
     public void MovePlayerToTile(BoardTile boardTile)
     {
         if ( boardTile != null)
         {
-            player.transform.position = boardTile.transform.position;
+            MovePlayerPieceToTile(this.playerPiece, boardTile);
             BoardTile currentTile = boardTile;
             EncounterData encounter = currentTile.GetEncounter();
             player.SetCurrentBoardTile(currentTile);
@@ -78,9 +86,9 @@ public class Board : MonoBehaviour
     {
         Debug.Log($"Starting encounter: {encounter}");
 
-        gameManager.SetCurrentEncounter( encounter );
+        GameManager.Instance.SetCurrentEncounter( encounter );
 
-        gameManager.sceneLoader.LoadCombatScene();
+        SceneLoader.Instance.LoadCombatScene();
     }
 
     //Traverse the tiles

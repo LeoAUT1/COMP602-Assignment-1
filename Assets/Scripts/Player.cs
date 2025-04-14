@@ -2,24 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : CombatEntity
+public class Player : Singleton<Player>
 {
     [SerializeField] protected int coins;
-    [SerializeField] protected CameraController cam;
     [SerializeField] protected int indexOnGameBoard;
     private BoardTile currentTile;
-
-    private void Start()
-    {
-        if (cam == null)
-        {
-            cam = FindAnyObjectByType<CameraController>(); // Good enough :^)
-        }
-        cam.target = this.transform;
-
-        //We don't want to destroy the player on scene transition
-        DontDestroyOnLoad(this);
-    }
+    private PlayerCombat playerCombat = new();
 
     public void AddCoins(int amount)
     {
