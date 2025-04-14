@@ -12,7 +12,6 @@ enum GameBoardState
 public class Board : MonoBehaviour
 {
     [SerializeField] private BoardTile startTile;// The first game tile
-    private BoardTile currentTile;// The first game tile
 
     [SerializeField] private GameObject tileContainer;// Game object of which all the board tiles are children
     private BoardTile[] tiles; //The tiles themselves
@@ -27,7 +26,7 @@ public class Board : MonoBehaviour
 
         if (startTile != null)
         {
-            currentTile = startTile;
+            player.SetCurrentBoardTile(startTile);
         } else
         {
             Debug.Log("No Start Tile");
@@ -62,9 +61,9 @@ public class Board : MonoBehaviour
         if ( boardTile != null)
         {
             player.transform.position = boardTile.transform.position;
-            currentTile = boardTile;
-
+            BoardTile currentTile = boardTile;
             Encounter encounter = currentTile.GetEncounter();
+            player.SetCurrentBoardTile(currentTile);
 
             if (encounter != null)
             {
@@ -81,6 +80,9 @@ public class Board : MonoBehaviour
     //Traverse the tiles
     public BoardTile GetTileAhead(int steps)
     {
+
+        BoardTile currentTile = player.GetCurrentBoardTile();
+
         if (steps < 0)
         {
             Debug.LogError("Cannot get tile with negative steps");
