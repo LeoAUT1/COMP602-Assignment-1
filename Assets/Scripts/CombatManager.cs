@@ -8,7 +8,7 @@ public class CombatManager : MonoBehaviour
     private Player player;
     private Enemy[] enemies;
 
-    public void InitialiseCombatScene(Player player, EncounterData encounter)
+    public void InitialiseCombat(Player player, EncounterData encounter)
     {
         // Do stuff here to set up whatever is necessary for the combat scene 
         Instantiate(encounter.enemies[0]);
@@ -17,8 +17,9 @@ public class CombatManager : MonoBehaviour
         this.enemies = encounter.enemies;
     }
 
-    public void FinishCombat()
+    public void ExitCombat()
     {
-
+        //Combat has finished, back to the Board Scene
+        GameManager.Instance.ExitCombat();
     }
 }

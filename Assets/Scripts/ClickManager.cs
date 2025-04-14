@@ -35,7 +35,7 @@ public class ClickManager : MonoBehaviour
                 BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
                 if (boardTile != null)
                 {
-                    board.MovePlayerToTile(boardTile);
+                    board.MovePlayerToTile(boardTile, true);
                 }
             }
         }

@@ -6,21 +6,24 @@ using UnityEngine.SceneManagement;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private Player player;
-
     [SerializeField] private EncounterData currentEncounter;
     [SerializeField] private CombatManager combatManager;
+    private Board board;
 
     protected override void Awake()
     {
         base.Awake();
+    }
 
-        // Register for scene load notifications
+    private void OnEnable()
+    {
+        // Subscribe when enabled
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        // Always unregister events when the object is destroyed
+        // Unsubscribe when disabled
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -28,32 +31,63 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log($"Scene loaded: {scene.name}");
 
-        if (scene.name == "Combat") //Maybe not use strings like this? im not sure
+        if (!IsFirstLoad)
         {
-            InitialiseCombat();
-        }
+            if (scene.name == "Combat") //Maybe not use strings like this? im not sure
+            {
+                InitialiseCombat();
+            }
 
-        else if (scene.name == "GameBoard")
-        {
-            // The board scene has loaded
-            ExitCombat();
+            else if (scene.name == "GameBoard")
+            {
+                if (player != null)
+                {
+                    Debug.Log($"Player index is {player.GetTileIndex()}");
+                    //Player has loaded back into the board, get their 
+                    board = FindObjectOfType<Board>();
+                    board.SetPlayer(player);
+                    board.SetIsNewGame(false);
+                }
+            }
+
         }
     }
 
     void InitialiseCombat()
     {
         // Find the combat controller in the scene
+        combatManager = FindObjectOfType<CombatManager>();
+
         if (combatManager == null)
         {
-            combatManager = FindObjectOfType<CombatManager>();
+            Debug.LogError("No CombatManager found in scene!");
+            return;
         }
 
-        combatManager.InitialiseCombatScene(player, currentEncounter);
+        if (player == null)
+        {
+            player = FindObjectOfType<Player>();
+            if (player == null)
+            {
+                Debug.LogError("No Player found!");
+                return;
+            }
+        }
+
+        if (currentEncounter == null)
+        {
+            Debug.LogError("No EncounterData set before entering combat!");
+            return;
+        }
+
+        combatManager.InitialiseCombat(player, currentEncounter);
     }
 
-    void ExitCombat()
-    {
 
+    public void ExitCombat()
+    {
+        //Do any housekeeping for leaving the combat scene
+        SceneLoader.Instance.LoadGameScene();
     }
 
     public EncounterData CurrentEncounter()

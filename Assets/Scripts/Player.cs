@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Player : Singleton<Player>
@@ -7,7 +8,8 @@ public class Player : Singleton<Player>
     [SerializeField] protected int coins;
     [SerializeField] protected int indexOnGameBoard;
     private BoardTile currentTile;
-    private PlayerCombat playerCombat = new();
+    private int tileIndex;
+    //private PlayerCombat playerCombat = AddedComponent();
 
     public void AddCoins(int amount)
     {
@@ -28,8 +30,14 @@ public class Player : Singleton<Player>
         return currentTile;
     }
 
+    public int GetTileIndex()
+    {
+        return tileIndex;
+    }
+
     public void SetCurrentBoardTile(BoardTile tile)
     {
         currentTile = tile;
+        this.tileIndex = tile.getIndex();
     }
 }

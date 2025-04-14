@@ -3,6 +3,8 @@ using UnityEngine;
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
+    private static bool _isFirstLoad = true;
+
     public static T Instance
     {
         get
@@ -17,6 +19,20 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 }
             }
             return _instance;
+        }
+    }
+
+    // Public property to check if this is the first load
+    public static bool IsFirstLoad
+    {
+        get
+        {
+            if (_isFirstLoad)
+            {
+                _isFirstLoad = false;
+                return true;
+            }
+            return false;
         }
     }
 

@@ -21,21 +21,23 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject playerPiecePrefab; // The prefab in the Inspector
     private GameObject playerPiece; // Reference to the instantiated object //Player's representation on the game board
 
+    private bool isNewGame = true;
+
     private void Start()
     {
         tiles = tileContainer.GetComponentsInChildren<BoardTile>();
-        Debug.Log($"Found {tiles.Length} tiles");
 
-        if (startTile != null)
+        if (startTile != null && isNewGame)
         {
+            Debug.Log("Is new game, setting player to first tile");
             player.SetCurrentBoardTile(startTile);
-        } else
-        {
-            Debug.Log("No Start Tile");
         }
 
         playerPiece = Instantiate(this.playerPiecePrefab);
-        MovePlayerToTile(this.player.GetCurrentBoardTile());
+        int playerIndex = this.player.GetTileIndex();
+        BoardTile playerTile = GetTileByIndex(playerIndex);
+
+        MovePlayerToTile(playerTile, isNewGame);
     }
 
     private int RollTheDice()
@@ -58,24 +60,28 @@ public class Board : MonoBehaviour
 
         Debug.Log(boardTile);
 
-        MovePlayerToTile(boardTile);
+        MovePlayerToTile(boardTile, true);
     }
 
-    public void MovePlayerPieceToTile(GameObject playerPiece, BoardTile boardTile)
+    public void MovePlayerPieceToTile(BoardTile boardTile)
     {
-        playerPiece.transform.position = boardTile.transform.position;
+        // Debug logging to help identify the null reference
+        Debug.Log($"playerPiece is {(playerPiece == null ? "NULL" : "not null")}");
+        Debug.Log($"boardTile is {(boardTile == null ? "NULL" : "not null")}");
+
+        this.playerPiece.transform.position = boardTile.transform.position;
     }
 
-    public void MovePlayerToTile(BoardTile boardTile)
+    public void MovePlayerToTile(BoardTile boardTile, bool triggerEncounter)
     {
         if ( boardTile != null)
         {
-            MovePlayerPieceToTile(this.playerPiece, boardTile);
+            MovePlayerPieceToTile(boardTile);
             BoardTile currentTile = boardTile;
             EncounterData encounter = currentTile.GetEncounter();
             player.SetCurrentBoardTile(currentTile);
 
-            if (encounter != null)
+            if (encounter != null && triggerEncounter)
             {
                 StartEncounter(encounter);
             }
@@ -131,5 +137,27 @@ public class Board : MonoBehaviour
         }
 
         return currentTile;
+    }
+
+    public BoardTile GetTileByIndex(int index)
+    {
+        return tiles[index];
+    }
+
+    public void SetIsNewGame(bool b)
+    {
+        this.isNewGame = b;
+    }
+
+    public void SetPlayer(Player player)
+    {
+        this.player = player;
+    }
+
+    public void UpdateEncounterData(EncounterData encounterData)
+    {
+        int index = player.GetTileIndex();
+        BoardTile tile = tiles[index];
+        tile.SetEncounterData(encounterData);
     }
 }
