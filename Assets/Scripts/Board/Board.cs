@@ -19,6 +19,8 @@ public class Board : MonoBehaviour
 
     [SerializeField] private Player player;// The first game tile
 
+    [SerializeField] private GameManager gameManager;
+
     private void Start()
     {
         tiles = tileContainer.GetComponentsInChildren<BoardTile>();
@@ -62,7 +64,7 @@ public class Board : MonoBehaviour
         {
             player.transform.position = boardTile.transform.position;
             BoardTile currentTile = boardTile;
-            Encounter encounter = currentTile.GetEncounter();
+            EncounterData encounter = currentTile.GetEncounter();
             player.SetCurrentBoardTile(currentTile);
 
             if (encounter != null)
@@ -72,9 +74,13 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void StartEncounter(Encounter encounter)
+    private void StartEncounter(EncounterData encounter)
     {
         Debug.Log($"Starting encounter: {encounter}");
+
+        gameManager.SetCurrentEncounter( encounter );
+
+        gameManager.sceneLoader.LoadCombatScene();
     }
 
     //Traverse the tiles

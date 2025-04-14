@@ -52,6 +52,7 @@ MonoBehaviour:
   dexterity: 0
   intelligence: 0
   coins: 0
+  cam: {fileID: 0}
   indexOnGameBoard: 0
 --- !u!1001 &7374232295465798071
 PrefabInstance:
@@ -87,11 +88,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6087616
+      value: 0.70710677
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7933532
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalRotation.y
@@ -103,7 +104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -105
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y

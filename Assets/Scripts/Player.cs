@@ -16,6 +16,9 @@ public class Player : CombatEntity
             cam = FindAnyObjectByType<CameraController>(); // Good enough :^)
         }
         cam.target = this.transform;
+
+        //We don't want to destroy the player on scene transition
+        DontDestroyOnLoad(this);
     }
 
     public void AddCoins(int amount)

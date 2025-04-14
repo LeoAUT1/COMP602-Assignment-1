@@ -5,7 +5,7 @@ using UnityEngine;
 public class BoardTile : MonoBehaviour
 {
     [SerializeField] public List<BoardTile> nextTiles; // Outgoing connections
-    [SerializeField] private Encounter encounter; // Gameplay properties
+    [SerializeField] private EncounterData encounter; // Gameplay properties
 
     // Methods for gameplay logic
     public BoardTile GetNextTile(int pathChoice = 0)
@@ -13,7 +13,7 @@ public class BoardTile : MonoBehaviour
         return pathChoice < nextTiles.Count ? nextTiles[pathChoice] : null;
     }
 
-    public Encounter GetEncounter()
+    public EncounterData GetEncounter()
     {
         return encounter;
     }
