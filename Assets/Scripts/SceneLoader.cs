@@ -8,6 +8,7 @@ public class SceneLoader : Singleton<SceneLoader>
 
     public void LoadGameScene()
     {
+        Debug.Log("attempting to load main game scene");
         SceneManager.LoadScene("GameBoard");
     }
 
@@ -19,5 +20,10 @@ public class SceneLoader : Singleton<SceneLoader>
     public void LoadMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void LoadGameOver()
+    {
+        SceneManager.LoadScene("GameOver");
     }
 }

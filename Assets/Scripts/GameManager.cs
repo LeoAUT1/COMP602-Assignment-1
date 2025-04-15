@@ -87,7 +87,22 @@ public class GameManager : Singleton<GameManager>
     public void ExitCombat()
     {
         //Do any housekeeping for leaving the combat scene
-        SceneLoader.Instance.LoadGameScene();
+        if (player.GetPlayerCombat().GetIsAlive())
+        {
+            if (currentEncounter.isFinalBoss)
+            {
+                //Player has beat the final boss
+
+                return;
+            }
+
+            //Player has finished the encounter
+            SceneLoader.Instance.LoadGameScene();
+        }
+        else //Game over
+        {
+
+        }
     }
 
     public EncounterData CurrentEncounter()

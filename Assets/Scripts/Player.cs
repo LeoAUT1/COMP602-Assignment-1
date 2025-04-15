@@ -7,9 +7,13 @@ public class Player : Singleton<Player>
 {
     [SerializeField] protected int coins;
     [SerializeField] protected int indexOnGameBoard;
+    [SerializeField] PlayerCombat playerCombat;
+
+
     private BoardTile currentTile;
     private int tileIndex;
-    //private PlayerCombat playerCombat = AddedComponent();
+
+    
 
     public void AddCoins(int amount)
     {
@@ -39,5 +43,10 @@ public class Player : Singleton<Player>
     {
         currentTile = tile;
         this.tileIndex = tile.getIndex();
+    }
+
+    public PlayerCombat GetPlayerCombat()
+    {
+        return playerCombat;
     }
 }

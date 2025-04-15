@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2362603987418269019}
   - component: {fileID: 5820751951653907196}
+  - component: {fileID: 6508123060139364006}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -44,12 +45,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac18fa9913962241b778582481835be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityName: 
+  coins: 0
+  indexOnGameBoard: 0
+  playerCombat: {fileID: 6508123060139364006}
+--- !u!114 &6508123060139364006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8671192130053172557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14b5f906f34461e4f8e533fe2be959e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityName: Player
   health: 0
   maxHealth: 0
   strength: 0
   dexterity: 0
   intelligence: 0
-  coins: 0
-  cam: {fileID: 0}
-  indexOnGameBoard: 0

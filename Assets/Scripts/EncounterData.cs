@@ -5,6 +5,7 @@ public class EncounterData : ScriptableObject
 {
     public string encounterName;
     public string description;
+    public bool isFinalBoss; // True if you want beating this encounter to win the game
 
     [Header("Combat Setup")]
     public Enemy[] enemies;
