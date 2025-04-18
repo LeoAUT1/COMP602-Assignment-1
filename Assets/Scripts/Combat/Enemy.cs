@@ -7,5 +7,5 @@ public class Enemy : CombatEntity
 {
     [SerializeField] protected int experienceGranted; //experience given to the player when they defeat this enemy
 
-    public int getExperience() { return experienceGranted; }
+    public int getExperience() { return experienceGranted; } //Not sure if we need this
 }
