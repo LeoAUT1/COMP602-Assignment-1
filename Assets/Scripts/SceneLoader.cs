@@ -26,4 +26,9 @@ public class SceneLoader : Singleton<SceneLoader>
     {
         SceneManager.LoadScene("GameOver");
     }
+
+    public void LoadVictoryScene()
+    {
+        SceneManager.LoadScene("Victory");
+    }
 }

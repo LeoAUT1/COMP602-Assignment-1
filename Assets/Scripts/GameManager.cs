@@ -93,6 +93,7 @@ public class GameManager : Singleton<GameManager>
             {
                 //Player has beat the final boss
 
+                SceneLoader.Instance.LoadVictoryScene();
                 return;
             }
 
