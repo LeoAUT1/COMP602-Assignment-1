@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player : Singleton<Player>
 {
+    private int experience;
     [SerializeField] protected int coins;
     [SerializeField] protected int indexOnGameBoard;
     [SerializeField] PlayerCombat playerCombat;
@@ -27,6 +28,16 @@ public class Player : Singleton<Player>
 
     public int GetCoins() {
         return coins;
+    }
+
+    public void AddExperience(int amount)
+    {
+        experience += amount;
+    }
+
+    public int GetExperience()
+    {
+        return experience;
     }
 
     public BoardTile GetCurrentBoardTile()

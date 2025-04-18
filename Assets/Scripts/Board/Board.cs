@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 enum GameBoardState
 {
@@ -23,6 +25,8 @@ public class Board : MonoBehaviour
 
     private bool isNewGame = true;
 
+    [SerializeField] private TextMeshProUGUI playerStats;
+
     private void Start()
     {
         tiles = tileContainer.GetComponentsInChildren<BoardTile>();
@@ -38,6 +42,14 @@ public class Board : MonoBehaviour
         BoardTile playerTile = GetTileByIndex(playerIndex);
 
         MovePlayerToTile(playerTile, isNewGame);
+
+        UpdatePlayerStatsUi(player);
+    }
+
+    private void UpdatePlayerStatsUi(Player player)
+    {
+        playerStats.text = $"Experience: {player.GetExperience()}\n";
+        playerStats.text += $"Coins: {player.GetCoins()}\n";
     }
 
     private int RollTheDice()
