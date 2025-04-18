@@ -7,14 +7,19 @@ public class Player : Singleton<Player>
 {
     private int experience;
     [SerializeField] protected int coins;
-    [SerializeField] protected int indexOnGameBoard;
     [SerializeField] PlayerCombat playerCombat;
 
 
     private BoardTile currentTile;
     private int tileIndex;
 
-    
+    public void ResetPlayer()
+    {
+        experience = 0;
+        coins = 0;
+        currentTile = null;
+        tileIndex = 0;
+    }    
 
     public void AddCoins(int amount)
     {

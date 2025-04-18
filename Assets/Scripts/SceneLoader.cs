@@ -6,9 +6,14 @@ public class SceneLoader : Singleton<SceneLoader>
     // Include one SceneLoader prefab per scene
     // The singleton pattern will ensure that any duplicates self-destruct
 
-    public void LoadGameScene()
+    public void LoadGameScene(bool newGame = false)
     {
         Debug.Log("attempting to load main game scene");
+        if (newGame)
+        {
+            Player.Instance.ResetPlayer();
+        }
+
         SceneManager.LoadScene("GameBoard");
     }
 

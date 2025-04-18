@@ -8,7 +8,8 @@ public class ButtonHandler : MonoBehaviour
         GameBoard,
         Combat,
         MainMenu,
-        GameOver
+        GameOver,
+        NewGame
     }
 
     public SceneType targetScene;
@@ -35,6 +36,9 @@ public class ButtonHandler : MonoBehaviour
                 break;
             case SceneType.GameOver:
                 SceneLoader.Instance.LoadGameOver();
+                break;
+            case SceneType.NewGame:
+                SceneLoader.Instance.LoadGameScene(newGame: true);
                 break;
         }
     }
