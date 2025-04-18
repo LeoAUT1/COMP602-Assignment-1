@@ -31,25 +31,22 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log($"Scene loaded: {scene.name}");
 
-        if (!IsFirstLoad)
+        if (!IsFirstLoad && scene.name == "GameBoard")
         {
-            if (scene.name == "Combat") //Maybe not use strings like this? im not sure
+            if (player != null)
             {
-                InitialiseCombat();
+                Debug.Log($"Player index is {player.GetTileIndex()}");
+                //Player has loaded back into the board, get their 
+                board = FindObjectOfType<Board>();
+                board.SetPlayer(player);
+                board.SetIsNewGame(false);
             }
+        }
 
-            else if (scene.name == "GameBoard")
-            {
-                if (player != null)
-                {
-                    Debug.Log($"Player index is {player.GetTileIndex()}");
-                    //Player has loaded back into the board, get their 
-                    board = FindObjectOfType<Board>();
-                    board.SetPlayer(player);
-                    board.SetIsNewGame(false);
-                }
-            }
 
+        if (scene.name == "Combat") //Maybe not use strings like this? im not sure
+        {
+            InitialiseCombat();
         }
     }
 
