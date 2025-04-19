@@ -21,6 +21,8 @@ public class Board : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerStats;
 
     [SerializeField] private float moveDurationPerTile = 0.5f; // Time in seconds to move between two tiles
+    [SerializeField] private float hopHeight = 1.0f; // Max height the piece reaches during a hop
+
 
     private bool isMoving = false; // Flag to prevent concurrent moves
 
@@ -108,26 +110,61 @@ public class Board : MonoBehaviour
         player.SetCurrentBoardTile(boardTile);
     }
 
+    private Vector3 CalculateCubicBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        float u = 1 - t;
+        float tt = t * t;
+        float uu = u * u;
+        float uuu = uu * u;
+        float ttt = tt * t;
+
+        Vector3 p = uuu * p0; // (1-t)^3 * P0
+        p += 3 * uu * t * p1; // 3 * (1-t)^2 * t * P1
+        p += 3 * u * tt * p2; // 3 * (1-t) * t^2 * P2
+        p += ttt * p3; // t^3 * P3
+
+        return p;
+    }
+
     // Coroutine to animate movement along a path
     private IEnumerator AnimatePlayerMovement(List<BoardTile> path)
     {
         isMoving = true;
-        Debug.Log($"Starting animation across {path.Count} tiles.");
+        Debug.Log($"Starting animation across {path.Count - 1} steps."); // Corrected log message
 
-        // Start from the second tile in the path (index 1)
         // The first tile (index 0) is the starting position.
-        for (int i = 1; i < path.Count; i++)
+        // We iterate from the first segment (index 0 to 1) up to the last segment.
+        for (int i = 0; i < path.Count - 1; i++)
         {
-            BoardTile targetTile = path[i];
-            Vector3 startPos = playerPiece.transform.position;
+            BoardTile startTile = path[i];
+            BoardTile targetTile = path[i + 1];
+
+            Vector3 startPos = startTile.playerPlacement.transform.position;
+            // If starting from the very first move, use the current piece position
+            // in case it wasn't perfectly aligned (e.g., during setup).
+            if (i == 0)
+            {
+                startPos = playerPiece.transform.position;
+            }
+
             Vector3 endPos = targetTile.playerPlacement.transform.position;
+
+            // Calculate control points for the hop
+            // Place control points horizontally between start and end, but elevated
+            Vector3 midPointHorizontal = Vector3.Lerp(startPos, endPos, 0.5f);
+            Vector3 controlPoint1 = midPointHorizontal + Vector3.up * hopHeight;
+            Vector3 controlPoint2 = controlPoint1; // Simple symmetrical hop
+
             float elapsedTime = 0f;
 
-            Debug.Log($"Moving to tile {i}: {targetTile.name}");
+            Debug.Log($"Moving from {startTile.name} to {targetTile.name}");
 
             while (elapsedTime < moveDurationPerTile)
             {
-                playerPiece.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / moveDurationPerTile);
+                float t = elapsedTime / moveDurationPerTile;
+                // Use the Bezier function instead of Lerp
+                playerPiece.transform.position = CalculateCubicBezierPoint(t, startPos, controlPoint1, controlPoint2, endPos);
+
                 elapsedTime += Time.deltaTime;
                 yield return null; // Wait for the next frame
             }
@@ -157,6 +194,7 @@ public class Board : MonoBehaviour
 
         isMoving = false; // Allow next move
     }
+
 
 
     private void StartEncounter(EncounterData encounter)
