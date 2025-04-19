@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 3483462022323167804}
   - component: {fileID: 6976192669349603459}
   m_Layer: 5
-  m_Name: Button
+  m_Name: debugadvance1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,12 +65,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4712057896990601070}
-  m_Father: {fileID: 4494345142271524179}
+  m_Father: {fileID: 7195669897091526308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.06}
-  m_AnchorMax: {x: 0.59, y: 0.07}
-  m_AnchoredPosition: {x: 13.485565, y: -28.919357}
-  m_SizeDelta: {x: 186.97118, y: 32.91457}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 100, y: 20}
+  m_SizeDelta: {x: 199, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6336377843781146451
 CanvasRenderer:
@@ -156,7 +156,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6115964428648382125}
         m_TargetAssemblyTypeName: Board, Assembly-CSharp
-        m_MethodName: AdvancePlayer
+        m_MethodName: MovePlayerSteps
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -198,11 +198,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7195669897091526308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 500, y: 500}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3894884348868474947
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 563450673688019179}
   - component: {fileID: 3402253665963062617}
   m_Layer: 5
-  m_Name: Button
+  m_Name: RollDice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -400,13 +400,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8776358222723830864}
-  - {fileID: 3844113745724432948}
   m_Father: {fileID: 7195669897091526308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.4, y: 0.26}
-  m_AnchorMax: {x: 0.6, y: 0.22}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 100, y: 73.5}
+  m_SizeDelta: {x: 199, y: 43.000008}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4000243164466161542
 CanvasRenderer:
@@ -492,7 +491,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6115964428648382125}
         m_TargetAssemblyTypeName: Board, Assembly-CSharp
-        m_MethodName: ProcessPlayerTurn
+        m_MethodName: PlayerAction_RollAndMove
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -669,6 +668,7 @@ RectTransform:
   m_Children:
   - {fileID: 4494345142271524179}
   - {fileID: 4028572399100509843}
+  - {fileID: 3844113745724432948}
   m_Father: {fileID: 6076953768555259893}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -788,7 +788,8 @@ MonoBehaviour:
   tileContainer: {fileID: 0}
   player: {fileID: 0}
   playerPiecePrefab: {fileID: 6432881886936753685, guid: 2b794e056082ffa41ba14ae5f64edc77, type: 3}
-  playerStats: {fileID: 0}
+  playerStats: {fileID: 1333060743826702293}
+  moveDurationPerTile: 0.5
 --- !u!1 &8713477735554827254
 GameObject:
   m_ObjectHideFlags: 0
@@ -881,13 +882,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
