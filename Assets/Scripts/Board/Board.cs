@@ -81,7 +81,7 @@ public class Board : MonoBehaviour
         Debug.Log($"playerPiece is {(playerPiece == null ? "NULL" : "not null")}");
         Debug.Log($"boardTile is {(boardTile == null ? "NULL" : "not null")}");
 
-        this.playerPiece.transform.position = boardTile.transform.position;
+        this.playerPiece.transform.position = boardTile.playerPlacement.transform.position;
     }
 
     public void MovePlayerToTile(BoardTile boardTile, bool triggerEncounter)
