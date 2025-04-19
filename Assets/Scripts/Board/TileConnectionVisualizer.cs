@@ -6,22 +6,33 @@ public class TileConnectionVisualizer : MonoBehaviour
 {
     private BoardTile tile;
     [SerializeField] private GameObject pathPrefab;
+    // This list still helps track managed paths, e.g., for HasAnyNextTilePositionChanged
     private List<GameObject> pathObjects = new List<GameObject>();
 
     private Vector3 lastPosition;
     private bool needsUpdate = true;
+    // PATH_PREFIX is less critical now for cleanup but still useful for naming
     private const string PATH_PREFIX = "Path_";
 
     private void Awake()
     {
-        // Clean up any existing path objects that might have been serialized
+        // Ensure tile reference is available early if possible
+        if (tile == null)
+            tile = GetComponent<BoardTile>();
+
+        // Clean up any existing path objects under the designated transform
         CleanupExistingPaths();
     }
 
     private void Start()
     {
-        tile = GetComponent<BoardTile>();
-        lastPosition = transform.position;
+        // Redundant if Awake runs, but safe to keep
+        if (tile == null)
+            tile = GetComponent<BoardTile>();
+
+        if (tile != null)
+            lastPosition = transform.position;
+
         needsUpdate = true;
     }
 
@@ -34,7 +45,9 @@ public class TileConnectionVisualizer : MonoBehaviour
         if (tile == null)
             tile = GetComponent<BoardTile>();
 
-        lastPosition = transform.position;
+        if (tile != null)
+            lastPosition = transform.position;
+
         needsUpdate = true;
 
         // Only clean up paths when not transitioning between play modes
@@ -47,67 +60,54 @@ public class TileConnectionVisualizer : MonoBehaviour
 
     private void CleanupExistingPaths()
     {
-        // Clear the list first
+        // Clear the internal tracking list first
         pathObjects.Clear();
 
-        // Find and destroy any paths with our naming convention
-        // We need to be extra careful with null checking during transitions
-        try
+        if (tile == null || tile.pathVisualiser == null)
         {
-            // Check if transform is valid first
-            if (this == null || transform == null)
-                return;
+            // Can't clean children if the target doesn't exist
+            return;
+        }
 
-            Transform[] allChildren = GetComponentsInChildren<Transform>();
-            if (allChildren == null)
-                return;
-
-            foreach (Transform child in allChildren)
+        // Find and destroy any child objects under the pathVisualiser transform
+        // Use a temporary list to avoid issues modifying collection while iterating (esp. with DestroyImmediate)
+        List<GameObject> childrenToDestroy = new List<GameObject>();
+        foreach (Transform child in tile.pathVisualiser)
+        {
+            if (child != null) // Basic null check
             {
-                // Check for null before accessing properties
-                if (child == null)
-                    continue;
-
-                // Additional null check before accessing name
-                string childName = null;
-                try
-                {
-                    childName = child.name;
-                }
-                catch (MissingReferenceException)
-                {
-                    continue;
-                }
-
-                if (childName != null && childName.StartsWith(PATH_PREFIX))
-                {
-                    if (Application.isEditor && !Application.isPlaying)
-                    {
-                        if (child.gameObject != null)
-                            DestroyImmediate(child.gameObject);
-                    }
-                    else
-                    {
-                        if (child.gameObject != null)
-                            Destroy(child.gameObject);
-                    }
-                }
+                // Optional: Only destroy objects matching the prefix if you want to be specific
+                // if (child.name.StartsWith(PATH_PREFIX))
+                // {
+                //     childrenToDestroy.Add(child.gameObject);
+                // }
+                // Or, destroy *all* children regardless of name:
+                childrenToDestroy.Add(child.gameObject);
             }
         }
-        catch (System.Exception ex)
+
+        foreach (GameObject objToDestroy in childrenToDestroy)
         {
-            // During transitions between play modes, some exceptions might occur
-            // Just silently catch them to prevent error spam
-            // Debug.LogWarning("CleanupExistingPaths exception: " + ex.Message);
+            if (objToDestroy == null) continue; // Check again before destroying
+
+            if (Application.isEditor && !Application.isPlaying)
+            {
+                DestroyImmediate(objToDestroy);
+            }
+            else
+            {
+                Destroy(objToDestroy);
+            }
         }
     }
 
 
     private void Update()
     {
-        if (tile == null) return;
+        // Essential checks before proceeding
+        if (tile == null || tile.pathVisualiser == null || pathPrefab == null) return;
 
-        // Only update when position changes or we explicitly need to
+        // Only update when position changes, connected tile moves, or explicitly needed
         if (transform.position != lastPosition || HasAnyNextTilePositionChanged() || needsUpdate)
         {
             UpdatePathVisuals();
@@ -118,21 +118,45 @@ public class TileConnectionVisualizer : MonoBehaviour
 
     private bool HasAnyNextTilePositionChanged()
     {
-        if (tile.nextTiles == null || pathObjects.Count != tile.nextTiles.Count)
+        // Check if tile references are valid
+        if (tile == null || tile.nextTiles == null) return false; // Or true if you want an update on null
+
+        // If the number of tracked objects doesn't match expected, assume change
+        if (pathObjects.Count != tile.nextTiles.Count)
             return true;
 
-        // Check if any connected tile has moved
+        // Check if any connected tile has moved relative to its path visual
         for (int i = 0; i < tile.nextTiles.Count; i++)
         {
-            if (tile.nextTiles[i] != null &&
-                i < pathObjects.Count &&
-                pathObjects[i] != null)
+            BoardTile nextTile = tile.nextTiles[i];
+            if (nextTile != null && i < pathObjects.Count)
             {
-                // The midpoint and orientation would change if the target tile moved
-                Vector3 expectedMidPoint = (tile.transform.position + tile.nextTiles[i].transform.position) / 2;
-                if (Vector3.Distance(pathObjects[i].transform.position, expectedMidPoint) > 0.001f)
+                GameObject pathObject = pathObjects[i];
+                if (pathObject != null)
+                {
+                    // Check if the path's current position matches the expected midpoint
+                    Vector3 expectedMidPoint = (tile.transform.position + nextTile.transform.position) / 2;
+                    if (Vector3.Distance(pathObject.transform.position, expectedMidPoint) > 0.001f)
+                        return true;
+
+                    // Check if the path's current orientation points to the next tile
+                    // Note: Floating point comparisons require tolerance
+                    Quaternion expectedRotation = Quaternion.LookRotation(nextTile.transform.position - tile.transform.position);
+                    if (Quaternion.Angle(pathObject.transform.rotation, expectedRotation) > 0.1f) // Allow small tolerance
+                        return true;
+                }
+                else
+                {
+                    // If a path object is unexpectedly null, trigger update
                     return true;
+                }
             }
+            else if (nextTile != null && i >= pathObjects.Count)
+            {
+                // More nextTiles than pathObjects tracked, needs update
+                return true;
+            }
+            // If nextTile is null, we don't expect a path, so no change detected here
         }
 
         return false;
@@ -140,20 +164,37 @@ public class TileConnectionVisualizer : MonoBehaviour
 
     private void UpdatePathVisuals()
     {
-        // Clear old paths
-        foreach (GameObject path in pathObjects)
+        // Ensure prerequisites are met
+        if (tile == null || tile.pathVisualiser == null || pathPrefab == null)
         {
-            if (path != null)
-            {
-                if (Application.isEditor && !Application.isPlaying)
-                    DestroyImmediate(path);
-                else
-                    Destroy(path);
-            }
+            Debug.LogWarning($"TileConnectionVisualizer on {gameObject.name}: Missing tile, pathVisualiser, or pathPrefab reference. Cannot update visuals.", this);
+            return;
         }
+
+        // --- New Clearing Logic ---
+        // Clear old paths by destroying all children of the target transform
+        // Use a temporary list to avoid modifying collection while iterating
+        List<GameObject> childrenToDestroy = new List<GameObject>();
+        foreach (Transform child in tile.pathVisualiser)
+        {
+            if (child != null)
+                childrenToDestroy.Add(child.gameObject);
+        }
+
+        foreach (GameObject objToDestroy in childrenToDestroy)
+        {
+            if (objToDestroy == null) continue;
+            if (Application.isEditor && !Application.isPlaying)
+                DestroyImmediate(objToDestroy);
+            else
+                Destroy(objToDestroy);
+        }
+        // --- End New Clearing Logic ---
+
+        // Clear the tracking list now that objects are destroyed
         pathObjects.Clear();
 
-        // Create new paths
+        // Create new paths if connections exist
         if (tile.nextTiles != null)
         {
             for (int i = 0; i < tile.nextTiles.Count; i++)
@@ -161,20 +202,26 @@ public class TileConnectionVisualizer : MonoBehaviour
                 BoardTile nextTile = tile.nextTiles[i];
                 if (nextTile != null)
                 {
-                    // Name the path with a consistent prefix and index for easier cleanup
-                    GameObject path = Instantiate(pathPrefab, transform);
+                    // --- Instantiate under the designated parent ---
+                    GameObject path = Instantiate(pathPrefab, tile.pathVisualiser);
+                    // --- End Change ---
+
+                    // Name the path for easier identification in hierarchy
                     path.name = PATH_PREFIX + tile.name + "_to_" + nextTile.name;
 
+                    // Position at midpoint
                     Vector3 midPoint = (tile.transform.position + nextTile.transform.position) / 2;
                     path.transform.position = midPoint;
 
                     // Orient toward target
                     path.transform.LookAt(nextTile.transform);
 
-                    // Scale to reach target
+                    // Scale to span the distance
                     float distance = Vector3.Distance(tile.transform.position, nextTile.transform.position);
-                    path.transform.localScale = new Vector3(1, 1, distance);
+                    // Assuming the prefab is 1 unit long along Z
+                    path.transform.localScale = new Vector3(path.transform.localScale.x, path.transform.localScale.y, distance);
 
+                    // Add to tracking list
                     pathObjects.Add(path);
                 }
             }
@@ -187,9 +234,13 @@ public class TileConnectionVisualizer : MonoBehaviour
         needsUpdate = true;
     }
 
-    // If the BoardTile component changes its connections, call this method
+    // If the BoardTile component changes its connections (e.g., in Inspector), flag for update
     private void OnValidate()
     {
+        // Ensure tile reference is updated if component is added/removed in editor
+        if (tile == null)
+            tile = GetComponent<BoardTile>();
+
         needsUpdate = true;
     }
 }

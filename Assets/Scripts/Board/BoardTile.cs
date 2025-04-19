@@ -10,8 +10,11 @@ public class BoardTile : MonoBehaviour
     [SerializeField] private EncounterData encounter; // Encounter storage
     private bool isEncounterUntriggered = true;
 
-    [SerializeField]
-    private int index;
+    [SerializeField] private int index;
+
+    public Transform playerPlacement;
+    public Transform enemyPlacement;
+    public Transform pathVisualiser;
     public BoardTile GetNextTile(int pathChoice = 0)
     {
         return pathChoice < nextTiles.Count ? nextTiles[pathChoice] : null;

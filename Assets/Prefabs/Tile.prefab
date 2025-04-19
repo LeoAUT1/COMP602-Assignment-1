@@ -1,5 +1,98 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2599984866802849230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5718888265549983176}
+  m_Layer: 0
+  m_Name: PlayerGoesHere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5718888265549983176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2599984866802849230}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.227, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6534981046972855637}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7533736095052732489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1445324690133738295}
+  m_Layer: 0
+  m_Name: PathVisualGoesHere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1445324690133738295
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7533736095052732489}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6534981046972855637}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8691727291947393058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5926971011010500280}
+  m_Layer: 0
+  m_Name: EnemyGoesHere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5926971011010500280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8691727291947393058}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.274, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6534981046972855637}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6717774007393276606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70,7 +163,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d7713d2c192a3645853936109d6c283, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5926971011010500280}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d7713d2c192a3645853936109d6c283, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1445324690133738295}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d7713d2c192a3645853936109d6c283, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5718888265549983176}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d7713d2c192a3645853936109d6c283, type: 3}
       insertIndex: -1
@@ -101,6 +203,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextTiles: []
   encounter: {fileID: 0}
+  index: 0
+  playerPlacement: {fileID: 5718888265549983176}
+  enemyPlacement: {fileID: 5926971011010500280}
+  pathVisualiser: {fileID: 1445324690133738295}
 --- !u!114 &1947607860828052754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,3 +241,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.8660254, y: 0.9999999, z: 0.100082204}
   m_Center: {x: 0, y: -0.000000029802322, z: 0.000000052154064}
+--- !u!4 &6534981046972855637 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d7713d2c192a3645853936109d6c283, type: 3}
+  m_PrefabInstance: {fileID: 6717774007393276606}
+  m_PrefabAsset: {fileID: 0}
