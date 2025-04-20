@@ -129,8 +129,6 @@ public class Board : MonoBehaviour
         int roll = RollTheDice();
         BoardTile currentTile = player.GetCurrentBoardTile();
 
-        roll = 3;
-
         if (currentTile == null)
         {
             Debug.LogError("Player's current tile is null. Cannot roll and move.");
