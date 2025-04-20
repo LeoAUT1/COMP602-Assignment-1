@@ -38,6 +38,23 @@ public class ClickManager : MonoBehaviour
                     board.MovePlayerPieceInstantly(boardTile);
                 }
             }
+
+        }
+
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, clickableLayer))
+            {
+                BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
+                if (boardTile != null)
+                {
+                    board.MovePlayerPieceInstantly(boardTile);
+                }
+            }
         }
     }
 }

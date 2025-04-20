@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // Needed for FindPaths logic potentially
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ public class Board : MonoBehaviour
 
     [SerializeField] private Player player;
     [SerializeField] private GameObject playerPiecePrefab;
+    [SerializeField] private GameObject selectionarrowPrefab;
     private GameObject playerPiece;
 
     private bool isNewGame = true;
@@ -23,80 +25,279 @@ public class Board : MonoBehaviour
     [SerializeField] private float moveDurationPerTile = 0.5f; // Time in seconds to move between two tiles
     [SerializeField] private float hopHeight = 1.0f; // Max height the piece reaches during a hop
 
-
+    // --- State Flags ---
     private bool isMoving = false; // Flag to prevent concurrent moves
+    private bool isAwaitingPathChoice = false;
+
+    // --- Pathfinding Data ---
+    private List<List<BoardTile>> currentPathChoices;
+    private List<GameObject> pathArrows = new List<GameObject>();
 
     private void Start()
     {
+        // Ensure tiles are fetched before potentially using them
         tiles = tileContainer.GetComponentsInChildren<BoardTile>();
+        if (tiles == null || tiles.Length == 0)
+        {
+            Debug.LogError("Failed to find any BoardTile components in the tileContainer!");
+            // Consider disabling the component or showing an error state
+            return;
+        }
 
         if (startTile != null && isNewGame)
         {
             Debug.Log("Is new game, setting player to first tile");
+            // Ensure the startTile is actually part of the fetched tiles if needed,
+            // or just trust the serialized reference.
             player.SetCurrentBoardTile(startTile);
         }
+        else if (startTile == null && isNewGame)
+        {
+            Debug.LogError("New game started but Start Tile is not assigned in the Inspector!");
+            // Handle error - maybe default to tiles[0]?
+            if (tiles.Length > 0)
+            {
+                player.SetCurrentBoardTile(tiles[0]);
+                Debug.LogWarning("Using first tile in container as start tile due to missing reference.");
+            }
+            else
+            {
+                Debug.LogError("Cannot set start tile - no tiles found and no start tile assigned.");
+                return; // Critical error
+            }
+        }
+
 
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
-        BoardTile initialPlayerTile = GetTileByIndex(player.GetTileIndex()); // Ensure we have the tile
+        BoardTile initialPlayerTile = player.GetCurrentBoardTile(); // Get the tile set above
         if (initialPlayerTile != null)
         {
-            // Use the instant move for initial placement
             MovePlayerPieceInstantly(initialPlayerTile);
         }
         else
         {
-            Debug.LogError("Cannot determine initial player tile for placement.");
+            Debug.LogError("Cannot determine initial player tile for placement even after attempting setup.");
         }
-
 
         UpdatePlayerStatsUi(player);
     }
 
     private void UpdatePlayerStatsUi(Player player)
     {
-        playerStats.text = $"Experience: {player.GetExperience()}\n";
-        playerStats.text += $"Coins: {player.GetCoins()}\n";
+        if (playerStats != null && player != null)
+        {
+            playerStats.text = $"Experience: {player.GetExperience()}\n";
+            playerStats.text += $"Coins: {player.GetCoins()}\n";
+        }
+        else
+        {
+            Debug.LogWarning("PlayerStats UI or Player reference is missing.");
+        }
     }
 
     private int RollTheDice()
     {
-        int diceRoll = UnityEngine.Random.Range(1, 7);
+        int diceRoll = UnityEngine.Random.Range(1, 7); // Standard d6 roll
         Debug.Log($"Dice Roll: {diceRoll}");
         return diceRoll;
     }
 
+    // --- Main Player Action ---
     public void PlayerAction_RollAndMove()
     {
+        // Prevent action if already moving or waiting for path selection
         if (isMoving)
         {
             Debug.LogWarning("Player is already moving.");
-            return; // Don't allow actions while moving
+            return;
+        }
+        if (isAwaitingPathChoice)
+        {
+            Debug.LogWarning("Player is currently selecting a path.");
+            return;
         }
 
         int roll = RollTheDice();
-        List<BoardTile> path = GetPathAhead(roll);
+        BoardTile currentTile = player.GetCurrentBoardTile();
 
-        if (path != null && path.Count > 1) // Only animate if there's more than one tile (i.e., actual movement)
+        roll = 3;
+
+        if (currentTile == null)
         {
-            StartCoroutine(AnimatePlayerMovement(path));
+            Debug.LogError("Player's current tile is null. Cannot roll and move.");
+            return;
         }
-        else if (path != null && path.Count == 1)
+
+        // --- Use the new FindPaths function ---
+        List<List<BoardTile>> availablePaths = FindPaths(currentTile, roll);
+
+        // --- Handle the results ---
+        if (availablePaths == null || availablePaths.Count == 0)
         {
-            // If the path is just the current tile (roll 0 or can't move),
-            // still potentially trigger encounter logic if needed, though GetPathAhead handles steps=0.
-            // In this setup, no movement means no new encounter trigger.
-            Debug.Log("No movement required.");
-            // Optionally, trigger the current tile's encounter again if desired,
-            // but the current logic implies encounters trigger on *landing*.
+            // No valid paths found for the rolled steps
+            Debug.Log($"No valid paths found for a roll of {roll} from tile {currentTile.name}. Player stays put.");
+            // Potentially end turn or trigger other logic for being stuck
         }
-        else
+        else if (availablePaths.Count == 1)
         {
-            Debug.LogWarning("Failed to get path or path is empty.");
+            // Exactly one path found - proceed automatically
+            Debug.Log($"One path found for roll {roll}. Moving automatically.");
+            List<BoardTile> pathToTake = availablePaths[0];
+
+            if (pathToTake.Count > 1) // Ensure the path involves actual movement
+            {
+                StartCoroutine(AnimatePlayerMovement(pathToTake));
+            }
+            else
+            {
+                Debug.Log("Path found has only one tile (start tile). No movement needed.");
+            }
+        }
+        else // availablePaths.Count > 1
+        {
+            // Multiple paths found - require player input
+            Debug.Log($"Multiple ({availablePaths.Count}) paths found for roll {roll}. Awaiting player selection.");
+            isAwaitingPathChoice = true;
+            currentPathChoices = availablePaths; // Store the choices
+
+            // --- Placeholder Calls ---
+            VisualizePathChoices(currentPathChoices);
+            EnablePathSelectionInput(currentPathChoices);
+            // --- End Placeholders ---
+
+            // The function execution effectively pauses here until the player makes a choice
+            // and calls SelectPathAndMove.
         }
     }
 
-    // Instantly moves the player piece visuals. Used for setup.
+    public void SelectPath(int index)
+    {
+        List<BoardTile> path = currentPathChoices[index];
+        SelectPathAndMove(path);
+    }
+
+    // --- NEW: Method called by Input System when player selects a path ---
+    private void SelectPathAndMove(List<BoardTile> chosenPath)
+    {
+        if (!isAwaitingPathChoice)
+        {
+            Debug.LogWarning("SelectPathAndMove called, but not currently awaiting path choice.");
+            return;
+        }
+        if (chosenPath == null || chosenPath.Count == 0)
+        {
+            Debug.LogError("SelectPathAndMove called with an invalid path.");
+            // Maybe re-enable input or handle error? For now, just reset state.
+            ClearPathVisualizations(); // Clean up visuals
+            isAwaitingPathChoice = false;
+            currentPathChoices = null;
+            return;
+        }
+
+        Debug.Log($"Player selected path ending at {chosenPath[chosenPath.Count - 1].name}.");
+
+        isAwaitingPathChoice = false;
+        currentPathChoices = null; // Clear stored choices
+
+        ClearPathVisualizations();
+
+
+        // Start movement along the selected path
+        if (chosenPath.Count > 1)
+        {
+            StartCoroutine(AnimatePlayerMovement(chosenPath));
+        }
+        else
+        {
+            Debug.LogWarning("Selected path has only one tile. No movement animation needed.");
+            // If landing on the same tile should trigger something, do it here.
+        }
+    }
+
+
+    // --- Placeholder Functions for Visualization and Input ---
+
+    private void VisualizePathChoices(List<List<BoardTile>> paths)
+    {
+        int index = 0;
+        foreach (List<BoardTile> path in paths) {
+            BoardTile finalPathTile = path.Last();
+            GameObject go = Instantiate(selectionarrowPrefab, finalPathTile.transform.position, Quaternion.identity, finalPathTile.transform);
+            pathArrows.Add(go); // Make a list of our arrows so we can clean them up later.
+            ClickablePathingArrow arrow = go.GetComponent<ClickablePathingArrow>();
+            arrow.pathIndex = index;
+            arrow.SetBoard(this);
+            index++;
+
+        }
+    }
+
+    private void ClearPathVisualizations()
+    {
+        foreach (GameObject go in pathArrows)
+        {
+            if (go != null) {
+                Destroy(go);
+            }
+        }
+
+        pathArrows.Clear();
+    }
+
+    private void EnablePathSelectionInput(List<List<BoardTile>> paths)
+    {
+        // New code goes here
+    }
+
+
+    public List<List<BoardTile>> FindPaths(BoardTile startTile, int steps)
+    {
+        List<List<BoardTile>> allPathsFound = new List<List<BoardTile>>();
+        if (startTile == null || steps < 0)
+        {
+            Debug.LogError($"Invalid input for FindPaths: startTile={startTile}, steps={steps}");
+            return allPathsFound;
+        }
+        if (steps == 0)
+        {
+            allPathsFound.Add(new List<BoardTile> { startTile });
+            return allPathsFound;
+        }
+        List<BoardTile> initialPath = new List<BoardTile> { startTile };
+        FindPathsRecursive(startTile, initialPath, steps, allPathsFound);
+        return allPathsFound;
+    }
+
+    private void FindPathsRecursive(BoardTile currentTile, List<BoardTile> currentPath, int stepsRemaining, List<List<BoardTile>> allPathsFound)
+    {
+        if (stepsRemaining == 0)
+        {
+            allPathsFound.Add(new List<BoardTile>(currentPath));
+            return;
+        }
+
+        BoardTile previousTile = (currentPath.Count >= 2) ? currentPath[currentPath.Count - 2] : null;
+        List<BoardTile> potentialNeighbors = new List<BoardTile>();
+
+        // Add forward connections
+        if (currentTile.nextTiles != null) potentialNeighbors.AddRange(currentTile.nextTiles);
+        // Add backward connections (Requires BoardTile.PreviousTiles property)
+        if (currentTile.PreviousTiles != null) potentialNeighbors.AddRange(currentTile.PreviousTiles);
+
+        foreach (BoardTile neighbor in potentialNeighbors)
+        {
+            if (neighbor == null || neighbor == previousTile) continue; // Skip nulls and immediate U-turns
+
+            List<BoardTile> newPath = new List<BoardTile>(currentPath);
+            newPath.Add(neighbor);
+            FindPathsRecursive(neighbor, newPath, stepsRemaining - 1, allPathsFound);
+        }
+    }
+
+
+    // --- Movement and Utility Functions (Mostly unchanged) ---
+
     public void MovePlayerPieceInstantly(BoardTile boardTile)
     {
         if (playerPiece == null || boardTile == null || boardTile.playerPlacement == null)
@@ -104,231 +305,167 @@ public class Board : MonoBehaviour
             Debug.LogError($"Cannot instantly move player piece. playerPiece: {playerPiece}, boardTile: {boardTile}, playerPlacement: {boardTile?.playerPlacement}");
             return;
         }
-        playerPiece.transform.position = boardTile.playerPlacement.transform.position;
-
-        // This looks superfluous but is necessary for click to move for debugging
-        player.SetCurrentBoardTile(boardTile);
+        playerPiece.transform.position = boardTile.playerPlacement.position; // Use position directly
+        // Setting the logical tile is important if this is called outside initial setup
+        // player.SetCurrentBoardTile(boardTile); // Already handled in Start/Animate
     }
 
     private Vector3 CalculateCubicBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
     {
-        float u = 1 - t;
-        float tt = t * t;
-        float uu = u * u;
-        float uuu = uu * u;
-        float ttt = tt * t;
-
-        Vector3 p = uuu * p0; // (1-t)^3 * P0
-        p += 3 * uu * t * p1; // 3 * (1-t)^2 * t * P1
-        p += 3 * u * tt * p2; // 3 * (1-t) * t^2 * P2
-        p += ttt * p3; // t^3 * P3
-
-        return p;
+        float u = 1 - t; float tt = t * t; float uu = u * u; float uuu = uu * u; float ttt = tt * t;
+        Vector3 p = uuu * p0; p += 3 * uu * t * p1; p += 3 * u * tt * p2; p += ttt * p3; return p;
     }
 
-    // Coroutine to animate movement along a path
     private IEnumerator AnimatePlayerMovement(List<BoardTile> path)
     {
         isMoving = true;
-        Debug.Log($"Starting animation across {path.Count - 1} steps."); // Corrected log message
+        Debug.Log($"Starting animation across {path.Count - 1} steps.");
 
-        // The first tile (index 0) is the starting position.
-        // We iterate from the first segment (index 0 to 1) up to the last segment.
         for (int i = 0; i < path.Count - 1; i++)
         {
-            BoardTile startTile = path[i];
+            BoardTile segmentStartTile = path[i];
             BoardTile targetTile = path[i + 1];
 
-            Vector3 startPos = startTile.playerPlacement.transform.position;
-            // If starting from the very first move, use the current piece position
-            // in case it wasn't perfectly aligned (e.g., during setup).
-            if (i == 0)
+            // Ensure placement transforms exist
+            if (segmentStartTile.playerPlacement == null || targetTile.playerPlacement == null)
             {
-                startPos = playerPiece.transform.position;
+                Debug.LogError($"Missing playerPlacement transform on {segmentStartTile.name} or {targetTile.name}. Aborting move.");
+                isMoving = false; // Reset state
+                yield break; // Exit coroutine
             }
 
-            Vector3 endPos = targetTile.playerPlacement.transform.position;
-
-            // Calculate control points for the hop
-            // Place control points horizontally between start and end, but elevated
+            Vector3 startPos = (i == 0) ? playerPiece.transform.position : segmentStartTile.playerPlacement.position;
+            Vector3 endPos = targetTile.playerPlacement.position;
             Vector3 midPointHorizontal = Vector3.Lerp(startPos, endPos, 0.5f);
             Vector3 controlPoint1 = midPointHorizontal + Vector3.up * hopHeight;
-            Vector3 controlPoint2 = controlPoint1; // Simple symmetrical hop
+            Vector3 controlPoint2 = controlPoint1;
 
             float elapsedTime = 0f;
-
-            Debug.Log($"Moving from {startTile.name} to {targetTile.name}");
+            // Debug.Log($"Moving from {segmentStartTile.name} to {targetTile.name}"); // Optional: less verbose log
 
             while (elapsedTime < moveDurationPerTile)
             {
                 float t = elapsedTime / moveDurationPerTile;
-                // Use the Bezier function instead of Lerp
                 playerPiece.transform.position = CalculateCubicBezierPoint(t, startPos, controlPoint1, controlPoint2, endPos);
-
                 elapsedTime += Time.deltaTime;
-                yield return null; // Wait for the next frame
+                yield return null;
             }
-
-            // Ensure the piece is exactly at the target position
-            playerPiece.transform.position = endPos;
+            playerPiece.transform.position = endPos; // Snap to final position
         }
 
-        // --- Animation Complete ---
-
-        // Now, update the player's logical state to the final tile
         BoardTile finalTile = path[path.Count - 1];
         Debug.Log($"Movement finished. Final tile: {finalTile.name}");
-        player.SetCurrentBoardTile(finalTile);
+        player.SetCurrentBoardTile(finalTile); // Update logical position *after* animation
 
-        // Check for and trigger encounter ONLY on the final tile
         EncounterData encounter = finalTile.GetEncounter();
-        if (encounter != null)
+        if (encounter != null /* && finalTile.IsEncounterUntriggered() or similar logic */)
         {
             Debug.Log($"Landed on tile with encounter: {encounter.name}");
+            // finalTile.MarkEncounterTriggered(); // Optional: prevent re-triggering immediately
             StartEncounter(encounter);
         }
         else
         {
-            Debug.Log("Landed on tile with no encounter.");
+            Debug.Log($"Landed on tile {finalTile.name} with no encounter or encounter already triggered.");
         }
 
-        isMoving = false; // Allow next move
+        isMoving = false;
     }
-
-
 
     private void StartEncounter(EncounterData encounter)
     {
-        Debug.Log($"Starting encounter: {encounter.name}"); // Use encounter.name if it exists
-        GameManager.Instance.SetCurrentEncounter(encounter);
-        SceneLoader.Instance.LoadCombatScene();
+        Debug.Log($"Starting encounter: {encounter.name}");
+        // Assuming GameManager and SceneLoader are singletons or accessible
+        if (GameManager.Instance != null) GameManager.Instance.SetCurrentEncounter(encounter);
+        else Debug.LogError("GameManager.Instance is null!");
+
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadCombatScene();
+        else Debug.LogError("SceneLoader.Instance is null!");
     }
 
-    // Renamed from GetTileAhead and modified to return the full path
-    public List<BoardTile> GetPathAhead(int steps)
-    {
-        List<BoardTile> path = new List<BoardTile>();
-        BoardTile currentTile = player.GetCurrentBoardTile();
-
-        if (currentTile == null)
-        {
-            Debug.LogError("Player's current tile is null. Cannot determine path.");
-            return null; // Or return empty list: new List<BoardTile>();
-        }
-
-        path.Add(currentTile); // Add the starting tile
-
-        if (steps < 0)
-        {
-            Debug.LogError("Cannot get path with negative steps");
-            return null; // Or return list with only start tile: path;
-        }
-
-        if (steps == 0)
-        {
-            // Return the path containing only the current tile
-            return path;
-        }
-
-        BoardTile nextTileInPath = currentTile;
-        // Traverse the linked list 'steps' times
-        for (int i = 0; i < steps; i++)
-        {
-            // If there are no next tiles, we've reached the end
-            if (nextTileInPath.nextTiles == null || nextTileInPath.nextTiles.Count == 0)
-            {
-                Debug.LogWarning($"Reached end of board after {i} steps (requested {steps}). Path ends at {nextTileInPath.name}");
-                return path; // Return the path up to this point
-            }
-
-            // Move to the next tile (using the first path by default)
-            nextTileInPath = nextTileInPath.GetNextTile(); // Assuming GetNextTile() gets the default next tile
-
-            // If we hit a null tile, something's wrong with the board definition
-            if (nextTileInPath == null)
-            {
-                Debug.LogError($"Null tile encountered after {i} steps while traversing from {path[path.Count - 1].name}");
-                return path; // Return the path up to the point before the null tile
-            }
-
-            path.Add(nextTileInPath); // Add the valid next tile to the path
-        }
-
-        return path; // Return the complete path
-    }
-
-    public void MovePlayerSteps(int steps)
-    {
-        // Prevent starting a new move if one is already in progress.
-        if (isMoving)
-        {
-            Debug.LogWarning("Player is already moving. Move command ignored.");
-            return;
-        }
-
-        // Validate the input. Moving 0 or negative steps doesn't make sense here.
-        if (steps <= 0)
-        {
-            Debug.LogWarning($"MovePlayerSteps called with non-positive value: {steps}. No movement will occur.");
-            return;
-        }
-
-        Debug.Log($"Attempting to move player {steps} steps forward.");
-
-        // Calculate the path the player will take.
-        List<BoardTile> path = GetPathAhead(steps);
-
-        // Check if a valid path with actual movement was found.
-        // path.Count > 1 means there's at least a start and one destination tile.
-        if (path != null && path.Count > 1)
-        {
-            // Start the animation coroutine using the calculated path.
-            StartCoroutine(AnimatePlayerMovement(path));
-        }
-        else if (path != null && path.Count <= 1)
-        {
-            // This might happen if GetPathAhead determines no movement is possible (e.g., already at the end).
-            Debug.LogWarning($"Calculated path for {steps} steps resulted in no actual movement (Path length: {path.Count}). Player remains on tile: {player.GetCurrentBoardTile()?.name}");
-        }
-        else
-        {
-            // GetPathAhead returned null, indicating an error during path calculation.
-            Debug.LogError($"Failed to calculate path for {steps} steps. Check board configuration and player state.");
-        }
-    }
-
+    // GetTileByIndex, SetIsNewGame, SetPlayer, UpdateEncounterData remain largely the same
     public BoardTile GetTileByIndex(int index)
     {
+        // Added check for tiles array initialization
+        if (tiles == null)
+        {
+            Debug.LogError("Tiles array not initialized in GetTileByIndex.");
+            return null;
+        }
         if (index >= 0 && index < tiles.Length)
         {
+            // Optional: Check if tiles[index] itself is null if that's possible
             return tiles[index];
         }
-        Debug.LogError($"Invalid tile index requested: {index}");
+        Debug.LogWarning($"Invalid tile index requested: {index}. Max index is {tiles.Length - 1}");
         return null;
     }
 
-    // SetIsNewGame, SetPlayer, UpdateEncounterData remain the same
-    public void SetIsNewGame(bool b)
-    {
-        this.isNewGame = b;
-    }
-
-    public void SetPlayer(Player player)
-    {
-        this.player = player;
-    }
+    public void SetIsNewGame(bool b) { this.isNewGame = b; }
+    public void SetPlayer(Player player) { this.player = player; }
 
     public void UpdateEncounterData(EncounterData encounterData)
     {
-        int index = player.GetTileIndex();
+        int index = player.GetTileIndex(); // Assumes player has GetTileIndex()
         BoardTile tile = GetTileByIndex(index);
         if (tile != null)
         {
             tile.SetEncounterData(encounterData);
+            Debug.Log($"Updated encounter data on tile {index}.");
         }
         else
         {
             Debug.LogError($"Could not find tile at index {index} to update encounter data.");
         }
     }
-}
+
+
+    public void MovePlayerSteps(int steps)
+    {
+        if (isMoving || isAwaitingPathChoice)
+        {
+            Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
+            return;
+        }
+        if (steps <= 0)
+        {
+            Debug.LogWarning($"MovePlayerSteps called with non-positive value: {steps}.");
+            return;
+        }
+        Debug.Log($"Attempting to force move player {steps} steps forward (using default path).");
+
+        // NOTE: This still uses the old GetPathAhead logic.
+        // If you want forced moves to also consider branching/backwards,
+        // you'd need to adapt the FindPaths logic or decide on a default behavior.
+        // For now, let's assume it uses a simple forward-only path for simplicity.
+        List<BoardTile> path = GetSimplePathAhead(steps); // Renamed for clarity
+
+        if (path != null && path.Count > 1)
+        {
+            StartCoroutine(AnimatePlayerMovement(path));
+        }
+        else
+        {
+            Debug.LogWarning($"Could not find a simple forward path for {steps} steps.");
+        }
+    }
+
+    // Example of a simple forward path function (replace GetPathAhead with this if needed)
+    private List<BoardTile> GetSimplePathAhead(int steps)
+    {
+        List<BoardTile> path = new List<BoardTile>();
+        BoardTile currentTile = player.GetCurrentBoardTile();
+        if (currentTile == null || steps <= 0) return path; // Return empty path
+
+        path.Add(currentTile);
+        BoardTile nextTileInPath = currentTile;
+        for (int i = 0; i < steps; i++)
+        {
+            nextTileInPath = nextTileInPath.GetNextTile(); // Assumes GetNextTile(0) is the default
+            if (nextTileInPath == null) return path; // Reached end or dead end
+            path.Add(nextTileInPath);
+        }
+        return path;
+    }
+
+} // End of Board class
