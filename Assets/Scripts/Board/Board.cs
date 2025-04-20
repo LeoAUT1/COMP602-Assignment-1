@@ -15,6 +15,7 @@ public class Board : MonoBehaviour
     private BoardTile[] tiles;
 
     [SerializeField] private Player player;
+    [SerializeField] public PlayerAnimator playerAnimator; // Assign in Inspector
     [SerializeField] private GameObject playerPiecePrefab;
     [SerializeField] private GameObject selectionarrowPrefab;
     private GameObject playerPiece;
@@ -22,11 +23,6 @@ public class Board : MonoBehaviour
     private bool isNewGame = true;
     [SerializeField] private TextMeshProUGUI playerStats;
 
-    [SerializeField] private float moveDurationPerTile = 0.5f; // Time in seconds to move between two tiles
-    [SerializeField] private float hopHeight = 1.0f; // Max height the piece reaches during a hop
-
-    // --- State Flags ---
-    private bool isMoving = false; // Flag to prevent concurrent moves
     private bool isAwaitingPathChoice = false;
 
     // --- Pathfinding Data ---
@@ -70,10 +66,22 @@ public class Board : MonoBehaviour
 
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
+
+
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetPlayerPiece(playerPiece);
+        }
+        else
+        {
+            Debug.LogError("PlayerAnimator reference not set on Board!");
+            return;
+        }
+
         BoardTile initialPlayerTile = player.GetCurrentBoardTile(); // Get the tile set above
         if (initialPlayerTile != null)
         {
-            MovePlayerPieceInstantly(initialPlayerTile);
+            playerAnimator.MovePlayerPieceInstantly(initialPlayerTile);
         }
         else
         {
@@ -107,7 +115,7 @@ public class Board : MonoBehaviour
     public void PlayerAction_RollAndMove()
     {
         // Prevent action if already moving or waiting for path selection
-        if (isMoving)
+        if (playerAnimator != null && playerAnimator.IsAnimating)
         {
             Debug.LogWarning("Player is already moving.");
             return;
@@ -147,7 +155,7 @@ public class Board : MonoBehaviour
 
             if (pathToTake.Count > 1) // Ensure the path involves actual movement
             {
-                StartCoroutine(AnimatePlayerMovement(pathToTake));
+                playerAnimator.AnimateMove(pathToTake, () => HandleMovementComplete(pathToTake));
             }
             else
             {
@@ -161,13 +169,7 @@ public class Board : MonoBehaviour
             isAwaitingPathChoice = true;
             currentPathChoices = availablePaths; // Store the choices
 
-            // --- Placeholder Calls ---
             VisualizePathChoices(currentPathChoices);
-            EnablePathSelectionInput(currentPathChoices);
-            // --- End Placeholders ---
-
-            // The function execution effectively pauses here until the player makes a choice
-            // and calls SelectPathAndMove.
         }
     }
 
@@ -206,17 +208,39 @@ public class Board : MonoBehaviour
         // Start movement along the selected path
         if (chosenPath.Count > 1)
         {
-            StartCoroutine(AnimatePlayerMovement(chosenPath));
+            playerAnimator.AnimateMove(chosenPath, () => HandleMovementComplete(chosenPath));
         }
         else
         {
             Debug.LogWarning("Selected path has only one tile. No movement animation needed.");
             // If landing on the same tile should trigger something, do it here.
+            HandleMovementComplete(chosenPath);
+
         }
     }
 
+    private void HandleMovementComplete(List<BoardTile> path)
+    {
+        if (path == null || path.Count == 0) return; // Safety check
 
-    // --- Placeholder Functions for Visualization and Input ---
+        BoardTile finalTile = path[path.Count - 1];
+        Debug.Log($"Movement finished. Final tile: {finalTile.name}");
+        player.SetCurrentBoardTile(finalTile); // Update logical position
+
+        // Check for encounters AFTER movement is complete
+        EncounterData encounter = finalTile.GetEncounter();
+        if (encounter != null /* && finalTile.IsEncounterUntriggered() */)
+        {
+            Debug.Log($"Landed on tile with encounter: {encounter.name}");
+            // finalTile.MarkEncounterTriggered();
+            StartEncounter(encounter);
+        }
+        else
+        {
+            Debug.Log($"Landed on tile {finalTile.name} with no encounter or encounter already triggered.");
+            // Maybe signal end of turn here if no encounter
+        }
+    }
 
     private void VisualizePathChoices(List<List<BoardTile>> paths)
     {
@@ -244,12 +268,6 @@ public class Board : MonoBehaviour
 
         pathArrows.Clear();
     }
-
-    private void EnablePathSelectionInput(List<List<BoardTile>> paths)
-    {
-        // New code goes here
-    }
-
 
     public List<List<BoardTile>> FindPaths(BoardTile startTile, int steps)
     {
@@ -293,83 +311,6 @@ public class Board : MonoBehaviour
             newPath.Add(neighbor);
             FindPathsRecursive(neighbor, newPath, stepsRemaining - 1, allPathsFound);
         }
-    }
-
-
-    // --- Movement and Utility Functions (Mostly unchanged) ---
-
-    public void MovePlayerPieceInstantly(BoardTile boardTile)
-    {
-        if (playerPiece == null || boardTile == null || boardTile.playerPlacement == null)
-        {
-            Debug.LogError($"Cannot instantly move player piece. playerPiece: {playerPiece}, boardTile: {boardTile}, playerPlacement: {boardTile?.playerPlacement}");
-            return;
-        }
-        playerPiece.transform.position = boardTile.playerPlacement.position; // Use position directly
-        // Setting the logical tile is important if this is called outside initial setup
-        // player.SetCurrentBoardTile(boardTile); // Already handled in Start/Animate
-    }
-
-    private Vector3 CalculateCubicBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
-    {
-        float u = 1 - t; float tt = t * t; float uu = u * u; float uuu = uu * u; float ttt = tt * t;
-        Vector3 p = uuu * p0; p += 3 * uu * t * p1; p += 3 * u * tt * p2; p += ttt * p3; return p;
-    }
-
-    private IEnumerator AnimatePlayerMovement(List<BoardTile> path)
-    {
-        isMoving = true;
-        Debug.Log($"Starting animation across {path.Count - 1} steps.");
-
-        for (int i = 0; i < path.Count - 1; i++)
-        {
-            BoardTile segmentStartTile = path[i];
-            BoardTile targetTile = path[i + 1];
-
-            // Ensure placement transforms exist
-            if (segmentStartTile.playerPlacement == null || targetTile.playerPlacement == null)
-            {
-                Debug.LogError($"Missing playerPlacement transform on {segmentStartTile.name} or {targetTile.name}. Aborting move.");
-                isMoving = false; // Reset state
-                yield break; // Exit coroutine
-            }
-
-            Vector3 startPos = (i == 0) ? playerPiece.transform.position : segmentStartTile.playerPlacement.position;
-            Vector3 endPos = targetTile.playerPlacement.position;
-            Vector3 midPointHorizontal = Vector3.Lerp(startPos, endPos, 0.5f);
-            Vector3 controlPoint1 = midPointHorizontal + Vector3.up * hopHeight;
-            Vector3 controlPoint2 = controlPoint1;
-
-            float elapsedTime = 0f;
-            // Debug.Log($"Moving from {segmentStartTile.name} to {targetTile.name}"); // Optional: less verbose log
-
-            while (elapsedTime < moveDurationPerTile)
-            {
-                float t = elapsedTime / moveDurationPerTile;
-                playerPiece.transform.position = CalculateCubicBezierPoint(t, startPos, controlPoint1, controlPoint2, endPos);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            playerPiece.transform.position = endPos; // Snap to final position
-        }
-
-        BoardTile finalTile = path[path.Count - 1];
-        Debug.Log($"Movement finished. Final tile: {finalTile.name}");
-        player.SetCurrentBoardTile(finalTile); // Update logical position *after* animation
-
-        EncounterData encounter = finalTile.GetEncounter();
-        if (encounter != null /* && finalTile.IsEncounterUntriggered() or similar logic */)
-        {
-            Debug.Log($"Landed on tile with encounter: {encounter.name}");
-            // finalTile.MarkEncounterTriggered(); // Optional: prevent re-triggering immediately
-            StartEncounter(encounter);
-        }
-        else
-        {
-            Debug.Log($"Landed on tile {finalTile.name} with no encounter or encounter already triggered.");
-        }
-
-        isMoving = false;
     }
 
     private void StartEncounter(EncounterData encounter)
@@ -422,7 +363,7 @@ public class Board : MonoBehaviour
 
     public void MovePlayerSteps(int steps)
     {
-        if (isMoving || isAwaitingPathChoice)
+        if (playerAnimator.IsAnimating || isAwaitingPathChoice)
         {
             Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
             return;
@@ -434,15 +375,11 @@ public class Board : MonoBehaviour
         }
         Debug.Log($"Attempting to force move player {steps} steps forward (using default path).");
 
-        // NOTE: This still uses the old GetPathAhead logic.
-        // If you want forced moves to also consider branching/backwards,
-        // you'd need to adapt the FindPaths logic or decide on a default behavior.
-        // For now, let's assume it uses a simple forward-only path for simplicity.
         List<BoardTile> path = GetSimplePathAhead(steps); // Renamed for clarity
 
         if (path != null && path.Count > 1)
         {
-            StartCoroutine(AnimatePlayerMovement(path));
+            playerAnimator.AnimateMove(path, () => HandleMovementComplete(path));
         }
         else
         {
@@ -450,7 +387,6 @@ public class Board : MonoBehaviour
         }
     }
 
-    // Example of a simple forward path function (replace GetPathAhead with this if needed)
     private List<BoardTile> GetSimplePathAhead(int steps)
     {
         List<BoardTile> path = new List<BoardTile>();
@@ -468,4 +404,4 @@ public class Board : MonoBehaviour
         return path;
     }
 
-} // End of Board class
+}

@@ -35,13 +35,13 @@ public class ClickManager : MonoBehaviour
                 BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
                 if (boardTile != null)
                 {
-                    board.MovePlayerPieceInstantly(boardTile);
+                    board.playerAnimator.MovePlayerPieceInstantly(boardTile);
                 }
             }
 
         }
 
-
+        // Debug Feautre to move the player to an arbitrary tile
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -52,7 +52,8 @@ public class ClickManager : MonoBehaviour
                 BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
                 if (boardTile != null)
                 {
-                    board.MovePlayerPieceInstantly(boardTile);
+                    Player.Instance.SetCurrentBoardTile(boardTile);
+                    board.playerAnimator.MovePlayerPieceInstantly(boardTile);
                 }
             }
         }

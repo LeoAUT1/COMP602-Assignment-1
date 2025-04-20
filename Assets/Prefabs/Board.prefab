@@ -749,6 +749,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7888936361013925830}
   - component: {fileID: 6115964428648382125}
+  - component: {fileID: 6867746101428545304}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -788,8 +789,22 @@ MonoBehaviour:
   tileContainer: {fileID: 0}
   player: {fileID: 0}
   playerPiecePrefab: {fileID: 6432881886936753685, guid: 2b794e056082ffa41ba14ae5f64edc77, type: 3}
+  selectionarrowPrefab: {fileID: 0}
   playerStats: {fileID: 1333060743826702293}
   moveDurationPerTile: 0.5
+  hopHeight: 1
+--- !u!114 &6867746101428545304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8169815318480374628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c07b9ca0a76f9984d92442788b1c39fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8713477735554827254
 GameObject:
   m_ObjectHideFlags: 0
