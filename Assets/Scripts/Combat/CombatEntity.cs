@@ -36,5 +36,9 @@ public abstract class CombatEntity : MonoBehaviour
     public int GetIntelligence() { return intelligence; }
     public bool GetIsAlive() {  return isAlive; }   
 
+    public void SetStrength(int x) { strength = x; }
+    public void SetDexterity(int x) { dexterity = x; }
+    public void SetIntelligence (int x) { intelligence = x; }
+
     // Other shared functionality
 }
