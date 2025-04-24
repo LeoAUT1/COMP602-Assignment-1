@@ -88,14 +88,19 @@ public class Board : MonoBehaviour
             Debug.LogError("Cannot determine initial player tile for placement even after attempting setup.");
         }
 
-        UpdatePlayerStatsUi(player);
+        if (player != null)
+        {
+            player.SetBoard(this);
+        }
+
+        UpdatePlayerStatsUi();
     }
 
-    private void UpdatePlayerStatsUi(Player player)
+    public void UpdatePlayerStatsUi()
     {
         if (playerStats != null && player != null)
         {
-            playerStats.text = $"Experience: {player.GetExperience()}\n";
+            playerStats.text = $"LVL {player.GetLevel()} | {player.GetExperience()} xp\n";
             playerStats.text += $"Coins: {player.GetCoins()}\n";
         }
         else
