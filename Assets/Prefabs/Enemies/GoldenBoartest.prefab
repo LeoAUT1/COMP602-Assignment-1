@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &131700880780199157
+--- !u!1 &3261235072760639444
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,57 +8,55 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1204372802428025150}
-  - component: {fileID: 6321431687357841294}
+  - component: {fileID: 8191786495088339327}
+  - component: {fileID: 8001653114674862310}
   m_Layer: 0
-  m_Name: GoldenBoar
+  m_Name: GoldenBoartest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1204372802428025150
+--- !u!4 &8191786495088339327
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131700880780199157}
+  m_GameObject: {fileID: 3261235072760639444}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.33, y: -0.1, z: 21.64}
+  m_LocalPosition: {x: 14.77, y: 0, z: 20.91}
   m_LocalScale: {x: 2, y: 1.9354172, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 658691392031018445}
+  - {fileID: 955911469725669573}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6321431687357841294
+--- !u!114 &8001653114674862310
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131700880780199157}
+  m_GameObject: {fileID: 3261235072760639444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20b4673fa48a78c44865c1313c74d35d, type: 3}
+  m_Script: {fileID: 11500000, guid: a26ba0746ac39274c82eba6a08e3d794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityName: Golden Boar
-  health: 5
-  maxHealth: 5
-  strength: 3
-  dexterity: 3
-  intelligence: 3
-  experienceGranted: 15
---- !u!1001 &1057955764987013670
+  unitName: Golden Boar
+  unitLevel: 2
+  damage: 5
+  maxHp: 30
+  currentHp: 30
+--- !u!1001 &778750103015210798
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1204372802428025150}
+    m_TransformParent: {fileID: 8191786495088339327}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f6316746b098d324ca87b59be5fa790c, type: 3}
       propertyPath: m_LocalScale.x
@@ -121,8 +119,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6316746b098d324ca87b59be5fa790c, type: 3}
---- !u!4 &658691392031018445 stripped
+--- !u!4 &955911469725669573 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f6316746b098d324ca87b59be5fa790c, type: 3}
-  m_PrefabInstance: {fileID: 1057955764987013670}
+  m_PrefabInstance: {fileID: 778750103015210798}
   m_PrefabAsset: {fileID: 0}

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8671192130053172557
+--- !u!1 &5643868293014857444
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,71 +8,55 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2362603987418269019}
-  - component: {fileID: 5820751951653907196}
-  - component: {fileID: 6508123060139364006}
+  - component: {fileID: 6670893748541904290}
+  - component: {fileID: 7949301530197890615}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Playertest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2362603987418269019
+--- !u!4 &6670893748541904290
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8671192130053172557}
+  m_GameObject: {fileID: 5643868293014857444}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1223574, y: 2.4287474, z: -0.71073127}
+  m_LocalPosition: {x: 0, y: 0, z: 5.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2272530497051078520}
+  - {fileID: 585452826174125895}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5820751951653907196
+--- !u!114 &7949301530197890615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8671192130053172557}
+  m_GameObject: {fileID: 5643868293014857444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ac18fa9913962241b778582481835be, type: 3}
+  m_Script: {fileID: 11500000, guid: a26ba0746ac39274c82eba6a08e3d794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins: 0
-  playerCombat: {fileID: 6508123060139364006}
---- !u!114 &6508123060139364006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8671192130053172557}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14b5f906f34461e4f8e533fe2be959e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entityName: Player
-  health: 0
-  maxHealth: 0
-  strength: 0
-  dexterity: 0
-  intelligence: 0
---- !u!1001 &1730260831784257683
+  unitName: Hero
+  unitLevel: 10
+  damage: 10
+  maxHp: 100
+  currentHp: 100
+--- !u!1001 &1122886433877921964
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2362603987418269019}
+    m_TransformParent: {fileID: 6670893748541904290}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalScale.x
@@ -88,7 +72,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.44
+      value: -14.73
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -135,8 +119,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
---- !u!4 &2272530497051078520 stripped
+--- !u!4 &585452826174125895 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2eea85e5448fbb04ca2d74b207335ea5, type: 3}
-  m_PrefabInstance: {fileID: 1730260831784257683}
+  m_PrefabInstance: {fileID: 1122886433877921964}
   m_PrefabAsset: {fileID: 0}
