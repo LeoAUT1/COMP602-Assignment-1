@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Golden Boar
   unitLevel: 2
-  damage: 5
+  damage: 15
   maxHp: 30
   currentHp: 30
 --- !u!1001 &778750103015210798

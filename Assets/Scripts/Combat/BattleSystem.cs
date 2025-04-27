@@ -82,6 +82,23 @@ public class BattleSystem : MonoBehaviour
 
     }
 
+
+    IEnumerator PlayerHeal()
+    {
+        playerUnit.heal(5);
+        playerHud.setHP(playerUnit.currentHp);
+        playerHud.healthText.text = "HP: " + playerUnit.currentHp + "/" + playerUnit.maxHp;
+
+        combatTxt.text = "you feel rejuvenated!";
+
+        yield return new WaitForSeconds(2f);
+
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(EnemyTurn());
+
+
+    }
+
     //enemy turn
     IEnumerator EnemyTurn()
     {
@@ -140,6 +157,15 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(PlayerAttack());
 
     }
-   
-  
+
+    public void OnHealButton()
+    {
+        if (state != BattleState.PLAYERTURN)
+            return;
+
+        StartCoroutine(PlayerHeal());
+
+    }
+
+
 }
