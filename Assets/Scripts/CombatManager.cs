@@ -17,11 +17,7 @@ public class CombatManager : MonoBehaviour
     PlayerCombat playerUnit;
     Enemy enemyUnit;
 
-    public Text combatTxt;
-
-    public CombatHud playerHud;
-    public CombatHud EnemyHud;
-    public GameObject buttonContainer; //Hide these when its not the player's turn
+    [SerializeField] CombatHud combatHud;
 
     public BattleState state;
 
@@ -34,7 +30,6 @@ public class CombatManager : MonoBehaviour
         this.enemies = encounter.enemies;
 
         state = BattleState.START;
-        SetupBattle();
         StartCoroutine(SetupBattle());
     }
 
@@ -50,27 +45,25 @@ public class CombatManager : MonoBehaviour
     }
     IEnumerator SetupBattle()
     {
-        Debug.Log("test");
-        Debug.Log(encounter.enemies[0]);
-
         enemyUnit = Instantiate(encounter.enemies[0]);
 
         playerUnit = player.GetComponent<PlayerCombat>();
 
-        //GameObject playerObj = Instantiate(playerPreFab);
-        //playerUnit = playerObj.GetComponent<CombatEntity>();
 
-        //GameObject enemyObj = Instantiate(enemyPreFab);
-        //enemyUnit = enemyObj.GetComponent<CombatEntity>();
+        combatHud.combatMessage.SetText($"A { enemyUnit.GetName()} appeared.");
 
-        combatTxt.text = "A wild " + enemyUnit.GetName() + " has appeared.";
+        if (enemyUnit == null)
+        {
+            Debug.LogError("Enemy is missing");
+        }
 
-        playerHud.setHUD(playerUnit);
+        if (playerUnit == null) {
+            Debug.LogError("Player is missing");
+        }
 
-        EnemyHud.setHUD(enemyUnit);
+        combatHud.Initialise(enemyUnit, playerUnit);
 
         yield return new WaitForSeconds(2f);
-
 
         state = BattleState.PLAYERTURN;
         PlayerTurn();
@@ -79,12 +72,9 @@ public class CombatManager : MonoBehaviour
     //player attack after pressing button
     IEnumerator PlayerAttack()
     {
-        int enemyRemainingHealth = enemyUnit.SubtractHealth(playerUnit.GetStrength());
-
-        Debug.Log($"Enemy now has {enemyRemainingHealth} HP");
-
-        EnemyHud.setHP(enemyUnit.GetHealth());
-        combatTxt.text = "Attack succesful!";
+        enemyUnit.SubtractHealth(playerUnit.GetStrength());
+        combatHud.combatMessage.SetText("Attack succesful!");
+        combatHud.UpdateEnemyHud(enemyUnit);
 
         yield return new WaitForSeconds(2f);
 
@@ -93,11 +83,10 @@ public class CombatManager : MonoBehaviour
         {
             //end combat
             state = BattleState.WIN;
-            EndBattle();
+            StartCoroutine(EndBattle());
         }
         else
         {
-            Debug.Log("player still alive");
             //enemy turn
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
@@ -106,12 +95,9 @@ public class CombatManager : MonoBehaviour
     IEnumerator PlayerHeal()
     {
         playerUnit.AddHealth(5);
-        playerHud.setHP(playerUnit.GetHealth());
-        playerHud.healthText.text = "HP: " + playerUnit.GetHealth() + "/" + playerUnit.GetMaxHealth();
+        combatHud.combatMessage.SetText("You feel rejuvenated");
 
-        combatTxt.text = "you feel rejuvenated!";
-
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.3f);
 
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
@@ -120,22 +106,19 @@ public class CombatManager : MonoBehaviour
     //enemy turn
     IEnumerator EnemyTurn()
     {
-        combatTxt.text = enemyUnit.GetName() + " attacks!";
+        combatHud.combatMessage.SetText($"{enemyUnit.GetName()} attacks!");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
 
         playerUnit.SubtractHealth(enemyUnit.GetStrength());
+        combatHud.UpdatePlayerHud(playerUnit);
 
-        playerHud.setHP(playerUnit.GetHealth());
-        
-        playerHud.healthText.text = "HP: " + playerUnit.GetHealth() + "/" + playerUnit.GetMaxHealth();
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.3f);
 
         if (!playerUnit.GetIsAlive())
         {
             state = BattleState.LOSE;
-            EndBattle();
+            StartCoroutine(EndBattle());
         }
         else
         {
@@ -146,23 +129,28 @@ public class CombatManager : MonoBehaviour
     }
 
     //ends battle
-    void EndBattle()
+    IEnumerator EndBattle()
     {
         if (state == BattleState.WIN)
         {
-            combatTxt.text = enemyUnit.GetName() + " has been slain!";
-            GameManager.Instance.ExitCombat();
+            combatHud.combatMessage.SetText($"{enemyUnit.GetName()} was slain!");
         }
-        else if (state == BattleState.LOSE)
+        if (state == BattleState.LOSE)
         {
-            combatTxt.text = "you were defeated!";
+            combatHud.combatMessage.SetText($"You were defeated");
         }
+
+        yield return new WaitForSeconds(1f);
+
+        GameManager.Instance.ExitCombat();
+
     }
 
     //player turn action
     void PlayerTurn()
     {
-        combatTxt.text = "Select an action:";
+        combatHud.ShowPlayerCombatActions(true);
+        combatHud.combatMessage.SetText($"Select an action:");
     }
 
     //attack button
@@ -174,6 +162,7 @@ public class CombatManager : MonoBehaviour
             return;
         }
 
+        combatHud.ShowPlayerCombatActions(false);
         StartCoroutine(PlayerAttack());
 
     }
