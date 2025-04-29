@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   encounterName: Golden Boar Encounter
   description: Test encounter
-  encounterFinished: 0
+  isFinalBoss: 0
   enemies:
   - {fileID: 6321431687357841294, guid: 301253f4122642e4ca056be5660cf8fa, type: 3}
   grantedCoins: 10

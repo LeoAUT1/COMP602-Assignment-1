@@ -11,13 +11,15 @@ public abstract class CombatEntity : MonoBehaviour
 
     private bool isAlive = true;
 
-    public virtual void AddHealth(int amount)
+    public virtual int AddHealth(int amount)
     {
         health += amount;
         health = Mathf.Min(health, maxHealth); // Prevent exceeding max health
+
+        return health;
     }
 
-    public virtual void SubtractHealth(int amount)
+    public virtual int SubtractHealth(int amount)
     {
         health -= amount;
         health = Mathf.Max(health, 0); // Prevent falling below 0
@@ -26,11 +28,13 @@ public abstract class CombatEntity : MonoBehaviour
         {
             isAlive = false;
         }
+
+        return health;
     }
 
     public string GetName() { return entityName; }
-    public float GetHealth() { return health; }
-    public float GetMaxHealth() { return maxHealth; }
+    public int GetHealth() { return health; }
+    public int GetMaxHealth() { return maxHealth; }
     public int GetStrength() { return strength; }
     public int GetDexterity() { return dexterity; }
     public int GetIntelligence() { return intelligence; }

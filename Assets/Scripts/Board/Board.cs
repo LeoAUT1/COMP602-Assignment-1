@@ -78,6 +78,12 @@ public class Board : MonoBehaviour
             return;
         }
 
+
+        if (player.GetCurrentBoardTile() == null)
+        {
+            player.SetCurrentBoardTile(this.GetTileByIndex(player.GetTileIndex()));
+        }
+
         BoardTile initialPlayerTile = player.GetCurrentBoardTile(); // Get the tile set above
         if (initialPlayerTile != null)
         {
