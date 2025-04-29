@@ -19,6 +19,11 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] CombatHud combatHud;
 
+    [SerializeField] private Transform instantiatePlayerHere; // When the scene loads put the player's model on this transform
+    [SerializeField] private Transform instantiateEnemyHere; // When the scene loads put the enemy model on this transform
+
+    [SerializeField] private GameObject playerPiecePrefab; //player's model
+
     public BattleState state;
 
     public void InitialiseCombat(Player player, EncounterData encounter)
@@ -45,12 +50,10 @@ public class CombatManager : MonoBehaviour
     }
     IEnumerator SetupBattle()
     {
-        enemyUnit = Instantiate(encounter.enemies[0]);
+        enemyUnit = Instantiate(encounter.enemies[0], instantiateEnemyHere);
+        Instantiate(playerPiecePrefab, instantiatePlayerHere.position, Quaternion.Euler(0,180,0));
 
         playerUnit = player.GetComponent<PlayerCombat>();
-
-
-        combatHud.combatMessage.SetText($"A { enemyUnit.GetName()} appeared.");
 
         if (enemyUnit == null)
         {
@@ -61,9 +64,10 @@ public class CombatManager : MonoBehaviour
             Debug.LogError("Player is missing");
         }
 
+        combatHud.combatMessage.SetText($"A {enemyUnit.GetName()} appeared.");
         combatHud.Initialise(enemyUnit, playerUnit);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         state = BattleState.PLAYERTURN;
         PlayerTurn();
@@ -164,7 +168,6 @@ public class CombatManager : MonoBehaviour
 
         combatHud.ShowPlayerCombatActions(false);
         StartCoroutine(PlayerAttack());
-
     }
 
     public void OnHealButton()
