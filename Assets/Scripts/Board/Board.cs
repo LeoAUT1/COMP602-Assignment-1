@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq; // Needed for FindPaths logic potentially
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,11 @@ public class Board : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerStats;
 
     private bool isAwaitingPathChoice = false;
+
+    [SerializeField] private GameObject die;
+    [SerializeField] private Transform dieSpawnPoint;
+
+    [SerializeField] private GameObject boardInteractionButtons;
 
     // --- Pathfinding Data ---
     private List<List<BoardTile>> currentPathChoices;
@@ -115,16 +121,59 @@ public class Board : MonoBehaviour
         }
     }
 
-    private int RollTheDice()
+    public void RollTheDice(System.Action<int> callback)
     {
-        int diceRoll = UnityEngine.Random.Range(1, 7); // Standard d6 roll
-        Debug.Log($"Dice Roll: {diceRoll}");
-        return diceRoll;
+        //int diceRoll = UnityEngine.Random.Range(1, 7); // Standard d6 roll
+        //Debug.Log($"Dice Roll: {diceRoll}");
+        //return diceRoll;
+
+        GameObject diceObj = Instantiate(die, dieSpawnPoint);
+        Dice dice = diceObj.GetComponent<Dice>();
+
+        // Subscribe to the dice roll event
+        dice.OnDiceRollComplete += (result) => {
+            callback(result);
+
+            // Optional: Destroy the dice after some delay
+            Destroy(diceObj, 2f); // Destroy after 2 seconds
+        };
+
+        dice.PhysicalRoll();
     }
 
-    // --- Main Player Action ---
-    public void PlayerAction_RollAndMove()
+    // Using a coroutine
+    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete)
     {
+        int result = 0;
+        bool rollComplete = false;
+
+        RollTheDice((rollResult) => {
+            result = rollResult;
+            rollComplete = true;
+            PlayerAction_RollAndMove(result);
+        });
+
+        // Wait until the roll is complete
+        yield return new WaitUntil(() => rollComplete);
+
+        onComplete(result);
+    }
+
+    // Usage example:
+    public void OnRollButtonClicked()
+    {
+        StartCoroutine(RollTheDiceCoroutine((result) => {
+            Debug.Log($"Player rolled: {result}");
+            // Do something with the result
+        }));
+        DisableBoardButtons();
+    }
+
+
+    // --- Main Player Action ---
+    public void PlayerAction_RollAndMove(int roll)
+    {
+
         // Prevent action if already moving or waiting for path selection
         if (playerAnimator != null && playerAnimator.IsAnimating)
         {
@@ -137,7 +186,6 @@ public class Board : MonoBehaviour
             return;
         }
 
-        int roll = RollTheDice();
         BoardTile currentTile = player.GetCurrentBoardTile();
 
         if (currentTile == null)
@@ -243,12 +291,16 @@ public class Board : MonoBehaviour
             Debug.Log($"Landed on tile with encounter: {encounter.name}");
             // finalTile.MarkEncounterTriggered();
             StartEncounter(encounter);
+            return;
         }
         else
         {
             Debug.Log($"Landed on tile {finalTile.name} with no encounter or encounter already triggered.");
             // Maybe signal end of turn here if no encounter
         }
+
+        //Player has finished moving so we can reenable the buttons
+        boardInteractionButtons.SetActive(true);
     }
 
     private void VisualizePathChoices(List<List<BoardTile>> paths)
@@ -324,13 +376,31 @@ public class Board : MonoBehaviour
 
     private void StartEncounter(EncounterData encounter)
     {
-        Debug.Log($"Starting encounter: {encounter.name}");
-        // Assuming GameManager and SceneLoader are singletons or accessible
-        if (GameManager.Instance != null) GameManager.Instance.SetCurrentEncounter(encounter);
-        else Debug.LogError("GameManager.Instance is null!");
+        Debug.Log($"Starting encounter: {encounter.name}, TYPE: {encounter.encounterType}");
 
-        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadCombatScene();
-        else Debug.LogError("SceneLoader.Instance is null!");
+        if (encounter.encounterType == EncounterType.COMBAT)
+        {
+            // Assuming GameManager and SceneLoader are singletons or accessible
+            if (GameManager.Instance != null) GameManager.Instance.SetCurrentEncounter(encounter);
+            else Debug.LogError("GameManager.Instance is null!");
+
+            if (SceneLoader.Instance != null) SceneLoader.Instance.LoadCombatScene();
+            else Debug.LogError("SceneLoader.Instance is null!");
+        } 
+        else
+        {
+            if (encounter.prefab == null)
+            {
+                Debug.LogError("No prefab for the non combat encounter");
+                EnableBoardButtons();
+                return;
+            }
+            else
+            {
+                GenericNonCombatEncounter go = Instantiate(encounter.prefab).GetComponent<GenericNonCombatEncounter>();
+                go.SetBoard(this);
+            }
+        }
     }
 
     // GetTileByIndex, SetIsNewGame, SetPlayer, UpdateEncounterData remain largely the same
@@ -372,6 +442,8 @@ public class Board : MonoBehaviour
 
     public void MovePlayerSteps(int steps)
     {
+
+        boardInteractionButtons.SetActive(false);
         if (playerAnimator.IsAnimating || isAwaitingPathChoice)
         {
             Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
@@ -411,6 +483,16 @@ public class Board : MonoBehaviour
             path.Add(nextTileInPath);
         }
         return path;
+    }
+
+    public void EnableBoardButtons()
+    {
+        boardInteractionButtons.SetActive(true);
+    }
+
+    public void DisableBoardButtons()
+    {
+        boardInteractionButtons.SetActive(false);
     }
 
 }

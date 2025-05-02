@@ -11,6 +11,12 @@ public abstract class CombatEntity : MonoBehaviour
 
     private bool isAlive = true;
 
+    public virtual int SetHealth(int amount)
+    {
+        health = amount;
+        return health;
+    }
+
     public virtual int AddHealth(int amount)
     {
         health += amount;
