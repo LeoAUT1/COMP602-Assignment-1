@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d587ecb210205f44b9ea9ecc7c0636f1, type: 3}
+  m_Name: TrapEncounter
+  m_EditorClassIdentifier: 
+  encounterName: TrapEncounter
+  description: A trap encounter
+  isFinalBoss: 0
+  encounterType: 1
+  prefab: {fileID: 6846774403218835944, guid: a8df03529ac8afc47a1849cec655c315, type: 3}
+  enemies: []
+  grantedCoins: 10
+  grantedExperience: 10
