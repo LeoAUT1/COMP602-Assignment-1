@@ -11,6 +11,8 @@ using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
+    // ... (Keep all existing fields and methods like Start, UpdatePlayerStatsUi, RollTheDice, etc.) ...
+
     [SerializeField] private BoardTile startTile;
     [SerializeField] private GameObject tileContainer;
     private BoardTile[] tiles;
@@ -27,7 +29,6 @@ public class Board : MonoBehaviour
     private bool isAwaitingPathChoice = false;
 
     [SerializeField] private GameObject die;
-    [SerializeField] private Transform dieSpawnPoint;
 
     [SerializeField] private GameObject boardInteractionButtons;
 
@@ -123,19 +124,17 @@ public class Board : MonoBehaviour
 
     public void RollTheDice(System.Action<int> callback)
     {
-        //int diceRoll = UnityEngine.Random.Range(1, 7); // Standard d6 roll
-        //Debug.Log($"Dice Roll: {diceRoll}");
-        //return diceRoll;
+        Vector3 dieSpawnPoint = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.5f);
 
-        GameObject diceObj = Instantiate(die, dieSpawnPoint);
-        Dice dice = diceObj.GetComponent<Dice>();
+        // Vector3 dieSpawnPoint = cameraPosition + Camera.main.transform.forward * distanceFromCamera;
+
+        GameObject diceObj = Instantiate(die, dieSpawnPoint, Quaternion.identity);
+        Dice dice = diceObj.GetComponentInChildren<Dice>();
 
         // Subscribe to the dice roll event
         dice.OnDiceRollComplete += (result) => {
             callback(result);
-
-            // Optional: Destroy the dice after some delay
-            Destroy(diceObj, 2f); // Destroy after 2 seconds
+            Destroy(diceObj, 2f); // Destroy our dice after 2 seconds
         };
 
         dice.PhysicalRoll();
@@ -203,6 +202,7 @@ public class Board : MonoBehaviour
             // No valid paths found for the rolled steps
             Debug.Log($"No valid paths found for a roll of {roll} from tile {currentTile.name}. Player stays put.");
             // Potentially end turn or trigger other logic for being stuck
+            EnableBoardButtons(); // Re-enable buttons if stuck
         }
         else if (availablePaths.Count == 1)
         {
@@ -217,6 +217,7 @@ public class Board : MonoBehaviour
             else
             {
                 Debug.Log("Path found has only one tile (start tile). No movement needed.");
+                EnableBoardButtons(); // Re-enable buttons if no movement
             }
         }
         else // availablePaths.Count > 1
@@ -227,11 +228,19 @@ public class Board : MonoBehaviour
             currentPathChoices = availablePaths; // Store the choices
 
             VisualizePathChoices(currentPathChoices);
+            // Buttons remain disabled until a path is chosen
         }
     }
 
     public void SelectPath(int index)
     {
+        if (!isAwaitingPathChoice || currentPathChoices == null || index < 0 || index >= currentPathChoices.Count)
+        {
+            Debug.LogWarning($"Invalid attempt to select path with index {index}. State: awaiting={isAwaitingPathChoice}, choices count={currentPathChoices?.Count}");
+            // Optionally re-enable buttons or reset state if this happens unexpectedly
+            // EnableBoardButtons();
+            return;
+        }
         List<BoardTile> path = currentPathChoices[index];
         SelectPathAndMove(path);
     }
@@ -251,6 +260,7 @@ public class Board : MonoBehaviour
             ClearPathVisualizations(); // Clean up visuals
             isAwaitingPathChoice = false;
             currentPathChoices = null;
+            EnableBoardButtons(); // Re-enable buttons on error
             return;
         }
 
@@ -271,8 +281,8 @@ public class Board : MonoBehaviour
         {
             Debug.LogWarning("Selected path has only one tile. No movement animation needed.");
             // If landing on the same tile should trigger something, do it here.
-            HandleMovementComplete(chosenPath);
-
+            HandleMovementComplete(chosenPath); // Still call HandleMovementComplete for potential encounters etc.
+            // Buttons will be re-enabled in HandleMovementComplete if no encounter starts
         }
     }
 
@@ -286,35 +296,47 @@ public class Board : MonoBehaviour
 
         // Check for encounters AFTER movement is complete
         EncounterData encounter = finalTile.GetEncounter();
-        if (encounter != null /* && finalTile.IsEncounterUntriggered() */)
+        if (encounter != null /* && finalTile.IsEncounterUntriggered() */) // Add encounter trigger logic if needed
         {
             Debug.Log($"Landed on tile with encounter: {encounter.name}");
-            // finalTile.MarkEncounterTriggered();
+            // finalTile.MarkEncounterTriggered(); // Add if you only want encounters once
             StartEncounter(encounter);
-            return;
+            // Buttons remain disabled as an encounter is starting
+            return; // Don't re-enable buttons yet
         }
         else
         {
             Debug.Log($"Landed on tile {finalTile.name} with no encounter or encounter already triggered.");
-            // Maybe signal end of turn here if no encounter
+            // Player has finished moving and there's no encounter, re-enable buttons for next action.
+            EnableBoardButtons();
         }
-
-        //Player has finished moving so we can reenable the buttons
-        boardInteractionButtons.SetActive(true);
     }
 
     private void VisualizePathChoices(List<List<BoardTile>> paths)
     {
+        ClearPathVisualizations(); // Clear any previous arrows first
         int index = 0;
-        foreach (List<BoardTile> path in paths) {
+        foreach (List<BoardTile> path in paths)
+        {
+            if (path == null || path.Count == 0) continue; // Skip invalid paths
+
             BoardTile finalPathTile = path.Last();
+            if (finalPathTile == null) continue; // Skip if final tile is somehow null
+
             GameObject go = Instantiate(selectionarrowPrefab, finalPathTile.transform.position, Quaternion.identity, finalPathTile.transform);
             pathArrows.Add(go); // Make a list of our arrows so we can clean them up later.
             ClickablePathingArrow arrow = go.GetComponent<ClickablePathingArrow>();
-            arrow.pathIndex = index;
-            arrow.SetBoard(this);
+            if (arrow != null)
+            {
+                arrow.pathIndex = index;
+                arrow.SetBoard(this);
+            }
+            else
+            {
+                Debug.LogError($"Prefab {selectionarrowPrefab.name} is missing ClickablePathingArrow script!", selectionarrowPrefab);
+                Destroy(go); // Destroy the useless arrow
+            }
             index++;
-
         }
     }
 
@@ -322,11 +344,11 @@ public class Board : MonoBehaviour
     {
         foreach (GameObject go in pathArrows)
         {
-            if (go != null) {
+            if (go != null)
+            {
                 Destroy(go);
             }
         }
-
         pathArrows.Clear();
     }
 
@@ -338,41 +360,120 @@ public class Board : MonoBehaviour
             Debug.LogError($"Invalid input for FindPaths: startTile={startTile}, steps={steps}");
             return allPathsFound;
         }
+        // If steps is 0, the only path is the start tile itself.
         if (steps == 0)
         {
             allPathsFound.Add(new List<BoardTile> { startTile });
             return allPathsFound;
         }
+
         List<BoardTile> initialPath = new List<BoardTile> { startTile };
         FindPathsRecursive(startTile, initialPath, steps, allPathsFound);
+
+        // Post-processing: Remove duplicate paths if the logic somehow creates them
+        // This can happen if multiple recursive calls end on the same tile via the new rule.
+        if (allPathsFound.Count > 1)
+        {
+            allPathsFound = allPathsFound
+                .GroupBy(path => path.LastOrDefault()) // Group by the final tile
+                .Select(group => group.First())        // Select the first path found for each unique end tile
+                .ToList();
+        }
+
+
         return allPathsFound;
     }
 
+    // --- MODIFIED RECURSIVE FUNCTION ---
     private void FindPathsRecursive(BoardTile currentTile, List<BoardTile> currentPath, int stepsRemaining, List<List<BoardTile>> allPathsFound)
     {
+        // Base Case 1: Exact number of steps taken
         if (stepsRemaining == 0)
         {
-            allPathsFound.Add(new List<BoardTile>(currentPath));
+            // Check if this exact path (ending tile) has already been added. Avoid duplicates.
+            // This check might be redundant depending on the post-processing in FindPaths,
+            // but can optimize recursion slightly.
+            if (!allPathsFound.Any(p => p.SequenceEqual(currentPath)))
+            {
+                allPathsFound.Add(new List<BoardTile>(currentPath));
+            }
             return;
         }
 
         BoardTile previousTile = (currentPath.Count >= 2) ? currentPath[currentPath.Count - 2] : null;
         List<BoardTile> potentialNeighbors = new List<BoardTile>();
+        bool canMoveForward = false;
 
-        // Add forward connections
-        if (currentTile.nextTiles != null) potentialNeighbors.AddRange(currentTile.nextTiles);
-        // Add backward connections (Requires BoardTile.PreviousTiles property)
-        if (currentTile.PreviousTiles != null) potentialNeighbors.AddRange(currentTile.PreviousTiles);
+        // Check forward moves first to determine if we *can* move forward
+        if (currentTile.nextTiles != null)
+        {
+            foreach (BoardTile next in currentTile.nextTiles)
+            {
+                if (next != null) // Check if *any* forward tile exists
+                {
+                    potentialNeighbors.Add(next); // Add for exploration later
+                    if (next != previousTile) // Check if it's a *valid* forward move (not immediate U-turn)
+                    {
+                        canMoveForward = true;
+                        // Don't break here, add all potential forward neighbors
+                    }
+                }
+            }
+        }
 
+        // Add backward moves (if applicable and allowed by game rules)
+        if (currentTile.PreviousTiles != null)
+        {
+            foreach (BoardTile prev in currentTile.PreviousTiles)
+            {
+                if (prev != null)
+                {
+                    // Avoid adding duplicates if a tile is in both lists
+                    if (!potentialNeighbors.Contains(prev))
+                    {
+                        potentialNeighbors.Add(prev);
+                    }
+                }
+            }
+        }
+
+        // --- NEW Base Case 2 ---
+        // If we cannot move forward from the current tile (reached end of a branch/board)
+        // AND we still have steps remaining, this path is considered valid and ends here.
+        if (!canMoveForward && stepsRemaining > 0)
+        {
+            // Check if this exact path (ending tile) has already been added.
+            if (!allPathsFound.Any(p => p.SequenceEqual(currentPath)))
+            {
+                allPathsFound.Add(new List<BoardTile>(currentPath));
+            }
+            return; // Stop exploring this branch, path is complete.
+        }
+
+        // Recursive Step: Explore valid neighbors
+        bool exploredAnyNeighbor = false;
         foreach (BoardTile neighbor in potentialNeighbors)
         {
-            if (neighbor == null || neighbor == previousTile) continue; // Skip nulls and immediate U-turns
+            // Skip nulls and immediate U-turns
+            if (neighbor == null || neighbor == previousTile) continue;
+
+            // Prevent cycles within a single path search if needed (optional, depends on board complexity)
+            // if (currentPath.Contains(neighbor)) continue;
 
             List<BoardTile> newPath = new List<BoardTile>(currentPath);
             newPath.Add(neighbor);
             FindPathsRecursive(neighbor, newPath, stepsRemaining - 1, allPathsFound);
+            exploredAnyNeighbor = true;
         }
+
+        // --- Implicit Base Case 3 ---
+        // If we have steps remaining, but there were NO valid neighbors to explore
+        // (e.g., only neighbor was previousTile, or all neighbors were null),
+        // this path simply terminates without being added to allPathsFound, which is correct.
+        // The `!exploredAnyNeighbor && stepsRemaining > 0` condition is implicitly handled.
     }
+    // --- END OF MODIFIED FUNCTION ---
+
 
     private void StartEncounter(EncounterData encounter)
     {
@@ -386,21 +487,36 @@ public class Board : MonoBehaviour
 
             if (SceneLoader.Instance != null) SceneLoader.Instance.LoadCombatScene();
             else Debug.LogError("SceneLoader.Instance is null!");
-        } 
+        }
         else
         {
             if (encounter.prefab == null)
             {
-                Debug.LogError("No prefab for the non combat encounter");
-                EnableBoardButtons();
+                Debug.LogError($"No prefab for the non-combat encounter: {encounter.name}");
+                EnableBoardButtons(); // Re-enable buttons if encounter fails to start
                 return;
             }
             else
             {
-                GenericNonCombatEncounter go = Instantiate(encounter.prefab).GetComponent<GenericNonCombatEncounter>();
-                go.SetBoard(this);
+                // Instantiate and setup the non-combat encounter
+                GameObject encounterInstance = Instantiate(encounter.prefab);
+                GenericNonCombatEncounter encounterScript = encounterInstance.GetComponent<GenericNonCombatEncounter>();
+
+                if (encounterScript != null)
+                {
+                    encounterScript.SetBoard(this);
+                    // Add any other necessary setup for the encounter here
+                }
+                else
+                {
+                    Debug.LogError($"Encounter prefab {encounter.prefab.name} is missing GenericNonCombatEncounter script!", encounter.prefab);
+                    Destroy(encounterInstance); // Clean up useless instance
+                    EnableBoardButtons(); // Re-enable buttons if encounter script is missing
+                }
             }
         }
+        // Buttons remain disabled while encounter is active. The encounter system
+        // should call EnableBoardButtons() when it finishes.
     }
 
     // GetTileByIndex, SetIsNewGame, SetPlayer, UpdateEncounterData remain largely the same
@@ -410,7 +526,13 @@ public class Board : MonoBehaviour
         if (tiles == null)
         {
             Debug.LogError("Tiles array not initialized in GetTileByIndex.");
-            return null;
+            // Attempt to initialize if null and in editor? Or just fail.
+            tiles = tileContainer?.GetComponentsInChildren<BoardTile>();
+            if (tiles == null || tiles.Length == 0)
+            {
+                Debug.LogError("Failed to re-initialize tiles array.");
+                return null;
+            }
         }
         if (index >= 0 && index < tiles.Length)
         {
@@ -426,6 +548,11 @@ public class Board : MonoBehaviour
 
     public void UpdateEncounterData(EncounterData encounterData)
     {
+        if (player == null)
+        {
+            Debug.LogError("Cannot update encounter data: Player reference is missing.");
+            return;
+        }
         int index = player.GetTileIndex(); // Assumes player has GetTileIndex()
         BoardTile tile = GetTileByIndex(index);
         if (tile != null)
@@ -442,16 +569,21 @@ public class Board : MonoBehaviour
 
     public void MovePlayerSteps(int steps)
     {
+        // This function seems designed for forced movement along a default path.
+        // It might need adjustment depending on how you want forced movement
+        // to interact with the end-of-board rule. Currently, it uses GetSimplePathAhead.
 
-        boardInteractionButtons.SetActive(false);
+        DisableBoardButtons(); // Disable buttons during forced move
         if (playerAnimator.IsAnimating || isAwaitingPathChoice)
         {
             Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
+            EnableBoardButtons(); // Re-enable if action is blocked
             return;
         }
         if (steps <= 0)
         {
             Debug.LogWarning($"MovePlayerSteps called with non-positive value: {steps}.");
+            EnableBoardButtons(); // Re-enable if steps invalid
             return;
         }
         Debug.Log($"Attempting to force move player {steps} steps forward (using default path).");
@@ -461,38 +593,67 @@ public class Board : MonoBehaviour
         if (path != null && path.Count > 1)
         {
             playerAnimator.AnimateMove(path, () => HandleMovementComplete(path));
+            // HandleMovementComplete will re-enable buttons if no encounter occurs
         }
         else
         {
-            Debug.LogWarning($"Could not find a simple forward path for {steps} steps.");
+            Debug.LogWarning($"Could not find a simple forward path for {steps} steps. Player stays put.");
+            // If the path is invalid or just the start tile, re-enable buttons.
+            // HandleMovementComplete won't be called in this case.
+            EnableBoardButtons();
         }
     }
 
+    // This helper function needs to respect the board end as well.
     private List<BoardTile> GetSimplePathAhead(int steps)
     {
         List<BoardTile> path = new List<BoardTile>();
         BoardTile currentTile = player.GetCurrentBoardTile();
-        if (currentTile == null || steps <= 0) return path; // Return empty path
+        if (currentTile == null || steps <= 0) return path; // Return empty path if invalid start or steps
 
         path.Add(currentTile);
         BoardTile nextTileInPath = currentTile;
         for (int i = 0; i < steps; i++)
         {
-            nextTileInPath = nextTileInPath.GetNextTile(); // Assumes GetNextTile(0) is the default
-            if (nextTileInPath == null) return path; // Reached end or dead end
-            path.Add(nextTileInPath);
+            // Assuming GetNextTile() gets the primary 'forward' tile.
+            // You might need a more robust way if multiple 'nextTiles' exist.
+            BoardTile next = nextTileInPath.GetNextTile(); // Assumes GetNextTile() returns the default next tile or null
+
+            if (next == null)
+            {
+                // Reached the end of the line before completing all steps.
+                // The path up to 'nextTileInPath' is the valid path.
+                Debug.Log($"Reached end of simple path after {i} steps. Requested {steps}.");
+                break; // Exit the loop, the path is complete up to the last valid tile.
+            }
+            path.Add(next);
+            nextTileInPath = next; // Move to the next tile for the next iteration
         }
-        return path;
+        return path; // Return the constructed path (might be shorter than 'steps')
     }
 
     public void EnableBoardButtons()
     {
-        boardInteractionButtons.SetActive(true);
+        if (boardInteractionButtons != null)
+        {
+            boardInteractionButtons.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("Attempted to enable board buttons, but reference is null.");
+        }
     }
 
     public void DisableBoardButtons()
     {
-        boardInteractionButtons.SetActive(false);
+        if (boardInteractionButtons != null)
+        {
+            boardInteractionButtons.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("Attempted to disable board buttons, but reference is null.");
+        }
     }
 
-}
+} // End of Board class

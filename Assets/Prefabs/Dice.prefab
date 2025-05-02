@@ -253,7 +253,7 @@ MonoBehaviour:
   - {fileID: 3111895448391349745}
   - {fileID: 989837984868126917}
   minForce: 2
-  maxForce: 5
+  maxForce: 10
   torqueMultiplier: 0.5
 --- !u!1 &5902079387921552716
 GameObject:
