@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq; // Needed for FindPaths logic potentially
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ public class Board : MonoBehaviour
     private BoardTile[] tiles;
 
     [SerializeField] private Player player;
+    [SerializeField] private GameObject playerPrefab;
     [SerializeField] public PlayerAnimator playerAnimator; // Assign in Inspector
     [SerializeField] private GameObject playerPiecePrefab;
     [SerializeField] private GameObject selectionarrowPrefab;
