@@ -40,6 +40,9 @@ public class GameManager : Singleton<GameManager>
                 board = FindObjectOfType<Board>();
                 board.SetPlayer(player);
                 board.SetIsNewGame(false);
+            } else
+            {
+                Debug.LogError("Player not found");
             }
         }
 
