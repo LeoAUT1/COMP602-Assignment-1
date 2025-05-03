@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -20,4 +21,15 @@ public class SettingsMenu : MonoBehaviour
             settingsPanel.SetActive(!settingsPanel.activeSelf);
         }
     }
+
+    public void LoadMainMenuScene()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void SetVolume(float value)
+   {
+       AudioManager.Instance.SetVolume(value);
+   }
+
 }
