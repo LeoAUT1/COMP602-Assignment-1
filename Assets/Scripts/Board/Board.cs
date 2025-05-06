@@ -27,6 +27,7 @@ public class Board : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerStats;
 
     private bool isAwaitingPathChoice = false;
+    public static Board Instance { get; private set; }
 
     [SerializeField] private GameObject die;
 
@@ -85,6 +86,16 @@ public class Board : MonoBehaviour
             return;
         }
 
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple Board instances detected!");
+            Destroy(gameObject); // Optional safety check
+            return;
+        }
 
         if (player.GetCurrentBoardTile() == null)
         {
@@ -141,7 +152,7 @@ public class Board : MonoBehaviour
     }
 
     // Using a coroutine
-    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete)
+    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete, bool movePlayer = true)
     {
         int result = 0;
         bool rollComplete = false;
@@ -149,7 +160,10 @@ public class Board : MonoBehaviour
         RollTheDice((rollResult) => {
             result = rollResult;
             rollComplete = true;
-            PlayerAction_RollAndMove(result);
+            if (movePlayer)
+            {
+                PlayerAction_RollAndMove(result);
+            }
         });
 
         // Wait until the roll is complete
