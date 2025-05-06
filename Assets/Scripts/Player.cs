@@ -17,7 +17,7 @@ public class Player : Singleton<Player>
 
 
     private BoardTile currentTile;
-    private int tileIndex;
+    [SerializeField] private int tileIndex;
 
     public void ResetPlayer()
     {
