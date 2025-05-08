@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20b4673fa48a78c44865c1313c74d35d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityName: Golden Boar
+  entityName: Guard
   health: 5
   maxHealth: 5
   strength: 3

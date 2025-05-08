@@ -99,6 +99,7 @@ public class CombatManager : MonoBehaviour
     IEnumerator PlayerHeal()
     {
         playerUnit.AddHealth(5);
+        combatHud.UpdatePlayerHud(playerUnit);
         combatHud.combatMessage.SetText("You feel rejuvenated");
 
         yield return new WaitForSeconds(0.3f);
