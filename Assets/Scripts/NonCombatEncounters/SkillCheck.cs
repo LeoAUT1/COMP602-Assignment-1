@@ -27,7 +27,7 @@ public class SkillCheck : GenericNonCombatEncounter
                 SkillWon();
             else
                 SkillFail();
-        }, movePlayer: false));
+        }));
     }
 
 

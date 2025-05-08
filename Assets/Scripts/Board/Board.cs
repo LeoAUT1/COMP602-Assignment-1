@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq; // Needed for FindPaths logic potentially
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,16 +19,15 @@ public class Board : MonoBehaviour
     private BoardTile[] tiles;
 
     [SerializeField] private Player player;
+    [SerializeField] private GameObject playerPrefab;
     [SerializeField] public PlayerAnimator playerAnimator; // Assign in Inspector
     [SerializeField] private GameObject playerPiecePrefab;
     [SerializeField] private GameObject selectionarrowPrefab;
     private GameObject playerPiece;
 
-    private bool isNewGame = true;
     [SerializeField] private TextMeshProUGUI playerStats;
 
     private bool isAwaitingPathChoice = false;
-    public static Board Instance { get; private set; }
 
     [SerializeField] private GameObject die;
 
@@ -36,9 +36,11 @@ public class Board : MonoBehaviour
     // --- Pathfinding Data ---
     private List<List<BoardTile>> currentPathChoices;
     private List<GameObject> pathArrows = new List<GameObject>();
+    public static Board Instance { get; private set; }
 
     private void Start()
     {
+
         // Ensure tiles are fetched before potentially using them
         tiles = tileContainer.GetComponentsInChildren<BoardTile>();
         if (tiles == null || tiles.Length == 0)
@@ -48,33 +50,19 @@ public class Board : MonoBehaviour
             return;
         }
 
-        if (startTile != null && isNewGame)
-        {
-            Debug.Log("Is new game, setting player to first tile");
-            // Ensure the startTile is actually part of the fetched tiles if needed,
-            // or just trust the serialized reference.
-            player.SetCurrentBoardTile(startTile);
-        }
-        else if (startTile == null && isNewGame)
-        {
-            Debug.LogError("New game started but Start Tile is not assigned in the Inspector!");
-            // Handle error - maybe default to tiles[0]?
-            if (tiles.Length > 0)
-            {
-                player.SetCurrentBoardTile(tiles[0]);
-                Debug.LogWarning("Using first tile in container as start tile due to missing reference.");
-            }
-            else
-            {
-                Debug.LogError("Cannot set start tile - no tiles found and no start tile assigned.");
-                return; // Critical error
-            }
-        }
+        PlayerSetup();
 
+        UpdatePlayerStatsUi();
+    }
+
+    private void PlayerSetup()
+    {
+        Player.Instance.SetBoard(this);
+        player = Player.Instance; //This is probably stupid and should be refactored
+        player.SetCurrentBoardTile(this.GetTileByIndex(player.GetTileIndex()));
 
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
-
 
         if (playerAnimator != null)
         {
@@ -86,38 +74,15 @@ public class Board : MonoBehaviour
             return;
         }
 
-        if (Instance == null)
+        //Move our player game board piece to their current tile.
+        if (player.GetCurrentBoardTile() != null)
         {
-            Instance = this;
-        }
-        else
-        {
-            Debug.LogWarning("Multiple Board instances detected!");
-            Destroy(gameObject); // Optional safety check
-            return;
-        }
-
-        if (player.GetCurrentBoardTile() == null)
-        {
-            player.SetCurrentBoardTile(this.GetTileByIndex(player.GetTileIndex()));
-        }
-
-        BoardTile initialPlayerTile = player.GetCurrentBoardTile(); // Get the tile set above
-        if (initialPlayerTile != null)
-        {
-            playerAnimator.MovePlayerPieceInstantly(initialPlayerTile);
+            playerAnimator.MovePlayerPieceInstantly(player.GetCurrentBoardTile());
         }
         else
         {
             Debug.LogError("Cannot determine initial player tile for placement even after attempting setup.");
         }
-
-        if (player != null)
-        {
-            player.SetBoard(this);
-        }
-
-        UpdatePlayerStatsUi();
     }
 
     public void UpdatePlayerStatsUi()
@@ -152,7 +117,7 @@ public class Board : MonoBehaviour
     }
 
     // Using a coroutine
-    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete, bool movePlayer = true)
+    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete)
     {
         int result = 0;
         bool rollComplete = false;
@@ -160,10 +125,7 @@ public class Board : MonoBehaviour
         RollTheDice((rollResult) => {
             result = rollResult;
             rollComplete = true;
-            if (movePlayer)
-            {
-                PlayerAction_RollAndMove(result);
-            }
+            PlayerAction_RollAndMove(result);
         });
 
         // Wait until the roll is complete
@@ -533,7 +495,7 @@ public class Board : MonoBehaviour
         // should call EnableBoardButtons() when it finishes.
     }
 
-    // GetTileByIndex, SetIsNewGame, SetPlayer, UpdateEncounterData remain largely the same
+    // GetTileByIndex, SetPlayer, UpdateEncounterData remain largely the same
     public BoardTile GetTileByIndex(int index)
     {
         // Added check for tiles array initialization
@@ -556,8 +518,6 @@ public class Board : MonoBehaviour
         Debug.LogWarning($"Invalid tile index requested: {index}. Max index is {tiles.Length - 1}");
         return null;
     }
-
-    public void SetIsNewGame(bool b) { this.isNewGame = b; }
     public void SetPlayer(Player player) { this.player = player; }
 
     public void UpdateEncounterData(EncounterData encounterData)
