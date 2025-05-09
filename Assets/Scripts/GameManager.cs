@@ -93,6 +93,9 @@ public class GameManager : Singleton<GameManager>
         else //Game over
         {
 
+            //Player has finished the encounter
+            SceneLoader.Instance.LoadGameOver();
+
         }
     }
 
