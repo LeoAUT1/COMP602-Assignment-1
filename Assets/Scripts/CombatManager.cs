@@ -147,7 +147,7 @@ public class CombatManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        GameManager.Instance.ExitCombat();
+        ExitCombat();
 
     }
 

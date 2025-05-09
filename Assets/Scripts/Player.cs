@@ -8,7 +8,7 @@ public class Player : Singleton<Player>
     private float powerCurve = 1.1f; //The power term for how much exp should be required for each future level.
     private int baseExp = 20; // Base exp for each level
 
-    private int experience;
+    [SerializeField] private int experience;
     private int playerLevel = 1;
     [SerializeField] protected int coins;
     [SerializeField] PlayerCombat playerCombat;
