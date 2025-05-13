@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private Player player;
     [SerializeField] private EncounterData currentEncounter;
     [SerializeField] private CombatManager combatManager;
-    private Board board;
 
     protected override void Awake()
     {
@@ -34,7 +32,6 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "GameBoard")
         {
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
-            board = FindObjectOfType<Board>();
         }
 
         if (scene.name == "Combat") //Maybe not use strings like this? im not sure
@@ -54,30 +51,20 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        if (player == null)
-        {
-            player = FindObjectOfType<Player>();
-            if (player == null)
-            {
-                Debug.LogError("No Player found!");
-                return;
-            }
-        }
-
         if (currentEncounter == null)
         {
             Debug.LogError("No EncounterData set before entering combat!");
             return;
         }
 
-        combatManager.InitialiseCombat(player, currentEncounter);
+        combatManager.InitialiseCombat(currentEncounter);
     }
 
 
     public void ExitCombat()
     {
         //Do any housekeeping for leaving the combat scene
-        if (player.GetPlayerCombat().GetIsAlive())
+        if (Player.Instance.GetPlayerCombat().GetIsAlive())
         {
             if (currentEncounter.isFinalBoss)
             {
