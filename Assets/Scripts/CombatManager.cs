@@ -9,8 +9,6 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, WIN, LOSE }
 
 public class CombatManager : MonoBehaviour
 {
-
-    private Player player;
     private Enemy[] enemies;
     private EncounterData encounter;
 
@@ -26,12 +24,11 @@ public class CombatManager : MonoBehaviour
 
     public BattleState state;
 
-    public void InitialiseCombat(Player player, EncounterData encounter)
+    public void InitialiseCombat(EncounterData encounter)
     {
         // Do stuff here to set up whatever is necessary for the combat scene 
 
         this.encounter = encounter;
-        this.player = player;
         this.enemies = encounter.enemies;
 
         state = BattleState.START;
@@ -42,8 +39,8 @@ public class CombatManager : MonoBehaviour
     {
 
         //Grant player the reward for completing the encounter
-        player.AddExperience(encounter.grantedExperience);
-        player.AddCoins(encounter.grantedCoins);
+        Player.Instance.AddExperience(encounter.grantedExperience);
+        Player.Instance.AddCoins(encounter.grantedCoins);
 
         //back to the Board Scene
         GameManager.Instance.ExitCombat();
@@ -53,7 +50,7 @@ public class CombatManager : MonoBehaviour
         enemyUnit = Instantiate(encounter.enemies[0], instantiateEnemyHere);
         Instantiate(playerPiecePrefab, instantiatePlayerHere.position, Quaternion.Euler(0,180,0));
 
-        playerUnit = player.GetComponent<PlayerCombat>();
+        playerUnit = Player.Instance.GetComponent<PlayerCombat>();
 
         if (enemyUnit == null)
         {

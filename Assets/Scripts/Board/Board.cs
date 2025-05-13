@@ -18,7 +18,6 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject tileContainer;
     private BoardTile[] tiles;
 
-    [SerializeField] private Player player;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] public PlayerAnimator playerAnimator; // Assign in Inspector
     [SerializeField] private GameObject playerPiecePrefab;
@@ -26,8 +25,6 @@ public class Board : MonoBehaviour
     private GameObject playerPiece;
 
     [SerializeField] private TextMeshProUGUI playerStats;
-
-    private bool isAwaitingPathChoice = false;
 
     [SerializeField] private GameObject die;
 
@@ -57,8 +54,7 @@ public class Board : MonoBehaviour
     private void PlayerSetup()
     {
         Player.Instance.SetBoard(this);
-        player = Player.Instance; //This is probably stupid and should be refactored
-        player.SetCurrentBoardTile(this.GetTileByIndex(player.GetTileIndex()));
+        Player.Instance.SetCurrentBoardTile(this.GetTileByIndex(Player.Instance.GetTileIndex()));
 
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
@@ -74,9 +70,9 @@ public class Board : MonoBehaviour
         }
 
         //Move our player game board piece to their current tile.
-        if (player.GetCurrentBoardTile() != null)
+        if (Player.Instance.GetCurrentBoardTile() != null)
         {
-            playerAnimator.MovePlayerPieceInstantly(player.GetCurrentBoardTile());
+            playerAnimator.MovePlayerPieceInstantly(Player.Instance.GetCurrentBoardTile());
         }
         else
         {
@@ -86,10 +82,10 @@ public class Board : MonoBehaviour
 
     public void UpdatePlayerStatsUi()
     {
-        if (playerStats != null && player != null)
+        if (playerStats != null)
         {
-            playerStats.text = $"LVL {player.GetLevel()} | {player.GetExperience()} xp\n";
-            playerStats.text += $"Coins: {player.GetCoins()}\n";
+            playerStats.text = $"LVL {Player.Instance.GetLevel()} | {Player.Instance.GetExperience()} xp\n";
+            playerStats.text += $"Coins: {Player.Instance.GetCoins()}\n";
         }
         else
         {
@@ -145,25 +141,16 @@ public class Board : MonoBehaviour
 
     public void PlayerAction_RollAndMove(int roll)
     {
-        Debug.Log($"Player rolled {roll}. Calculating path...");
+        Debug.Log($"Player rolled {roll}. Creating path...");
 
         // Prevent action if already moving or waiting for path selection
-        // Note: Buttons are already disabled by OnRollButtonClicked/RollTheDiceCoroutine
         if (playerAnimator != null && playerAnimator.IsAnimating)
         {
             Debug.LogWarning("Player is already moving. Move cancelled.");
-            // If animation was somehow interrupted, maybe re-enable buttons? Risky.
-            // Best to let the current animation complete and call HandleMovementComplete.
-            return;
-        }
-        if (isAwaitingPathChoice)
-        {
-            Debug.LogWarning("Player is currently selecting a path. Move cancelled.");
-            // Similar to above, let the path choice resolve.
             return;
         }
 
-        BoardTile currentTile = player.GetCurrentBoardTile();
+        BoardTile currentTile = Player.Instance.GetCurrentBoardTile();
         if (currentTile == null)
         {
             Debug.LogError("Player's current tile is null. Cannot roll and move.");
@@ -171,6 +158,7 @@ public class Board : MonoBehaviour
             return;
         }
 
+        //If the player somehow rolls 0 or less, something has probably gone wrong
         if (roll <= 0)
         {
             Debug.Log($"Roll was {roll}. No movement required.");
@@ -228,7 +216,7 @@ public class Board : MonoBehaviour
 
         BoardTile finalTile = path[path.Count - 1];
         Debug.Log($"Movement finished. Final tile: {finalTile.name}");
-        player.SetCurrentBoardTile(finalTile); // Update logical position
+        Player.Instance.SetCurrentBoardTile(finalTile); // Update logical position
 
         // Check for encounters AFTER movement is complete
         EncounterData encounter = finalTile.GetEncounter();
@@ -314,16 +302,16 @@ public class Board : MonoBehaviour
         Debug.LogWarning($"Invalid tile index requested: {index}. Max index is {tiles.Length - 1}");
         return null;
     }
-    public void SetPlayer(Player player) { this.player = player; }
 
     public void UpdateEncounterData(EncounterData encounterData)
     {
-        if (player == null)
+        if (Player.Instance == null)
         {
-            Debug.LogError("Cannot update encounter data: Player reference is missing.");
+            Debug.LogError("Cannot update encounter data: Player does not exist");
             return;
         }
-        int index = player.GetTileIndex(); // Assumes player has GetTileIndex()
+
+        int index = Player.Instance.GetTileIndex(); // Assumes player has GetTileIndex()
         BoardTile tile = GetTileByIndex(index);
         if (tile != null)
         {
@@ -340,7 +328,7 @@ public class Board : MonoBehaviour
     public void MovePlayerSteps(int steps)
     {
         DisableBoardButtons(); // Disable buttons during forced move
-        if (playerAnimator.IsAnimating || isAwaitingPathChoice)
+        if (playerAnimator.IsAnimating)
         {
             Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
             EnableBoardButtons(); // Re-enable if action is blocked
@@ -373,7 +361,7 @@ public class Board : MonoBehaviour
     private List<BoardTile> GetSimplePathAhead(int steps)
     {
         List<BoardTile> path = new List<BoardTile>();
-        BoardTile currentTile = player.GetCurrentBoardTile();
+        BoardTile currentTile = Player.Instance.GetCurrentBoardTile();
         if (currentTile == null || steps <= 0) return path; // Return empty path if invalid start or steps
 
         path.Add(currentTile);
