@@ -1,19 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq; // Needed for FindPaths logic potentially
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
-using UnityEngine.UI;
 
 // Enum GameBoardState remains the same
 
 public class Board : MonoBehaviour
 {
-    // ... (Keep all existing fields and methods like Start, UpdatePlayerStatsUi, RollTheDice, etc.) ...
-
     [SerializeField] private BoardTile startTile;
     [SerializeField] private GameObject tileContainer;
     private BoardTile[] tiles;
@@ -26,13 +20,7 @@ public class Board : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI playerStats;
 
-    [SerializeField] private GameObject die;
-
     [SerializeField] private GameObject boardInteractionButtons;
-
-    // --- Pathfinding Data ---
-    private List<List<BoardTile>> currentPathChoices;
-    private List<GameObject> pathArrows = new List<GameObject>();
 
     private void Start()
     {
@@ -93,51 +81,21 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void RollTheDice(System.Action<int> callback)
-    {
-        Vector3 dieSpawnPoint = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.5f);
-
-        // Vector3 dieSpawnPoint = cameraPosition + Camera.main.transform.forward * distanceFromCamera;
-
-        GameObject diceObj = Instantiate(die, dieSpawnPoint, Quaternion.identity);
-        Dice dice = diceObj.GetComponentInChildren<Dice>();
-
-        // Subscribe to the dice roll event
-        dice.OnDiceRollComplete += (result) => {
-            callback(result);
-            Destroy(diceObj, 2f); // Destroy our dice after 2 seconds
-        };
-
-        dice.PhysicalRoll();
-    }
-
-    // Using a coroutine
-    public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete)
-    {
-        int result = 0;
-        bool rollComplete = false;
-
-        RollTheDice((rollResult) => {
-            result = rollResult;
-            rollComplete = true;
-            PlayerAction_RollAndMove(result);
-        });
-
-        // Wait until the roll is complete
-        yield return new WaitUntil(() => rollComplete);
-
-        onComplete(result);
-    }
-
-    // Usage example:
     public void OnRollButtonClicked()
     {
-        StartCoroutine(RollTheDiceCoroutine((result) => {
-            Debug.Log($"Player rolled: {result}");
-            // Do something with the result
-        }));
+        // We want to spawn our die halfway between the player and the camera, or thereabouts.
+        Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.5f);
+
+        StartCoroutine(DiceManager.Instance.RollTheDiceCoroutine(
+            (diceRollResult) => {
+                Debug.Log($"Player rolled: {diceRollResult}");
+                PlayerAction_RollAndMove(diceRollResult); // Board calls its own method
+            },
+            spawnPos // Pass the calculated spawn position
+        ));
         DisableBoardButtons();
     }
+
 
     public void PlayerAction_RollAndMove(int roll)
     {

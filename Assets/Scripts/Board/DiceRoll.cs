@@ -15,11 +15,13 @@ public class Dice : MonoBehaviour
     [SerializeField] private Transform[] faceCheckers; // Reference to face center points
     [SerializeField] private float minForce = 2f;
     [SerializeField] private float maxForce = 5f;
-    [SerializeField] private float torqueMultiplier = 0.5f;
-
+    [SerializeField] private float minTorque = 0.5f;
+    [SerializeField] private float maxTorque = 5f;
+    [SerializeField] private float torqueMultiplier = 1.5f;
     public System.Action<int> OnDiceRollComplete; void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        rb.maxAngularVelocity = 50f;
     }
 
 
@@ -70,20 +72,27 @@ public class Dice : MonoBehaviour
         // Random force in random direction
         float forceMagnitude = Random.Range(minForce, maxForce);
         Vector3 forceDirection = new Vector3(
-            Random.Range(-0.1f, 0.1f),
+            Random.Range(-1f, 1f),
             Random.Range(2f, 4f), // Slight upward bias
-            Random.Range(-0.1f, 0.1f)
+            Random.Range(-1f, 1f)
         ).normalized;
 
         rb.AddForce(forceDirection * forceMagnitude, ForceMode.Impulse);
 
-        // Add random torque for rotation
-        Vector3 randomTorque = new Vector3(
+        // Add semi-random torque for rotation
+        Vector3 randomTorqueDirection = new Vector3(
             Random.Range(-1f, 1f),
             Random.Range(-1f, 1f),
-            Random.Range(-1f, 1f)
-        ).normalized * forceMagnitude * torqueMultiplier;
+            1f
+        ).normalized; // Ensures it's just a direction
 
-        rb.AddTorque(randomTorque, ForceMode.Impulse);
+        float torqueAmount = Random.Range(minTorque, maxTorque); // Define minTorque and maxTorque fields
+        rb.AddTorque(randomTorqueDirection * torqueAmount * torqueMultiplier, ForceMode.Acceleration);
+        Debug.Log($"Initial maxAngularVelocity: {rb.maxAngularVelocity}");
+
+        Debug.Log(randomTorqueDirection);
+        Debug.Log(torqueAmount);
+        Debug.Log(torqueMultiplier);
     }
+
 }
