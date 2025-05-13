@@ -49,7 +49,6 @@ public class Dice : MonoBehaviour
 
         for (int i = 0; i < faceCheckers.Length; i++)
         {
-            Debug.Log(faceCheckers[i]);
             Vector3 faceNormal = faceCheckers[i].up;
             float dot = Vector3.Dot(faceNormal, Vector3.up);
             if (dot > highestDot)

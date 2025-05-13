@@ -8,7 +8,6 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private Player player;
     [SerializeField] private EncounterData currentEncounter;
     [SerializeField] private CombatManager combatManager;
-    private Board board;
 
     protected override void Awake()
     {
@@ -34,7 +33,6 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "GameBoard")
         {
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
-            board = FindObjectOfType<Board>();
         }
 
         if (scene.name == "Combat") //Maybe not use strings like this? im not sure
