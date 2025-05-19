@@ -27,13 +27,8 @@ public class SceneLoader : Singleton<SceneLoader>
         SceneManager.LoadScene("MainMenu");
     }
 
-    public void LoadGameOver()
+    public void LoadGameEnd()
     {
-        SceneManager.LoadScene("GameOver");
-    }
-
-    public void LoadVictoryScene()
-    {
-        SceneManager.LoadScene("Victory");
+        SceneManager.LoadScene("GameEnd");
     }
 }

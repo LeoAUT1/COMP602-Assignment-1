@@ -12,10 +12,8 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject tileContainer;
     private BoardTile[] tiles;
 
-    [SerializeField] private GameObject playerPrefab;
     [SerializeField] public PlayerAnimator playerAnimator; // Assign in Inspector
     [SerializeField] private GameObject playerPiecePrefab;
-    [SerializeField] private GameObject selectionarrowPrefab;
     private GameObject playerPiece;
 
     [SerializeField] private TextMeshProUGUI playerStats;
@@ -197,6 +195,8 @@ public class Board : MonoBehaviour
     {
         Debug.Log($"Starting encounter: {encounter.name}, TYPE: {encounter.encounterType}");
 
+        DisableBoardButtons();
+
         if (encounter.encounterType == EncounterType.COMBAT)
         {
             // Assuming GameManager and SceneLoader are singletons or accessible
@@ -280,67 +280,6 @@ public class Board : MonoBehaviour
         {
             Debug.LogError($"Could not find tile at index {index} to update encounter data.");
         }
-    }
-
-
-    public void MovePlayerSteps(int steps)
-    {
-        DisableBoardButtons(); // Disable buttons during forced move
-        if (playerAnimator.IsAnimating)
-        {
-            Debug.LogWarning("Cannot MovePlayerSteps while moving or awaiting choice.");
-            EnableBoardButtons(); // Re-enable if action is blocked
-            return;
-        }
-        if (steps <= 0)
-        {
-            Debug.LogWarning($"MovePlayerSteps called with non-positive value: {steps}.");
-            EnableBoardButtons(); // Re-enable if steps invalid
-            return;
-        }
-        Debug.Log($"Attempting to force move player {steps} steps forward (using default path).");
-
-        List<BoardTile> path = GetSimplePathAhead(steps); // Renamed for clarity
-
-        if (path != null && path.Count > 1)
-        {
-            playerAnimator.AnimateMove(path, () => HandleMovementComplete(path));
-            // HandleMovementComplete will re-enable buttons if no encounter occurs
-        }
-        else
-        {
-            Debug.LogWarning($"Could not find a simple forward path for {steps} steps. Player stays put.");
-            // If the path is invalid or just the start tile, re-enable buttons.
-            // HandleMovementComplete won't be called in this case.
-            EnableBoardButtons();
-        }
-    }
-
-    private List<BoardTile> GetSimplePathAhead(int steps)
-    {
-        List<BoardTile> path = new List<BoardTile>();
-        BoardTile currentTile = Player.Instance.GetCurrentBoardTile();
-        if (currentTile == null || steps <= 0) return path; // Return empty path if invalid start or steps
-
-        path.Add(currentTile);
-        BoardTile nextTileInPath = currentTile;
-        for (int i = 0; i < steps; i++)
-        {
-            // Assuming GetNextTile() gets the primary 'forward' tile.
-            // You might need a more robust way if multiple 'nextTiles' exist.
-            BoardTile next = nextTileInPath.GetNextTile(); // Assumes GetNextTile() returns the default next tile or null
-
-            if (next == null)
-            {
-                // Reached the end of the line before completing all steps.
-                // The path up to 'nextTileInPath' is the valid path.
-                Debug.Log($"Reached end of simple path after {i} steps. Requested {steps}.");
-                break; // Exit the loop, the path is complete up to the last valid tile.
-            }
-            path.Add(next);
-            nextTileInPath = next; // Move to the next tile for the next iteration
-        }
-        return path; // Return the constructed path (might be shorter than 'steps')
     }
 
     public void EnableBoardButtons()
