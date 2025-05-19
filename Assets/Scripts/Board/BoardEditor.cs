@@ -48,7 +48,7 @@ public class BoardEditor : Editor
         int id = 0;
         foreach (BoardTile tile in tiles)
         {
-            tile.setIndex(id++);
+            tile.SetIndex(id++);
             EditorUtility.SetDirty(tile); // Mark the tile as dirty so changes are saved
         }
 
@@ -159,53 +159,75 @@ public class BoardEditor : Editor
         return tileContainer.GetComponentsInChildren<BoardTile>();
     }
 
-    // --- NEW: Function to propagate back connections ---
-    private void PropagateConnections(Board board)
+
+    private void PropagateConnections(Board board) 
     {
-        BoardTile[] tiles = GetAllTiles(board);
-        if (tiles == null) return;
+        BoardTile[] tiles = GetAllTiles(board); // You'll need to implement or provide GetAllTiles
+        if (tiles == null || tiles.Length == 0)
+        {
+            Debug.Log("No tiles found to propagate connections.");
+            return;
+        }
 
-        Debug.Log("Propagating back connections...");
+        Debug.Log("Propagating back connections for single forward/backward links...");
 
-        // 1. Clear all existing previous tile references on all tiles
         foreach (BoardTile tile in tiles)
         {
-            // Record object state before modification for Undo
-            Undo.RecordObject(tile, "Clear Previous Tiles");
-            tile.ClearPreviousTiles();
-            // No need to SetDirty here yet, will do it after adding new ones
+            if (tile.GetPrevTile() != null) // Only act if there's a previous tile to clear
+            {
+                Undo.RecordObject(tile, "Clear Previous Tile Link");
+                tile.SetPreviousTile(null); // Use the new setter, or ClearPreviousTile()
+                EditorUtility.SetDirty(tile); // Mark this tile as dirty as its prevTile changed
+            }
         }
         Debug.Log("Cleared existing previous tile links.");
 
-        // 2. Iterate through each tile and add 'self' to the 'prevTiles' list of its 'nextTiles'
+        // 2. Iterate through each tile and set the 'prevTile' of its 'nextTile'
         int connectionsMade = 0;
         foreach (BoardTile currentTile in tiles)
         {
-            if (currentTile.nextTiles == null) continue; // Skip if no next tiles defined
+            BoardTile nextTileInstance = currentTile.GetNextTile(); // Or access currentTile.nextTile directly
 
-            foreach (BoardTile nextTile in currentTile.nextTiles)
+            if (nextTileInstance != null)
             {
-                if (nextTile != null)
+                // Record 'nextTileInstance' because we are modifying its prevTile
+                Undo.RecordObject(nextTileInstance, "Set Previous Tile Link");
+
+                // Check if this nextTileInstance is already pointed to by another prevTile.
+                // This can happen if multiple tiles have nextTileInstance as their nextTile (a merge point).
+                // With a single prevTile, the last one processed will "win".
+                if (nextTileInstance.GetPrevTile() != null && nextTileInstance.GetPrevTile() != currentTile)
                 {
-                    // Record the 'nextTile' because we are modifying its prevTiles list
-                    Undo.RecordObject(nextTile, "Add Previous Tile Link");
-                    nextTile.AddPreviousTile(currentTile);
-                    EditorUtility.SetDirty(nextTile); // Mark the modified tile as dirty
-                    connectionsMade++;
+                    Debug.LogWarning($"Tile '{nextTileInstance.name}' (Index: {nextTileInstance.GetIndex()}) " +
+                                     $"already had a previous tile: '{nextTileInstance.GetPrevTile().name}' (Index: {nextTileInstance.GetPrevTile().GetIndex()}). " +
+                                     $"It will now be linked from '{currentTile.name}' (Index: {currentTile.GetIndex()}). " +
+                                     "This implies a merge point where the last processed link takes precedence for 'prevTile'.", nextTileInstance);
                 }
-                else
-                {
-                    Debug.LogWarning($"Tile {currentTile.getIndex()} has a null entry in its nextTiles list.", currentTile);
-                }
+
+                nextTileInstance.SetPreviousTile(currentTile);
+                EditorUtility.SetDirty(nextTileInstance); // Mark the modified tile as dirty
+                connectionsMade++;
             }
+            // If currentTile.nextTile is null, there's no forward connection, so nothing to propagate backward.
         }
 
         Debug.Log($"Propagated {connectionsMade} back-connections across {tiles.Length} tiles.");
 
-        // Save the scene changes
+        // Save the scene changes if any connections were made and we're in the editor
         if (connectionsMade > 0 && !Application.isPlaying)
         {
-            EditorSceneManager.MarkSceneDirty(board.gameObject.scene);
+            if (board != null && board.gameObject.scene.IsValid())
+            {
+                EditorSceneManager.MarkSceneDirty(board.gameObject.scene);
+            }
+            else if (board == null)
+            {
+                Debug.LogWarning("Board object is null. Cannot mark scene dirty.");
+            }
+            else
+            {
+                Debug.LogWarning("Board's game object scene is not valid. Cannot mark scene dirty. This might happen if 'board' is a prefab asset not instantiated in a scene, or the scene is not loaded.");
+            }
         }
     }
 }

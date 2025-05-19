@@ -8,6 +8,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private EncounterData currentEncounter;
     [SerializeField] private CombatManager combatManager;
 
+    private bool isPlayerVictorious = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -63,30 +65,28 @@ public class GameManager : Singleton<GameManager>
 
     public void ExitCombat()
     {
+        bool playerIsAlive = Player.Instance.GetPlayerCombat().GetIsAlive();
+
         //Do any housekeeping for leaving the combat scene
-        if (Player.Instance.GetPlayerCombat().GetIsAlive())
+        if (playerIsAlive && currentEncounter.isFinalBoss)
         {
-            if (currentEncounter.isFinalBoss)
-            {
-                //Player has beat the final boss
+            isPlayerVictorious = true;
+            SceneLoader.Instance.LoadGameEnd();
+            return;
+        }
 
-                SceneLoader.Instance.LoadVictoryScene();
-                return;
-            }
-
-            //Player has finished the encounter
+        //Player hasn't defeated the final boss, but is alive, go back to the game board
+        if (playerIsAlive)
+        {
             SceneLoader.Instance.LoadGameScene();
+            return;
         }
-        else //Game over
-        {
 
-            //Player has finished the encounter
-            SceneLoader.Instance.LoadGameOver();
-
-        }
+        //Presumably the player is dead, we can end the game.
+        SceneLoader.Instance.LoadGameEnd();
     }
 
-    public EncounterData CurrentEncounter()
+    public EncounterData SetCurrentEncounter()
     {
         return currentEncounter;
     }
@@ -94,5 +94,10 @@ public class GameManager : Singleton<GameManager>
     public void SetCurrentEncounter(EncounterData data)
     {
         currentEncounter = data;
+    }
+
+    public bool GetIsVictorious()
+    {
+        return isPlayerVictorious;
     }
 }

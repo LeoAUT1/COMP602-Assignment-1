@@ -10,7 +10,6 @@ public class Player : Singleton<Player>
 
     private int experience;
     private int playerLevel = 1;
-    [SerializeField] protected int coins;
     [SerializeField] PlayerCombat playerCombat;
 
     private Board board;
@@ -23,7 +22,6 @@ public class Player : Singleton<Player>
     {
         playerLevel = 1;
         experience = 0;
-        coins = 0;
         currentTile = null;
         tileIndex = 0;
     }
@@ -39,20 +37,6 @@ public class Player : Singleton<Player>
         }
 
         return false;
-    }
-
-    public void AddCoins(int amount)
-    {
-        coins += amount;
-    }
-
-    public void SubtractCoins(int amount)
-    {
-        coins -= amount;
-    }
-
-    public int GetCoins() {
-        return coins;
     }
 
     public void AddExperience(int amount)
@@ -98,7 +82,7 @@ public class Player : Singleton<Player>
     public void SetCurrentBoardTile(BoardTile tile)
     {
         currentTile = tile;
-        this.tileIndex = tile.getIndex();
+        this.tileIndex = tile.GetIndex();
     }
 
     public PlayerCombat GetPlayerCombat()

@@ -118,114 +118,145 @@ public class TileConnectionVisualizer : MonoBehaviour
 
     private bool HasAnyNextTilePositionChanged()
     {
-        // Check if tile references are valid
-        if (tile == null || tile.nextTiles == null) return false; // Or true if you want an update on null
-
-        // If the number of tracked objects doesn't match expected, assume change
-        if (pathObjects.Count != tile.nextTiles.Count)
-            return true;
-
-        // Check if any connected tile has moved relative to its path visual
-        for (int i = 0; i < tile.nextTiles.Count; i++)
+        // 1. Initial checks for the tile itself
+        if (tile == null)
         {
-            BoardTile nextTile = tile.nextTiles[i];
-            if (nextTile != null && i < pathObjects.Count)
-            {
-                GameObject pathObject = pathObjects[i];
-                if (pathObject != null)
-                {
-                    // Check if the path's current position matches the expected midpoint
-                    Vector3 expectedMidPoint = (tile.transform.position + nextTile.transform.position) / 2;
-                    if (Vector3.Distance(pathObject.transform.position, expectedMidPoint) > 0.001f)
-                        return true;
-
-                    // Check if the path's current orientation points to the next tile
-                    // Note: Floating point comparisons require tolerance
-                    Quaternion expectedRotation = Quaternion.LookRotation(nextTile.transform.position - tile.transform.position);
-                    if (Quaternion.Angle(pathObject.transform.rotation, expectedRotation) > 0.1f) // Allow small tolerance
-                        return true;
-                }
-                else
-                {
-                    // If a path object is unexpectedly null, trigger update
-                    return true;
-                }
-            }
-            else if (nextTile != null && i >= pathObjects.Count)
-            {
-                // More nextTiles than pathObjects tracked, needs update
-                return true;
-            }
-            // If nextTile is null, we don't expect a path, so no change detected here
+            // If the main tile is gone, and we still have path objects, it's a change.
+            // Or, if there's no tile, there's nothing to check, so no "change" in its connections.
+            // Let's assume if tile is null, we can't determine change, or it implies a cleanup is needed.
+            // If pathObjects exist, it means they are orphaned.
+            return pathObjects.Count > 0;
         }
 
+        BoardTile nextTile = tile.GetNextTile(); // Or tile.nextTile
+
+        // 2. Scenario: No next tile is expected
+        if (nextTile == null)
+        {
+            // If no next tile is defined, but we have a path object, it means the path is outdated.
+            return pathObjects.Count > 0;
+        }
+
+        // 3. Scenario: A next tile is expected
+        // At this point, nextTile is NOT null.
+
+        // If no path object exists, but one is expected, it's a change.
+        if (pathObjects.Count == 0)
+        {
+            return true;
+        }
+
+        // If there's more than one path object, something is wrong (should only be 0 or 1).
+        if (pathObjects.Count > 1)
+        {
+            Debug.LogWarning($"TileConnectionVisualizer for {tile.name}: Found {pathObjects.Count} path objects, expected 0 or 1. Forcing update.", this);
+            return true;
+        }
+
+        // At this point, nextTile is NOT null, and pathObjects.Count IS 1.
+        GameObject pathObject = pathObjects[0];
+
+        // If the tracked path object has been destroyed externally.
+        if (pathObject == null)
+        {
+            // pathObjects list might still contain a null reference if Destroy was called elsewhere.
+            // UpdatePathVisuals will clear and rebuild, so this indicates a change.
+            return true;
+        }
+
+        // 4. Check position of the existing path object
+        Vector3 expectedMidPoint = (tile.transform.position + nextTile.transform.position) / 2;
+        if (Vector3.Distance(pathObject.transform.position, expectedMidPoint) > 0.001f)
+        {
+            return true; // Position has changed
+        }
+
+        // 5. Check orientation of the existing path object
+        // Ensure tile and nextTile are not at the same position to avoid LookRotation issues
+        if (tile.transform.position == nextTile.transform.position)
+        {
+            // If they are at the same spot, the current rotation is fine unless it's NaN,
+            // but LookRotation would give an error. We can skip this check or handle it.
+            // For simplicity, if they are at the same spot, we assume orientation doesn't need an update
+            // unless the path visual itself has a default "zero-length" orientation.
+            // This edge case might need specific handling based on visual requirements.
+        }
+        else
+        {
+            Quaternion expectedRotation = Quaternion.LookRotation(nextTile.transform.position - tile.transform.position);
+            if (Quaternion.Angle(pathObject.transform.rotation, expectedRotation) > 0.1f) // Allow small tolerance
+            {
+                return true; // Orientation has changed
+            }
+        }
+
+        // If all checks pass, no change detected
         return false;
     }
 
-    private void UpdatePathVisuals()
+    public void UpdatePathVisuals()
     {
         // Ensure prerequisites are met
         if (tile == null || tile.pathVisualiser == null || pathPrefab == null)
         {
-            Debug.LogWarning($"TileConnectionVisualizer on {gameObject.name}: Missing tile, pathVisualiser, or pathPrefab reference. Cannot update visuals.", this);
+            // It's good practice to specify which tile is having the issue if 'tile' is not null
+            string tileName = tile != null ? tile.name : "UNKNOWN_TILE";
+            Debug.LogWarning($"TileConnectionVisualizer on {gameObject.name} (for tile: {tileName}): Missing tile reference, tile.pathVisualiser, or pathPrefab. Cannot update visuals.", this);
             return;
         }
 
-        // --- New Clearing Logic ---
+        // --- Clearing Logic (remains the same) ---
         // Clear old paths by destroying all children of the target transform
-        // Use a temporary list to avoid modifying collection while iterating
         List<GameObject> childrenToDestroy = new List<GameObject>();
         foreach (Transform child in tile.pathVisualiser)
         {
-            if (child != null)
+            if (child != null) // Ensure child is not already destroyed or null
                 childrenToDestroy.Add(child.gameObject);
         }
 
         foreach (GameObject objToDestroy in childrenToDestroy)
         {
-            if (objToDestroy == null) continue;
+            if (objToDestroy == null) continue; // Double check, in case it was destroyed by another process
             if (Application.isEditor && !Application.isPlaying)
                 DestroyImmediate(objToDestroy);
             else
                 Destroy(objToDestroy);
         }
-        // --- End New Clearing Logic ---
+        // --- End Clearing Logic ---
 
         // Clear the tracking list now that objects are destroyed
         pathObjects.Clear();
 
-        // Create new paths if connections exist
-        if (tile.nextTiles != null)
+        // Get the single next tile
+        BoardTile nextTile = tile.GetNextTile(); // Or tile.nextTile directly if public access is fine
+
+        // Create a new path if a connection exists
+        if (nextTile != null)
         {
-            for (int i = 0; i < tile.nextTiles.Count; i++)
-            {
-                BoardTile nextTile = tile.nextTiles[i];
-                if (nextTile != null)
-                {
-                    // --- Instantiate under the designated parent ---
-                    GameObject path = Instantiate(pathPrefab, tile.pathVisualiser);
-                    // --- End Change ---
+            // Instantiate under the designated parent (tile.pathVisualiser)
+            GameObject pathInstance = Instantiate(pathPrefab, tile.pathVisualiser);
 
-                    // Name the path for easier identification in hierarchy
-                    path.name = PATH_PREFIX + tile.name + "_to_" + nextTile.name;
+            // Name the path for easier identification in hierarchy
+            pathInstance.name = PATH_PREFIX + tile.name + "_to_" + nextTile.name;
 
-                    // Position at midpoint
-                    Vector3 midPoint = (tile.transform.position + nextTile.transform.position) / 2;
-                    path.transform.position = midPoint;
+            
+            // and then scale/rotate. For a centered pivot:
+            Vector3 midPoint = (tile.transform.position + nextTile.transform.position) / 2;
+            pathInstance.transform.position = midPoint;
 
-                    // Orient toward target
-                    path.transform.LookAt(nextTile.transform);
+            // Orient toward target
+            // Ensure the path prefab is oriented correctly (e.g., its "forward" is along its length)
+            pathInstance.transform.LookAt(nextTile.transform);
 
-                    // Scale to span the distance
-                    float distance = Vector3.Distance(tile.transform.position, nextTile.transform.position);
-                    // Assuming the prefab is 1 unit long along Z
-                    path.transform.localScale = new Vector3(path.transform.localScale.x, path.transform.localScale.y, distance);
+            // Scale to span the distance
+            float distance = Vector3.Distance(tile.transform.position, nextTile.transform.position);
+            // Assuming the pathPrefab is 1 unit long along its local Z-axis (or whichever axis points along the path)
+            pathInstance.transform.localScale = new Vector3(pathInstance.transform.localScale.x, pathInstance.transform.localScale.y, distance);
 
-                    // Add to tracking list
-                    pathObjects.Add(path);
-                }
-            }
+            // Add to tracking list (optional, but good if you need to reference it later)
+            pathObjects.Add(pathInstance);
         }
+        // If nextTile is null, no path is created, which is the desired behavior.
     }
 
     // Force update when hierarchy changes - like when connections are modified
