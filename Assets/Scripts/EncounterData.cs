@@ -21,6 +21,5 @@ public class EncounterData : ScriptableObject
     public Enemy[] enemies;
 
     [Header("Rewards")]
-    public int grantedCoins;
     public int grantedExperience;
 }

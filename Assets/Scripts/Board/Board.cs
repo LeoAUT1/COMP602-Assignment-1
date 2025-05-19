@@ -71,7 +71,6 @@ public class Board : MonoBehaviour
         if (playerStats != null)
         {
             playerStats.text = $"LVL {Player.Instance.GetLevel()} | {Player.Instance.GetExperience()} xp\n";
-            playerStats.text += $"Coins: {Player.Instance.GetCoins()}\n";
         }
         else
         {

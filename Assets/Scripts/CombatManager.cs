@@ -40,7 +40,6 @@ public class CombatManager : MonoBehaviour
 
         //Grant player the reward for completing the encounter
         Player.Instance.AddExperience(encounter.grantedExperience);
-        Player.Instance.AddCoins(encounter.grantedCoins);
 
         //back to the Board Scene
         GameManager.Instance.ExitCombat();
