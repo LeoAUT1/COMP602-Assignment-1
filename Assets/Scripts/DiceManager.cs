@@ -5,6 +5,7 @@ using UnityEngine;
 public class DiceManager : Singleton<DiceManager>
 {
     [SerializeField] private GameObject die;
+    [SerializeField] private float delayAfterRolling = 2f; // How long to wait until the die function returns the number, default 2seconds
 
     // In DiceManager
     public IEnumerator RollTheDiceCoroutine(System.Action<int> onComplete, Vector3 spawnPosition) // Or use a pre-configured spawn
@@ -17,6 +18,8 @@ public class DiceManager : Singleton<DiceManager>
             result = rollResult;
             rollComplete = true;
         }, spawnPosition); // Pass the determined spawn position
+
+        yield return new WaitForSeconds(delayAfterRolling);
 
         yield return new WaitUntil(() => rollComplete);
         onComplete?.Invoke(result);

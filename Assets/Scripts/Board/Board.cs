@@ -81,7 +81,7 @@ public class Board : MonoBehaviour
     public void OnRollButtonClicked()
     {
         // We want to spawn our die halfway between the player and the camera, or thereabouts.
-        Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.5f);
+        Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.25f);
 
         StartCoroutine(DiceManager.Instance.RollTheDiceCoroutine(
             (diceRollResult) => {
