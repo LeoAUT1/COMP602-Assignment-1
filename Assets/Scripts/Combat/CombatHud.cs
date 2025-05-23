@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic; // Required for Queue<T>
 using TMPro;
@@ -22,6 +23,14 @@ public class CombatHud : MonoBehaviour
     private Coroutine messageProcessingCoroutine;
     [SerializeField] private float messageDisplayTime = 0.75f; // Configurable display time per message
 
+    [Header("Ability UI")]
+    [SerializeField] private GameObject abilityButtonPrefab; // Assign a prefab for your ability button in Inspector
+    [SerializeField] private Transform abilityButtonContainer; // Assign a LayoutGroup panel in Inspector
+    [SerializeField] private GameObject playerActionsPanel; // The parent panel for combat actions
+
+    private List<GameObject> currentAbilityButtons = new List<GameObject>();
+    private Action<AbilityBase> onAbilitySelectedCallback; // Store the callback
+
     public void Initialise(Enemy newEnemyUnit, PlayerCombat newPlayerUnit)
     {
         this.enemyUnit = newEnemyUnit;
@@ -35,14 +44,6 @@ public class CombatHud : MonoBehaviour
 
         playerHud.SetHUD(newPlayerUnit);
         enemyHud.SetHUD(newEnemyUnit);
-    }
-
-    public void ShowPlayerCombatActions(bool show)
-    {
-        if (buttonContainer != null)
-        {
-            buttonContainer.SetActive(show);
-        }
     }
 
     // Specific update methods are preferred
@@ -62,10 +63,63 @@ public class CombatHud : MonoBehaviour
         }
     }
 
-    
+    public void DisplayPlayerAbilities(List<AbilityBase> abilities, Action<AbilityBase> callback)
+    {
+        this.onAbilitySelectedCallback = callback;
+
+        foreach (GameObject btn in currentAbilityButtons)
+        {
+            Destroy(btn);
+        }
+        currentAbilityButtons.Clear();
+
+        if (abilityButtonPrefab == null || abilityButtonContainer == null)
+        {
+            Debug.LogError("Ability Button Prefab or Container not set in CombatHud!");
+            return;
+        }
+
+        int x_val = 150;
+
+        foreach (AbilityBase ability in abilities)
+        {
+            GameObject buttonGO = Instantiate(abilityButtonPrefab, abilityButtonContainer);
+            Button button = buttonGO.GetComponent<Button>();
+            TextMeshProUGUI buttonText = buttonGO.GetComponentInChildren<TextMeshProUGUI>(); // Or TextMeshProUGUI
+
+            if (buttonText != null) buttonText.text = ability.AbilityName;
+
+            // Capture the 'ability' variable correctly for the closure
+            AbilityBase currentAbility = ability;
+            button.onClick.RemoveAllListeners(); // Clear previous listeners
+            button.onClick.AddListener(() => {
+                this.onAbilitySelectedCallback?.Invoke(currentAbility);
+            });
+            currentAbilityButtons.Add(buttonGO);
+
+            RectTransform rt = buttonGO.GetComponent<RectTransform>();
+
+            rt.anchoredPosition = new Vector2(x_val, -100);
+            x_val += 150;
+        }
+    }
+
+    public void ShowPlayerCombatActions(bool show)
+    {
+        if (playerActionsPanel != null)
+        {
+            playerActionsPanel.SetActive(show);
+        }
+        else if (abilityButtonContainer != null) // Fallback if no dedicated panel
+        {
+            abilityButtonContainer.gameObject.SetActive(show);
+        }
+    }
+
+
     /// Sets a primary combat message, clearing any queued messages and stopping current message processing.
     /// Use this for important messages like turn indicators or battle results.
-    
+
     public void SetPrimaryCombatMessage(string message)
     {
         if (combatMessage == null) return;

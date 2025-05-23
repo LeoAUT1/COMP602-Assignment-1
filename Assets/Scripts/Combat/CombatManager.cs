@@ -15,10 +15,6 @@ public class CombatManager : MonoBehaviour
     PlayerCombat playerUnit;
     Enemy enemyUnit;
 
-    // For queuing messages from status effects or other sources
-    private Queue<string> messageQueue = new Queue<string>();
-    private bool isDisplayingMessages = false;
-
     [SerializeField] public CombatHud combatHud;
 
     [SerializeField] private Transform instantiatePlayerHere; // When the scene loads put the player's model on this transform
@@ -96,69 +92,101 @@ public class CombatManager : MonoBehaviour
     }
 
     //player attack after pressing button
-    IEnumerator PlayerAttack()
+    // In CombatManager.cs
+
+    // This will be called by UI buttons, passing the selected ability.
+    // It then may need to handle target selection before executing.
+    public void OnPlayerAbilitySelected(AbilityBase ability)
     {
-        int damage = playerUnit.GetStrength(); // Or ((PlayerCombat)playerUnit).GetStrength();
+        if (state != BattleState.PLAYERTURN || playerUnit == null) return;
 
-        // --- Example of OnDamageDealt hook for player ---
-        // This is if the player has an effect that triggers when THEY deal damage
-        List<StatusEffect> playerEffects = playerUnit.GetActiveStatusEffects();
-        foreach(var effect in playerEffects) { effect.OnDamageDealt(enemyUnit, ref damage, combatHud); }
-        // ---
+        // --- TARGET SELECTION LOGIC ---
+        // This is a crucial part. For now, a simplified version:
+        CombatEntity primaryTarget = null;
+        List<CombatEntity> allSelectedTargets = new List<CombatEntity>();
 
-        combatHud.QueueCombatMessage("Attack successful!"); // Queued message
-        Coroutine preDamageMessages = combatHud.ProcessMessageQueue();
-        if (preDamageMessages != null) yield return preDamageMessages;
+        switch (ability.TargetType)
+        {
+            case TargetType.Self:
+                primaryTarget = playerUnit;
+                allSelectedTargets.Add(playerUnit);
+                break;
+            case TargetType.Enemy:
+                // In a real game, you'd enable a targeting mode here.
+                // Player clicks an enemy, that enemy becomes 'primaryTarget'.
+                // For now, assume the current 'enemyUnit' is the only/intended target.
+                if (enemyUnit != null && enemyUnit.IsAlive()) // Ensure enemyUnit is valid
+                {
+                    primaryTarget = enemyUnit;
+                    allSelectedTargets.Add(enemyUnit);
+                }
+                else
+                {
+                    combatHud.QueueCombatMessage("No valid enemy target available!");
+                    combatHud.ProcessMessageQueue(); // Show message immediately
+                    return; // Don't proceed
+                }
+                break;
+            default:
+                Debug.LogError($"Target type {ability.TargetType} not fully handled for selection.");
+                combatHud.QueueCombatMessage("Cannot determine target for this ability.");
+                combatHud.ProcessMessageQueue();
+                return;
+        }
 
-        enemyUnit.TakeDamage(damage, playerUnit); // Pass attacker
-        combatHud.UpdateEnemyHud(enemyUnit); // Update HUD after damage and effects
+        if (ability.CanUse(playerUnit, primaryTarget, allSelectedTargets))
+        {
+            combatHud.ShowPlayerCombatActions(false); // Hide ability panel
+            StartCoroutine(ExecutePlayerAbilityCoroutine(ability, primaryTarget, allSelectedTargets));
+        }
+        else
+        {
+            combatHud.QueueCombatMessage($"Cannot use {ability.AbilityName} now.");
+            // Consider showing a more specific reason from CanUse if you implement that.
+            combatHud.ProcessMessageQueue();
+            // Do not hide actions, let player choose again.
+        }
+    }
 
-        // Process messages from OnDamageTaken effects (e.g., Thorns)
-        Coroutine postDamageMessages = combatHud.ProcessMessageQueue();
-        if (postDamageMessages != null) yield return postDamageMessages;
+    IEnumerator ExecutePlayerAbilityCoroutine(AbilityBase ability, CombatEntity primaryTarget, List<CombatEntity> allSelectedTargets)
+    {
+        // Call the ability's own execution logic
+        yield return StartCoroutine(ability.Execute(playerUnit, primaryTarget, this, combatHud));
 
-        if (!enemyUnit.IsAlive())
+        // --- Post-Ability Common Logic ---
+        // Update HUDs (the ability itself might have done some, but a general refresh can be good)
+        combatHud.UpdatePlayerHud(playerUnit);
+        if (enemyUnit != null) combatHud.UpdateEnemyHud(enemyUnit); // Update main enemy HUD
+                                                                    // If 'allSelectedTargets' could contain other entities, update their HUDs too.
+
+        // Check for enemy death (simplified for one enemy)
+        if (enemyUnit != null && !enemyUnit.IsAlive())
         {
             state = BattleState.WIN;
+            StartCoroutine(EndBattle());
+            yield break; // Stop further processing this turn
+        }
+        // If multiple enemies, you'd check if ALL are dead.
+
+        // Player Turn End Effects
+        playerUnit.ProcessTurnEndEffects();
+        combatHud.UpdatePlayerHud(playerUnit); // Update after effects
+
+        Coroutine turnEndMessages = combatHud.ProcessMessageQueue();
+        if (turnEndMessages != null) yield return turnEndMessages;
+
+        if (!playerUnit.IsAlive()) // Check if player died from turn-end effects
+        {
+            state = BattleState.LOSE;
             StartCoroutine(EndBattle());
         }
         else
         {
-            // --- Player Turn End Effects ---
-            playerUnit.ProcessTurnEndEffects();
-            combatHud.UpdatePlayerHud(playerUnit); // Update HUD if effects changed stats
-
-            Coroutine turnEndMessages = combatHud.ProcessMessageQueue();
-            if (turnEndMessages != null) yield return turnEndMessages;
-            // ---
-
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
     }
 
-    IEnumerator PlayerHeal() // This could become a "Use Ability" coroutine
-    {
-        playerUnit.Heal(5); // Example heal amount
-        combatHud.UpdatePlayerHud(playerUnit);
-        combatHud.QueueCombatMessage("You feel rejuvenated.");
-
-        Coroutine healMessages = combatHud.ProcessMessageQueue();
-        if (healMessages != null) yield return healMessages;
-
-        yield return new WaitForSeconds(0.3f);
-
-        // --- Player Turn End Effects ---
-        playerUnit.ProcessTurnEndEffects();
-        combatHud.UpdatePlayerHud(playerUnit);
-
-        Coroutine turnEndMessages = combatHud.ProcessMessageQueue();
-        if (turnEndMessages != null) yield return turnEndMessages;
-        // ---
-
-        state = BattleState.ENEMYTURN;
-        StartCoroutine(EnemyTurn());
-    }
 
     //enemy turn
     IEnumerator EnemyTurn()
@@ -240,48 +268,25 @@ public class CombatManager : MonoBehaviour
     }
 
     //player turn action
-    IEnumerator PlayerTurnCoroutine() // Renamed for clarity, or just change PlayerTurn
+    IEnumerator PlayerTurnCoroutine()
     {
-        // --- Player Turn Start Effects ---
-        playerUnit.ProcessTurnStartEffects(); // This calls OnTurnStart for all player effects
-        combatHud.UpdatePlayerHud(playerUnit); // Update HUD if effects changed stats (e.g., health from regen)
+        playerUnit.ProcessTurnStartEffects();
+        combatHud.UpdatePlayerHud(playerUnit);
 
-        // Process any messages queued by OnTurnStart effects
         Coroutine turnStartMessages = combatHud.ProcessMessageQueue();
         if (turnStartMessages != null) yield return turnStartMessages;
 
-        // Important: Check if player died from start-of-turn effects (e.g., heavy poison)
         if (!playerUnit.IsAlive())
         {
             state = BattleState.LOSE;
             StartCoroutine(EndBattle());
-            yield break; // End turn processing
-        }
-        // ---
-
-        combatHud.SetPrimaryCombatMessage($"Select an action:");
-        combatHud.ShowPlayerCombatActions(true);
-    }
-
-    //attack button
-    public void OnAttackButton()
-    {
-        if (state != BattleState.PLAYERTURN)
-        {
-            Debug.Log("It is not the player's turn");
-            return;
+            yield break;
         }
 
-        combatHud.ShowPlayerCombatActions(false);
-        StartCoroutine(PlayerAttack());
-    }
-
-    public void OnHealButton()
-    {
-        if (state != BattleState.PLAYERTURN)
-            return;
-
-        StartCoroutine(PlayerHeal());
-
+        // Clear the text so there is room for buttons
+        combatHud.SetPrimaryCombatMessage($"");
+        // Pass the player's abilities to the HUD to generate buttons
+        combatHud.DisplayPlayerAbilities(playerUnit.Abilities, OnPlayerAbilitySelected);
+        combatHud.ShowPlayerCombatActions(true); // This now shows the panel with dynamic buttons
     }
 }

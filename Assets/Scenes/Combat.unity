@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18360026, g: 0.22910783, b: 0.3053853, a: 1}
+  m_IndirectSpecularColor: {r: 0.18360063, g: 0.2291083, b: 0.30538464, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -921,6 +921,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1898140332}
     - target: {fileID: 7215823061292493310, guid: 0049aee9ebc763a44819e2dc4e00bf1c, type: 3}
+      propertyPath: playerActionsPanel
+      value: 
+      objectReference: {fileID: 1898140332}
+    - target: {fileID: 7215823061292493310, guid: 0049aee9ebc763a44819e2dc4e00bf1c, type: 3}
+      propertyPath: abilityButtonPrefab
+      value: 
+      objectReference: {fileID: 8858797546317267118, guid: 1aa137d8cdcf76a41ba5d4f7695ba236, type: 3}
+    - target: {fileID: 7215823061292493310, guid: 0049aee9ebc763a44819e2dc4e00bf1c, type: 3}
       propertyPath: instantiateEnemyHere
       value: 
       objectReference: {fileID: 1126445815}
@@ -928,6 +936,10 @@ PrefabInstance:
       propertyPath: instantiatePlayerHere
       value: 
       objectReference: {fileID: 101087926}
+    - target: {fileID: 7215823061292493310, guid: 0049aee9ebc763a44819e2dc4e00bf1c, type: 3}
+      propertyPath: abilityButtonContainer
+      value: 
+      objectReference: {fileID: 6696506509219365938}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -976,10 +988,30 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3595088071996004781, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2860916216201814188}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 106
+      objectReference: {fileID: 0}
     - target: {fileID: 7815936170376361018, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1060,10 +1092,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8213538059971465901, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2860916216201814188}
     - target: {fileID: 8532010513676648000, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1077,6 +1105,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+--- !u!224 &6696506509219365938 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2958697852175264414, guid: 99ab2dec959125b48b29ddd613d8f15a, type: 3}
+  m_PrefabInstance: {fileID: 6696506509219365937}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

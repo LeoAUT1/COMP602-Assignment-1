@@ -11,6 +11,9 @@ public abstract class CombatEntity : MonoBehaviour
     [SerializeField] protected int intelligence;
     private List<StatusEffect> statusEffects = new List<StatusEffect>();
 
+
+    public List<AbilityBase> Abilities { get; protected set; } = new List<AbilityBase>();
+
     private CombatManager combatManagerInstance; // Cache this
     private CombatHud combatHud;
 
@@ -162,5 +165,17 @@ public abstract class CombatEntity : MonoBehaviour
             expiredEffect.OnRemove();
             RemoveStatusEffect(expiredEffect); // This will call OnRemove
         }
+    }
+    public virtual void AddAbility(AbilityBase ability)
+    {
+        if (ability != null && !Abilities.Contains(ability))
+        {
+            Abilities.Add(ability);
+        }
+    }
+
+    public virtual void RemoveAbility(AbilityBase ability)
+    {
+        Abilities.Remove(ability);
     }
 }
