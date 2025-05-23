@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Player : Singleton<Player>
 {
+    public string playerName = "Adventurer";
+
     private float powerCurve = 1.1f; //The power term for how much exp should be required for each future level.
     private int baseExp = 20; // Base exp for each level
 

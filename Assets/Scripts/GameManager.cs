@@ -65,7 +65,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ExitCombat()
     {
-        bool playerIsAlive = Player.Instance.GetPlayerCombat().GetIsAlive();
+        bool playerIsAlive = Player.Instance.GetPlayerCombat().IsAlive();
 
         //Do any housekeeping for leaving the combat scene
         if (playerIsAlive && currentEncounter.isFinalBoss)
