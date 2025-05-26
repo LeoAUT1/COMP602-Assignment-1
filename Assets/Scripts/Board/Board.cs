@@ -45,6 +45,9 @@ public class Board : MonoBehaviour
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
 
+        //Shrink down the player a bit
+        playerPiece.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
         if (playerAnimator != null)
         {
             playerAnimator.SetPlayerPiece(playerPiece);
