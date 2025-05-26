@@ -7,9 +7,10 @@ public class PlayerBoardPiece : MonoBehaviour
     [SerializeField] protected CameraController cam;
     void Start()
     {
-        if (cam == null)
+        cam = FindAnyObjectByType<CameraController>(); // Good enough :^)
+
+        if (cam != null )
         {
-            cam = FindAnyObjectByType<CameraController>(); // Good enough :^)
             cam.target = this.transform;
         }
     }

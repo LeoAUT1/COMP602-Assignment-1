@@ -92,11 +92,7 @@ public class BoardEditor : Editor
         Debug.Log("Clearing previous visuals...");
         foreach (BoardTile tile in tiles)
         {
-            // DestroyImmediate is necessary in Editor scripts for objects not part of a prefab instance
-            while (tile.enemyPlacement.childCount > 0)
-            {
-                Undo.DestroyObjectImmediate(tile.enemyPlacement.transform.GetChild(0).gameObject);
-            }
+            tile.ClearEncounterVisual();
         }
         Debug.Log("Previous visuals cleared.");
 
@@ -104,26 +100,7 @@ public class BoardEditor : Editor
         Debug.Log("Generating new visuals...");
         foreach (BoardTile tile in tiles)
         {
-            tilesProcessed++;
-            // Assuming BoardTile has a public field 'encounter'
-            // Replace 'encounter' with the actual field/property name if different
-            EncounterData encounterBase = tile.GetEncounter();
-
-            if (encounterBase != null && encounterBase is EncounterData encounterData)
-            {
-                // Check if the EncounterData has enemies
-                // Replace 'enemies' with the actual field/property name if different
-                if (encounterData.enemies != null && encounterData.enemies.Length > 0)
-                {
-                    foreach (Enemy enemyData in encounterData.enemies)
-                    {
-                        Debug.Log(enemyData.name);
-
-                        Enemy model = Instantiate(enemyData, tile.enemyPlacement.transform.position,Quaternion.Euler(0,0,0), tile.enemyPlacement.transform);
-                        model.transform.localScale = new Vector3(0.25f, .25f, .25f);
-                    }
-                }
-            }
+            tile.GenerateEncounterVisual();
         }
 
         Debug.Log($"Processed {tilesProcessed} tiles. Spawned {enemiesSpawned} enemy visuals.");

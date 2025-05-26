@@ -14,6 +14,10 @@ public class EncounterData : ScriptableObject
 
     public EncounterType encounterType;
 
+
+    [Header("Board Model")]
+    public GameObject boardVisual;
+
     [Header("Non Combat Prefab")]
     public GameObject prefab;
 

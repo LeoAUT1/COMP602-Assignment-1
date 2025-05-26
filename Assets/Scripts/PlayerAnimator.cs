@@ -27,6 +27,7 @@ public class PlayerAnimator : MonoBehaviour
             return;
         }
         playerPiece.transform.position = boardTile.playerPlacement.position;
+        playerPiece.transform.rotation = boardTile.playerPlacement.rotation;
     }
 
     // Start the animation and provide a callback for when it's done

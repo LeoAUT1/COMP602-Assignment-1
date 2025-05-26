@@ -20,6 +20,8 @@ public class Board : MonoBehaviour
 
     [SerializeField] private GameObject boardInteractionButtons;
 
+    [SerializeField] private float diceSpawnDistanceFromCam = 0.5f;
+
     private void Start()
     {
 
@@ -44,6 +46,9 @@ public class Board : MonoBehaviour
 
         // Instantiate and place the player piece instantly at the start
         playerPiece = Instantiate(this.playerPiecePrefab);
+
+        //Shrink down the player a bit
+        playerPiece.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
         if (playerAnimator != null)
         {
@@ -80,8 +85,19 @@ public class Board : MonoBehaviour
 
     public void OnRollButtonClicked()
     {
+        if (Camera.main == null)
+        {
+            Debug.Log("Can't find our camera");
+        }
+
+        if (playerPiece == null)
+        {
+            Debug.Log("Cant find our player");
+        }
+
+
         // We want to spawn our die halfway between the player and the camera, or thereabouts.
-        Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, 0.25f);
+        Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, diceSpawnDistanceFromCam);
 
         StartCoroutine(DiceManager.Instance.RollTheDiceCoroutine(
             (diceRollResult) => {

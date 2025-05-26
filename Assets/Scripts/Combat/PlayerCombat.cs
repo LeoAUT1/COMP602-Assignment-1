@@ -16,6 +16,12 @@ public class PlayerCombat : CombatEntity
 
         AddAbility(new BasicAttackAbility());
 
+        AddAbility(new BasicAttackAbility());
+
+        AddAbility(new BasicAttackAbility());
+
+        AddAbility(new BasicAttackAbility());
+
         AddAbility(new TestAbility());
         // Add other abilities the player starts with
     }
