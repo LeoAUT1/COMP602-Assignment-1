@@ -54,6 +54,9 @@ public class Player : Singleton<Player>
             playerCombat.SetDexterity(playerCombat.GetDexterity() +1 );
             playerCombat.SetIntelligence(playerCombat.GetIntelligence() + 1);
             playerCombat.SetStrength(playerCombat.GetStrength() + 1);
+
+            //learn ability if available on that level
+            playerCombat.LearnAbility(playerLevel);
         }
 
         if (board != null)
