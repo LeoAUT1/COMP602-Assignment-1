@@ -106,5 +106,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  rotationalCenter: {fileID: 0}
   smoothSpeed: 0.05
-  offset: {x: -3, y: 2, z: 0}
+  offset: {x: 0, y: 3, z: 1}
