@@ -1,10 +1,74 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class SceneLoader : Singleton<SceneLoader>
 {
-    // Include one SceneLoader prefab per scene
-    // The singleton pattern will ensure that any duplicates self-destruct
+
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Image fadeToBlackImage;
+    [SerializeField] private float fadeDuration = 0.3f;
+
+    private void Awake()
+    {
+        base.Awake(); // Call Singleton's Awake
+
+        // Create fade canvas and image if not assigned
+        if (canvas == null)
+        {
+            canvas = new GameObject("canvas").AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 999; // Make sure it renders on top
+
+            fadeToBlackImage = new GameObject("fadeToBlackImage").AddComponent<Image>();
+            fadeToBlackImage.transform.SetParent(canvas.transform, false);
+            fadeToBlackImage.color = Color.black;
+            fadeToBlackImage.rectTransform.anchorMin = Vector2.zero;
+            fadeToBlackImage.rectTransform.anchorMax = Vector2.one;
+            fadeToBlackImage.rectTransform.sizeDelta = Vector2.zero;
+
+            // Start with transparent black
+            Color transparent = Color.black;
+            transparent.a = 0;
+            fadeToBlackImage.color = transparent;
+
+            DontDestroyOnLoad(canvas.gameObject);
+        }
+    }
+
+    private IEnumerator FadeAndLoadScene(string sceneName)
+    {
+        // Fade to black
+        float elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = Mathf.Clamp01(elapsedTime / fadeDuration);
+            fadeToBlackImage.color = new Color(0, 0, 0, alpha);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure we're fully black
+        fadeToBlackImage.color = Color.black;
+
+        // Load the scene
+        SceneManager.LoadScene(sceneName);
+
+        // Fade back in
+        elapsedTime = 0;
+        while (elapsedTime < fadeDuration)
+        {
+            float alpha = 1 - Mathf.Clamp01(elapsedTime / fadeDuration);
+            fadeToBlackImage.color = new Color(0, 0, 0, alpha);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure we're fully transparent
+        fadeToBlackImage.color = new Color(0, 0, 0, 0);
+    }
 
     public void LoadGameScene(bool newGame = false)
     {
@@ -14,12 +78,12 @@ public class SceneLoader : Singleton<SceneLoader>
             Player.Instance.ResetPlayer();
         }
 
-        SceneManager.LoadScene("GameBoard");
+        StartCoroutine(FadeAndLoadScene("GameBoard"));
     }
 
     public void LoadCombatScene()
     {
-        SceneManager.LoadScene("Combat");
+        StartCoroutine(FadeAndLoadScene("Combat"));
     }
 
     public void LoadMainMenu()
