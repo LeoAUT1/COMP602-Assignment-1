@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Subsystems;
 
 [CreateAssetMenu(fileName = "New Status Effect", menuName = "Combat/Status Effect")]
 public class StatusEffect : ScriptableObject
@@ -65,6 +66,24 @@ public class StatusEffect : ScriptableObject
     // Called when the effect is removed (either by duration or dispel)
     public virtual void OnRemove()
     {
-        // Cleanup logic if any
+        // Cleanup logic, if any
     }
+    public void SetEffectName(string name) => effectName = name;
+    public void SetDescription(string desc) => description = desc;
+    public void SetDuration(int duration) => durationTurns = duration;
+    public void SetIsHarmful(bool harmful) => isHarmful = harmful;
 }
+
+//Runtime instantiation example
+// Create a new instance of the RegenPassive ScriptableObject
+//RegenPassive regenEffect = ScriptableObject.CreateInstance<RegenPassive>();
+
+// Set properties manually
+// Access private serialized fields using reflection or add setter methods
+//regenEffect.SetEffectName("Regeneration");
+//regenEffect.SetDescription("Heals 5 HP at the start of the turn.");
+//regenEffect.SetDuration(3);
+//regenEffect.SetHealAmount(5);
+
+// Apply to target
+//combatEntity.AddStatusEffect(regenEffect);

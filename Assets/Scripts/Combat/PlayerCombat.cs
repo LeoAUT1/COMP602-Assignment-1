@@ -17,8 +17,12 @@ public class PlayerCombat : CombatEntity
         base.Initialise(cm, hud);
         // Grant the player the basic ability
         AddAbility(new BasicAttackAbility());
+        AddAbility(new DoTAttack());
 
-        AddStatusEffect(regenEffectTemplate);
+        foreach (PowerupData pup in powerUps.Values)
+        {
+            AddStatusEffect(pup.statusEffect);
+        }
     }
 
     public Dictionary<string, PowerupData> GetPowerUps()
@@ -28,7 +32,7 @@ public class PlayerCombat : CombatEntity
 
     public void AddPowerup(string name, PowerupData powerup)
     {
-
+        Debug.Log($"Adding {powerup} to PlayerCombat");
         if (powerUps.TryGetValue(powerup.name, out PowerupData existingPowerup))
         {
             // Powerup already exists, increment its value

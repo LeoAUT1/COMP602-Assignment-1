@@ -56,6 +56,8 @@ public abstract class CombatEntity : MonoBehaviour
     {
         Debug.Log(attacker);
 
+        Debug.Log($"{entityName} Taking {amount} damage");
+
         // 1. Process OnDamageTaken effects (they might modify the damage)
         // Iterate backwards if effects can remove themselves
         for (int i = statusEffects.Count - 1; i >= 0; i--)
@@ -97,6 +99,13 @@ public abstract class CombatEntity : MonoBehaviour
         if (this.combatManagerInstance == null || this.combatHud == null)
         {
             Debug.LogError($"Attempted to add StatusEffect '{effectTemplate.EffectName}' to '{this.entityName}' before CombatEntity was initialized. Call Initialize() first.");
+            return;
+        }
+
+
+        if (effectTemplate == null)
+        {
+            Debug.LogWarning("Effect is null");
             return;
         }
 

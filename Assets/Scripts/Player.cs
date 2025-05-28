@@ -107,5 +107,6 @@ public class Player : Singleton<Player>
 
         //This is not great
         PowerUpUIManager manager = board.GetComponentInChildren<PowerUpUIManager>();
+        manager.RedrawPowerups();
     }
 }

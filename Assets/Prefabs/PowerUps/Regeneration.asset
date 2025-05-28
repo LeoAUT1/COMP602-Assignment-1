@@ -16,3 +16,4 @@ MonoBehaviour:
   description: You passively restore HP while in combat
   icon: {fileID: 21300000, guid: 3ec162b0b02011842b77934e42787acd, type: 3}
   count: 1
+  statusEffect: {fileID: 11400000, guid: a7daac94d0dd2ef4ab74d1665752c989, type: 2}

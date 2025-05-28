@@ -16,3 +16,4 @@ MonoBehaviour:
   description: Restore some of your health when you deal damage
   icon: {fileID: 21300000, guid: 2c412482be53ade4eafe612ee57be64c, type: 3}
   count: 1
+  statusEffect: {fileID: 0}

@@ -10,7 +10,7 @@ public class PowerupData : ScriptableObject
     public string description;
     public Sprite icon;
 
-    public int count = 1; //Number of times the player has the effect applied to theme, by default one.
+    [SerializeField] public int count = 1; //Number of times the player has the effect applied to theme, by default one.
 
     [Header("StatusEffect Effect (if applicable)")]
     public StatusEffect statusEffect; //This should be applied to the player on combat start

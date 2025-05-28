@@ -6,19 +6,15 @@ public class PowerupDebug : MonoBehaviour
 {
     [SerializeField] private PowerupData vampirism;
     [SerializeField] private PowerupData regen;
-
-    private PlayerCombat pcbt;
-
-    private void Start()
-    {
-        pcbt = Player.Instance.GetPlayerCombat();
-    }
     public void GrantVampirism()
     {
-        Player.Instance.AddPowerup(vampirism);
+        Debug.Log("GIving the player vampirism");
+        PowerupData copy = Instantiate(vampirism);
+        Player.Instance.AddPowerup(copy);
     }
     public void GrantRegen()
     {
-        Player.Instance.AddPowerup(regen);
+        PowerupData copy = Instantiate(regen);
+        Player.Instance.AddPowerup(copy);
     }
 }

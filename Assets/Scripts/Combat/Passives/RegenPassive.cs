@@ -5,8 +5,6 @@ public class RegenPassive : StatusEffect
 {
     [SerializeField] private int healAmount = 5;
 
-    // No constructor needed - ScriptableObjects use serialized fields instead
-
     public override void OnTurnStart(CombatHud hud)
     {
         base.OnTurnStart(hud);
@@ -24,4 +22,6 @@ public class RegenPassive : StatusEffect
         base.Initialize();
         // Any additional initialization
     }
+
+    public void SetHealAmount(int amount) => healAmount = amount;
 }
