@@ -1,3 +1,4 @@
+[System.Serializable]
 public abstract class StatusEffect
 {
     public string EffectName { get; protected set; }

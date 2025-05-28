@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerCombat : CombatEntity
@@ -7,42 +8,34 @@ public class PlayerCombat : CombatEntity
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
 
+    private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
-    // Example of initializing abilities:
-    void Start() // Or Awake, or a specific Init method called after Player.Instance is ready
+    void Awake()
     {
-        // Ensure entityName is set if you're not overriding GetName()
-        // this.entityName = Player.Instance.playerName;
-
-        //base ability/skill
-        AddAbility(new BasicAttackAbility());
-        
-        // Add other abilities the player starts with
+        Initialise();
     }
-    
-    //new abilites when leveling up
-    public void LearnAbility(int level)
+
+    private void Initialise()
     {
-        AbilityBase newAbility = null;
+        // Grant the player the basic ability
+        AddAbility(new BasicAttackAbility());
+    }
 
-        switch (level)
+    public Dictionary<string, PowerupData> GetPowerUps()
+    {
+        return powerUps;
+    }
+
+    public void AddPowerup(string name, PowerupData powerup)
+    {
+
+        if (powerUps.TryGetValue(powerup.name, out PowerupData existingPowerup))
         {
-            case 2:
-                newAbility = new HeavyAttack();
-                break;
-            case 3:
-                newAbility = new TestAbility();
-                break;
-            default:
-                Debug.Log("no new ability");
-                 return;
+            // Powerup already exists, increment its value
+            existingPowerup.Increment();
+            return;
         }
 
-        if (newAbility != null)
-        {
-            AddAbility(newAbility);
-            Debug.Log($"{GetName()} learned new ability: {newAbility.AbilityName}");
-        }
-
+        powerUps.Add(name, powerup);
     }
 }

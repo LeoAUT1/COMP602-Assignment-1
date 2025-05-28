@@ -100,4 +100,12 @@ public class Player : Singleton<Player>
     {
         board = b;
     }
+
+    public void AddPowerup(PowerupData powerup)
+    {
+        playerCombat.AddPowerup(powerup.name, powerup);
+
+        //This is not great
+        PowerUpUIManager manager = board.GetComponentInChildren<PowerUpUIManager>();
+    }
 }
