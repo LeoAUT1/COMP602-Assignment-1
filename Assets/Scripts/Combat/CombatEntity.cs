@@ -68,7 +68,7 @@ public abstract class CombatEntity : MonoBehaviour
         // 2. Apply actual damage
         if (amount > 0) // Don't "heal" from negative damage unless intended
         {
-            SubtractHealth(amount); // Your existing health logic
+            SubtractHealth(amount);
         }
 
         // 3. Update HUD (or CombatManager does this after all effects)
@@ -84,9 +84,9 @@ public abstract class CombatEntity : MonoBehaviour
     public string GetName() { return entityName; }
     public int GetHealth() { return health; }
     public int GetMaxHealth() { return maxHealth; }
-    public int GetStrength() { return strength; }
-    public int GetDexterity() { return dexterity; }
-    public int GetIntelligence() { return intelligence; }
+    public virtual int GetStrength() { return strength; }
+    public virtual int GetDexterity() { return dexterity; }
+    public virtual int GetIntelligence() { return intelligence; }
     public bool IsAlive() {  return isAlive; }   
 
     public void SetStrength(int x) { strength = x; }
@@ -96,12 +96,6 @@ public abstract class CombatEntity : MonoBehaviour
     // For managing status effects
     public void AddStatusEffect(StatusEffect effectTemplate)
     {
-        if (this.combatManagerInstance == null || this.combatHud == null)
-        {
-            Debug.LogError($"Attempted to add StatusEffect '{effectTemplate.EffectName}' to '{this.entityName}' before CombatEntity was initialized. Call Initialize() first.");
-            return;
-        }
-
 
         if (effectTemplate == null)
         {

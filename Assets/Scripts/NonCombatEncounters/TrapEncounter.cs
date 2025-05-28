@@ -6,7 +6,8 @@ using UnityEngine;
 public class TrapEncounter : GenericNonCombatEncounter
 {
     public TextAnimator text;
-    private int trapDamage = 5;
+    public int trapDamage = 5;
+    public int dexLevelForSuccess = 3;
 
     PlayerCombat playerCombat;
 
@@ -16,13 +17,13 @@ public class TrapEncounter : GenericNonCombatEncounter
         playerCombat = Player.Instance.GetPlayerCombat();
     }
 
-    public void PassTrap()
+    public void PassTrap(int roll, int level)
     {
-        text.SetText("You skillfully dodge the trap");
+        text.SetText($"You skillfully dodge the trap (needed:{dexLevelForSuccess}, rolled {roll} + {level})");
         StartCoroutine(FinishEncounter());
     }
 
-    public void FailTrap()
+    public void FailTrap(int roll, int level)
     {
         text.SetText($"You fail to dodge the trap, and take {trapDamage} damage.");
         playerCombat.SubtractHealth(trapDamage);
@@ -32,14 +33,16 @@ public class TrapEncounter : GenericNonCombatEncounter
     public void AttemptTrap()
     {
         int roll = Random.Range(1, 7);
-        
-        if (roll + playerCombat.GetDexterity() > 3)
+        int playerLevel = playerCombat.GetDexterity();
+
+
+        if (roll + playerLevel > dexLevelForSuccess)
         {
-            PassTrap();
+            PassTrap(roll, playerLevel);
         }
         else
         {
-            FailTrap();
+            FailTrap(roll, playerLevel);
         }
 
     }

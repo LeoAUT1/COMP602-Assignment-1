@@ -5,9 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Assuming TextAnimator has a SetText(string) method
-// using YourNamespace; // If TextAnimator is in a specific namespace
-
 public class CombatHud : MonoBehaviour
 {
     [SerializeField] private CombatEntityHud playerHud;
@@ -24,7 +21,7 @@ public class CombatHud : MonoBehaviour
     [SerializeField] private float messageDisplayTime = 0.75f; // Configurable display time per message
 
     [Header("Ability UI")]
-    [SerializeField] private GameObject abilityButtonPrefab; // Assign a prefab for your ability button in Inspector
+    [SerializeField] private GameObject abilityButtonPrefab; // Assign a prefab for the ability button in Inspector
     [SerializeField] private Transform abilityButtonContainer; // Assign a LayoutGroup panel in Inspector
     [SerializeField] private GameObject playerActionsPanel; // The parent panel for combat actions
 

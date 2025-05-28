@@ -20,7 +20,6 @@ public abstract class AbilityBase
     public virtual bool CanUse(CombatEntity caster, CombatEntity primaryTarget, List<CombatEntity> allPotentialTargets)
     {
         // An ability can be used if its current cooldown is zero.
-        // Your original logic checked `Cooldown > 0`, which would prevent abilities
         // with any cooldown from ever being usable after the first time.
         if (CurrentCooldown > 0)
         {
