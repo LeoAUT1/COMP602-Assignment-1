@@ -16,15 +16,10 @@ public class PlayerCombat : CombatEntity
 
         //base ability/skill
         AddAbility(new BasicAttackAbility());
-
-        // Add other abilities the player starts with
-
         
-
+        // Add other abilities the player starts with
     }
-
-
-
+    
     //new abilites when leveling up
     public void LearnAbility(int level)
     {

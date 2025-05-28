@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class BoardTile : MonoBehaviour
@@ -81,5 +82,32 @@ public class BoardTile : MonoBehaviour
     public void SetEncounterData(EncounterData data)
     {
         encounter = data;
+    }
+
+    public void ClearEncounterVisual()
+    {
+        int count = 100;
+        while (enemyPlacement.childCount > 0)
+        {
+            count--;
+            Undo.DestroyObjectImmediate(enemyPlacement.GetChild(0).gameObject);
+
+            // sanity escape hatch
+            if (count == 0)
+            {
+                break;
+            }
+        }
+    }
+
+    public void GenerateEncounterVisual()
+    {
+        if (encounter == null) return;
+
+        float scale = 0.5f;
+
+
+        GameObject model = Instantiate(encounter.boardVisual, enemyPlacement.position, enemyPlacement.rotation, enemyPlacement);
+        model.transform.localScale = new Vector3(scale, scale, scale);
     }
 }

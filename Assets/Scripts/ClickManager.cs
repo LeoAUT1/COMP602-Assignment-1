@@ -25,22 +25,6 @@ public class ClickManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, clickableLayer))
-            {
-                BoardTile boardTile = hit.collider.GetComponent<BoardTile>();
-                if (boardTile != null)
-                {
-                    board.playerAnimator.MovePlayerPieceInstantly(boardTile);
-                }
-            }
-
-        }
-
         // Debug Feautre to move the player to an arbitrary tile
         if (Input.GetMouseButtonDown(1))
         {

@@ -15,7 +15,9 @@ MonoBehaviour:
   encounterName: Final Encounter
   description: its the boss
   isFinalBoss: 1
+  encounterType: 0
+  boardVisual: {fileID: 6755108989216125669, guid: a93af44a089cd104089811e086007aab, type: 3}
+  prefab: {fileID: 0}
   enemies:
   - {fileID: 2978936711534133682, guid: a93af44a089cd104089811e086007aab, type: 3}
-  grantedCoins: 10
   grantedExperience: 10
