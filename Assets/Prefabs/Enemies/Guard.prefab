@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Guard
-  health: 5
-  maxHealth: 5
+  health: 100
+  maxHealth: 100
   strength: 3
   dexterity: 3
   intelligence: 3

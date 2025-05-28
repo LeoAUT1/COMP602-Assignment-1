@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerCombat : CombatEntity
@@ -7,19 +8,41 @@ public class PlayerCombat : CombatEntity
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
 
+    private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
-    // Example of initializing abilities:
-    void Start() // Or Awake, or a specific Init method called after Player.Instance is ready
+    [SerializeField] private RegenPassive regenEffectTemplate;
+
+    public override void Initialise(CombatManager cm, CombatHud hud)
     {
-        // Ensure entityName is set if you're not overriding GetName()
-        // this.entityName = Player.Instance.playerName;
-
-        //base ability/skill
+        base.Initialise(cm, hud);
+        // Grant the player the basic ability
         AddAbility(new BasicAttackAbility());
-        
-        // Add other abilities the player starts with
+        AddAbility(new DoTAttack());
+
+        foreach (PowerupData pup in powerUps.Values)
+        {
+            AddStatusEffect(pup.statusEffect);
+        }
     }
-    
+
+    public Dictionary<string, PowerupData> GetPowerUps()
+    {
+        return powerUps;
+    }
+
+    public void AddPowerup(string name, PowerupData powerup)
+    {
+        Debug.Log($"Adding {powerup} to PlayerCombat");
+        if (powerUps.TryGetValue(powerup.name, out PowerupData existingPowerup))
+        {
+            // Powerup already exists, increment its value
+            existingPowerup.Increment();
+            return;
+        }
+
+        powerUps.Add(name, powerup);
+    }
+
     //new abilites when leveling up
     public void LearnAbility(int level)
     {
@@ -35,7 +58,7 @@ public class PlayerCombat : CombatEntity
                 break;
             default:
                 Debug.Log("no new ability");
-                 return;
+                return;
         }
 
         if (newAbility != null)

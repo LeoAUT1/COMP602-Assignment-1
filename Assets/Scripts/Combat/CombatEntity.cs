@@ -19,7 +19,7 @@ public abstract class CombatEntity : MonoBehaviour
 
     private bool isAlive = true;
 
-    public void Initialise(CombatManager cm, CombatHud hud) // Call this from CombatManager.SetupBattle
+    public virtual void Initialise(CombatManager cm, CombatHud hud) // Call this from CombatManager.SetupBattle
     {
         this.combatManagerInstance = cm;
         this.combatHud = hud; // Or get it from cm
@@ -55,6 +55,8 @@ public abstract class CombatEntity : MonoBehaviour
     public void TakeDamage(int amount, CombatEntity attacker = null)
     {
         Debug.Log(attacker);
+
+        Debug.Log($"{entityName} Taking {amount} damage");
 
         // 1. Process OnDamageTaken effects (they might modify the damage)
         // Iterate backwards if effects can remove themselves
@@ -92,15 +94,23 @@ public abstract class CombatEntity : MonoBehaviour
     public void SetIntelligence (int x) { intelligence = x; }
 
     // For managing status effects
-    public void AddStatusEffect(StatusEffect effect)
+    public void AddStatusEffect(StatusEffect effectTemplate)
     {
         if (this.combatManagerInstance == null || this.combatHud == null)
         {
-            Debug.LogError($"Attempted to add StatusEffect '{effect.EffectName}' to '{this.entityName}' before CombatEntity was initialized. Call Initialize() first.");
-            // You might want to throw an exception or simply return to prevent further errors.
+            Debug.LogError($"Attempted to add StatusEffect '{effectTemplate.EffectName}' to '{this.entityName}' before CombatEntity was initialized. Call Initialize() first.");
             return;
         }
 
+
+        if (effectTemplate == null)
+        {
+            Debug.LogWarning("Effect is null");
+            return;
+        }
+
+        // Create a runtime instance of the status effect
+        StatusEffect effect = Instantiate(effectTemplate);
         statusEffects.Add(effect);
         effect.OnApply(this, combatManagerInstance, combatHud);
     }
