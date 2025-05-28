@@ -14,15 +14,35 @@ public class PlayerCombat : CombatEntity
         // Ensure entityName is set if you're not overriding GetName()
         // this.entityName = Player.Instance.playerName;
 
+        //base ability/skill
         AddAbility(new BasicAttackAbility());
-
-        AddAbility(new BasicAttackAbility());
-
-        AddAbility(new BasicAttackAbility());
-
-        AddAbility(new BasicAttackAbility());
-
-        AddAbility(new TestAbility());
+        
         // Add other abilities the player starts with
+    }
+    
+    //new abilites when leveling up
+    public void LearnAbility(int level)
+    {
+        AbilityBase newAbility = null;
+
+        switch (level)
+        {
+            case 2:
+                newAbility = new HeavyAttack();
+                break;
+            case 3:
+                newAbility = new TestAbility();
+                break;
+            default:
+                Debug.Log("no new ability");
+                 return;
+        }
+
+        if (newAbility != null)
+        {
+            AddAbility(newAbility);
+            Debug.Log($"{GetName()} learned new ability: {newAbility.AbilityName}");
+        }
+
     }
 }
