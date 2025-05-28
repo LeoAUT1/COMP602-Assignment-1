@@ -1,30 +1,38 @@
-[System.Serializable]
-public abstract class StatusEffect
-{
-    public string EffectName { get; protected set; }
-    public string Description { get; protected set; }
-    public int DurationTurns { get; protected set; } // -1 for permanent
-    public bool IsHarmful { get; protected set; } // For UI or AI logic
+using UnityEngine;
 
+[CreateAssetMenu(fileName = "New Status Effect", menuName = "Combat/Status Effect")]
+public class StatusEffect : ScriptableObject
+{
+    [SerializeField] private string effectName;
+    [SerializeField][TextArea(2, 4)] private string description;
+    [SerializeField] private int durationTurns = 1; // -1 for permanent
+    [SerializeField] private bool isHarmful = false; // For UI or AI logic
+
+    // Properties to maintain compatibility with existing code
+    public string EffectName => effectName;
+    public string Description => description;
+    public int DurationTurns { get; protected set; } // Runtime duration
+    public bool IsHarmful => isHarmful;
+
+    // Runtime references - not serialized
     protected CombatEntity Target;
-    protected CombatManager CombatManagerRef; // To queue messages or access combat state
+    protected CombatManager CombatManagerRef;
     protected CombatHud CombatHudRef;
 
-    public StatusEffect(string name, string description, int duration, bool isHarmful = false)
+    // Initialize runtime values from serialized data
+    public virtual void Initialize()
     {
-        EffectName = name;
-        Description = description;
-        DurationTurns = duration;
-        IsHarmful = isHarmful;
+        // Set runtime duration from the serialized value
+        DurationTurns = durationTurns;
     }
 
     // Called when the effect is first applied to the target
     public virtual void OnApply(CombatEntity target, CombatManager combatManager, CombatHud hud)
     {
+        Initialize(); // Set runtime values
         this.Target = target;
         this.CombatManagerRef = combatManager;
         this.CombatHudRef = hud;
-        // combatManager.QueueCombatMessage($"{target.GetUnitName()} gains {EffectName}!");
     }
 
     // Called at the start of the target's turn
@@ -34,7 +42,6 @@ public abstract class StatusEffect
     public virtual void OnTurnEnd(CombatHud hud) { }
 
     // Called when the target takes damage
-    // 'source' is who dealt the damage, 'damageAmount' is pre-mitigation if you have that
     public virtual void OnDamageTaken(CombatEntity source, ref int damageAmount, CombatHud hud) { }
 
     // Called when the target deals damage
@@ -49,7 +56,6 @@ public abstract class StatusEffect
             DurationTurns--;
             if (DurationTurns == 0)
             {
-                // CombatManagerRef.QueueCombatMessage($"{Target.GetUnitName()}'s {EffectName} wore off.");
                 return true; // Expired
             }
         }

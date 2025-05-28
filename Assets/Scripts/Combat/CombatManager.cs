@@ -78,9 +78,6 @@ public class CombatManager : MonoBehaviour
         combatHud.SetPrimaryCombatMessage($"A {enemyUnit.GetName()} appeared.");
         combatHud.Initialise(enemyUnit, playerUnit);
 
-        // Test status effect
-        playerUnit.AddStatusEffect(new RegenPassive(1, 100));
-
         Coroutine queuedMessagesCoroutine = combatHud.ProcessMessageQueue();
         if (queuedMessagesCoroutine != null) yield return queuedMessagesCoroutine;
 

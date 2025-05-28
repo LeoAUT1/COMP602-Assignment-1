@@ -1,24 +1,27 @@
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New Regeneration Effect", menuName = "Combat/Status Effects/Regeneration")]
 public class RegenPassive : StatusEffect
 {
-    private int healAmount;
+    [SerializeField] private int healAmount = 5;
 
-    public RegenPassive(int healPerTurn, int duration)
-        : base("Regeneration", $"Heals {healPerTurn} HP at the start of the turn.", duration, false)
+    // No constructor needed - ScriptableObjects use serialized fields instead
+
+    public override void OnTurnStart(CombatHud hud)
     {
-        this.healAmount = healPerTurn;
-    }
+        base.OnTurnStart(hud);
 
-    public override void OnTurnStart(CombatHud hud) // Accept CombatHud
-    {
-        base.OnTurnStart(hud); // Good practice
-
-        // Target should be set by OnApply or ensured by the calling CombatEntity method
         if (Target != null && Target.IsAlive())
         {
-            Target.AddHealth(healAmount); // Or Target.Heal(healAmount)
-            // Use the passed hud instance to queue the message
+            Target.AddHealth(healAmount);
             hud.QueueCombatMessage($"{Target.GetName()} regenerates {healAmount} HP from {EffectName}!");
-            // REMOVE: Target.UpdateHud(); // CombatManager will handle this
         }
+    }
+
+    // Optional: Override the Initialize method if you need to do any setup
+    public override void Initialize()
+    {
+        base.Initialize();
+        // Any additional initialization
     }
 }

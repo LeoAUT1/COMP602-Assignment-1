@@ -10,15 +10,15 @@ public class PlayerCombat : CombatEntity
 
     private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
-    void Awake()
-    {
-        Initialise();
-    }
+    [SerializeField] private RegenPassive regenEffectTemplate;
 
-    private void Initialise()
+    public override void Initialise(CombatManager cm, CombatHud hud)
     {
+        base.Initialise(cm, hud);
         // Grant the player the basic ability
         AddAbility(new BasicAttackAbility());
+
+        AddStatusEffect(regenEffectTemplate);
     }
 
     public Dictionary<string, PowerupData> GetPowerUps()
@@ -37,5 +37,31 @@ public class PlayerCombat : CombatEntity
         }
 
         powerUps.Add(name, powerup);
+    }
+
+    //new abilites when leveling up
+    public void LearnAbility(int level)
+    {
+        AbilityBase newAbility = null;
+
+        switch (level)
+        {
+            case 2:
+                newAbility = new HeavyAttack();
+                break;
+            case 3:
+                newAbility = new TestAbility();
+                break;
+            default:
+                Debug.Log("no new ability");
+                return;
+        }
+
+        if (newAbility != null)
+        {
+            AddAbility(newAbility);
+            Debug.Log($"{GetName()} learned new ability: {newAbility.AbilityName}");
+        }
+
     }
 }
