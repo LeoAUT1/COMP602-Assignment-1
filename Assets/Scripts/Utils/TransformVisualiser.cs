@@ -20,10 +20,6 @@ public class TransformVisualiser : MonoBehaviour
     [Tooltip("Color for the Right (X) axis.")]
     public Color rightColor = Color.red;
 
-
-    // If you want the gizmos to be drawn even when the object is NOT selected,
-    // uncomment the following method and comment out OnDrawGizmosSelected.
-    // Be warned, this can clutter your scene if used on many objects.
     void OnDrawGizmos()
     {
         DrawVisuals();
