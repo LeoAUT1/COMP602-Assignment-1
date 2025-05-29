@@ -14,6 +14,7 @@ public class Player : Singleton<Player>
     private int experience;
     private int playerLevel = 1;
     [SerializeField] PlayerCombat playerCombat;
+    private PlayerBoardPiece playerPiece;
 
     private Board board;
 
@@ -57,6 +58,8 @@ public class Player : Singleton<Player>
 
             //learn ability if available on that level
             playerCombat.LearnAbility(playerLevel);
+
+            playerPiece.SetPlayerModel();
         }
 
         if (board != null)
@@ -108,5 +111,10 @@ public class Player : Singleton<Player>
         //This is not great
         PowerUpUIManager manager = board.GetComponentInChildren<PowerUpUIManager>();
         manager.RedrawPowerups();
+    }
+
+    public void SetPlayerPiece(GameObject piece) // Set the player's model, we need this so that we can update the model when the player levels up
+    {
+        playerPiece = piece.GetComponent<PlayerBoardPiece>();
     }
 }
