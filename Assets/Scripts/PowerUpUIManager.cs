@@ -51,7 +51,7 @@ public class PowerUpUIManager : MonoBehaviour
 
             PowerUpIcon pup = go.GetComponent<PowerUpIcon>();
             pup.SetSprite(powerup.icon);
-            pup.SetText($"x{powerup.count}");
+            pup.SetCount($"x{powerup.count}");
 
             count++;
         }
