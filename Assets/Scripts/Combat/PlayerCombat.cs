@@ -51,10 +51,13 @@ public class PlayerCombat : CombatEntity
         switch (level)
         {
             case 2:
-                newAbility = new HeavyAttack();
+                newAbility = new DoubleSlash();
                 break;
             case 3:
                 newAbility = new TestAbility();
+                break;
+            case 4:
+                newAbility = new HeavyAttack();
                 break;
             default:
                 Debug.Log("no new ability");

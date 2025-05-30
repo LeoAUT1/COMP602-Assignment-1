@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class HeavyAttack : AbilityBase
+public class DoubleSlash : AbilityBase
 {
-    public override string AbilityName => "Heavy Attack";
-    public override string Description => "Massive physical attack with double the damage";
+    public override string AbilityName => "Double Slash";
+    public override string Description => "Moderate damage that hits 2 times";
 
     public override int Cooldown => 2;
 
@@ -26,7 +25,7 @@ public class HeavyAttack : AbilityBase
 
         hud.QueueCombatMessage($"{caster.GetName()} uses {AbilityName} on {primaryTarget.GetName()}!");
 
-        int damage = caster.GetStrength() * 2;
+        int damage = caster.GetStrength();
 
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
         foreach (var effect in casterEffects)
@@ -38,13 +37,19 @@ public class HeavyAttack : AbilityBase
         Coroutine preDamageMessages = hud.ProcessMessageQueue();
         if (preDamageMessages != null) yield return preDamageMessages;
 
-        // Do the thing
-        primaryTarget.TakeDamage(damage);
+        // Do the thing and update
 
-        // Determine if target is Player or Enemy for HUD update
-        if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
-        else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
+        for (int i = 0; i < 2; i++)
+        {
+            primaryTarget.TakeDamage(damage);
 
+            if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
+            else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
+
+            if (i == 0) yield return new WaitForSeconds(1f);
+
+        }
+       
 
         Coroutine postDamageMessages = hud.ProcessMessageQueue();
         if (postDamageMessages != null) yield return postDamageMessages;
