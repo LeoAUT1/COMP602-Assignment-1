@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5116477440779981014}
   - component: {fileID: 7952197960407541467}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -194,7 +194,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sprite: {fileID: 415554987301728839}
-  _textMeshPro: {fileID: 7952197960407541467}
+  _count: {fileID: 7952197960407541467}
+  _title: {fileID: 0}
+  _desc: {fileID: 0}
 --- !u!114 &415554987301728839
 MonoBehaviour:
   m_ObjectHideFlags: 0
