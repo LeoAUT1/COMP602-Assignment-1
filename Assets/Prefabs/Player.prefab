@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2362603987418269019}
   - component: {fileID: 5820751951653907196}
   - component: {fileID: 6508123060139364006}
+  - component: {fileID: 5475764370816112373}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -45,8 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac18fa9913962241b778582481835be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins: 0
+  playerName: Adventurer
   playerCombat: {fileID: 6508123060139364006}
+  tileIndex: 0
 --- !u!114 &6508123060139364006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,3 +67,23 @@ MonoBehaviour:
   strength: 1
   dexterity: 1
   intelligence: 1
+--- !u!114 &5475764370816112373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8671192130053172557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02e361a69f199fc47b4994d44065874b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerups:
+  - {fileID: 11400000, guid: 29fe9d1707dc24a46abc648426655d29, type: 2}
+  - {fileID: 11400000, guid: b110cf66bee65274a9a0233a3070d6cd, type: 2}
+  - {fileID: 11400000, guid: b0113e7d6e45d2c438ae564e73b7b1e9, type: 2}
+  - {fileID: 11400000, guid: 087236e5c2bb83645b0ca2dbd157da35, type: 2}
+  - {fileID: 11400000, guid: 3e910a597d528664a9437e4c22ed76e0, type: 2}
+  - {fileID: 11400000, guid: 100c017b1400f6849bd5f66bcbd2cf27, type: 2}
+  powerupModal: {fileID: 2920243273137217450, guid: db51b2042bfab174daaa8f571e136917, type: 3}

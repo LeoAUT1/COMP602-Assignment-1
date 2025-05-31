@@ -27,7 +27,7 @@ public class TrapEncounter : GenericNonCombatEncounter
     {
         text.SetText($"You fail to dodge the trap, and take {trapDamage} damage.");
         playerCombat.SubtractHealth(trapDamage);
-        StartCoroutine(FinishEncounter());
+        StartCoroutine(FinishEncounter(false));
     }
 
     public void AttemptTrap()

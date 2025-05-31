@@ -13,10 +13,16 @@ public class GenericNonCombatEncounter : MonoBehaviour
         board = b; ;
     }
 
-    protected IEnumerator FinishEncounter()
+    protected IEnumerator FinishEncounter(bool success=true)
     {
         // Wait for the specified delay
         yield return new WaitForSeconds(delayBeforeDestroy);
+
+        if (success) {
+
+            Player.Instance.GrantRandomPowerup();
+        }
+
 
         // Re-enable board buttons and destroy this component
         board.EnableBoardButtons();

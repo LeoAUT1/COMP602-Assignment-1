@@ -63,10 +63,7 @@ public class PowerupsOverlay : MonoBehaviour
             rectTransform.anchoredPosition = new Vector2( -160, (-count * iconOffset) + 110);
 
             PowerUpIcon pup = go.GetComponent<PowerUpIcon>();
-            pup.SetSprite(powerup.icon);
-            pup.SetCount($"x{powerup.count}");
-            pup.SetTitle(powerup.powerupName);
-            pup.SetDesc(powerup.description);
+            pup.SetAll(powerup);
 
             count++;
         }

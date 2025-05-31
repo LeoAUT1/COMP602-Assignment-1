@@ -18,7 +18,6 @@ public class Player : Singleton<Player>
 
     private Board board;
 
-
     private BoardTile currentTile;
     [SerializeField] private int tileIndex;
 
@@ -116,5 +115,13 @@ public class Player : Singleton<Player>
     public void SetPlayerPiece(GameObject piece) // Set the player's model, we need this so that we can update the model when the player levels up
     {
         playerPiece = piece.GetComponent<PlayerBoardPiece>();
+    }
+
+    public void GrantRandomPowerup()
+    {
+        // This is stupid and hacky
+        PowerupData powerup = GetComponent<PowerupDistribution>().GrantRandomPowerup();
+        Debug.Log(powerup.powerupName);
+        AddPowerup(powerup);
     }
 }
