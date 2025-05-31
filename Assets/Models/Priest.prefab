@@ -1403,7 +1403,7 @@ GameObject:
   - component: {fileID: 4754508615900690819}
   - component: {fileID: 1665000017619231737}
   m_Layer: 0
-  m_Name: PT_Priest_StPatrick
+  m_Name: Priest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
