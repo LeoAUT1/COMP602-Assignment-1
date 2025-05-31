@@ -11,8 +11,6 @@ public class PlayerCombat : CombatEntity
 
     private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
-    [SerializeField] private RegenPassive regenEffectTemplate;
-
     public override void Initialise(CombatManager cm, CombatHud hud)
     {
         base.Initialise(cm, hud);
@@ -35,14 +33,14 @@ public class PlayerCombat : CombatEntity
     public void AddPowerup(string name, PowerupData powerup)
     {
         Debug.Log($"Adding {powerup} to PlayerCombat");
-        if (powerUps.TryGetValue(powerup.name, out PowerupData existingPowerup))
+        if (powerUps.TryGetValue(powerup.powerupName, out PowerupData existingPowerup))
         {
             // Powerup already exists, increment its value
             existingPowerup.Increment();
             return;
         }
 
-        powerUps.Add(name, powerup);
+        powerUps.Add(powerup.powerupName, powerup);
     }
 
     //new abilites when leveling up

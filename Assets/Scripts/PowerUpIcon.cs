@@ -20,6 +20,15 @@ public class PowerUpIcon : MonoBehaviour
         _sprite.sprite = sprite;
     }
 
+    public void SetAll(PowerupData pup)
+    {
+        Debug.Log($"Powerup icon being set to {pup.powerupName}");
+        SetSprite(pup.icon);
+        SetCount($"x{pup.count}");
+        SetTitle(pup.powerupName);
+        SetDesc(pup.description);
+    }
+
     public void SetCount(string text)
     {
         if (_count == null)

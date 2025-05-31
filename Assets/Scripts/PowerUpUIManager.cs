@@ -50,8 +50,7 @@ public class PowerUpUIManager : MonoBehaviour
             rectTransform.anchoredPosition = new Vector2((-count * iconOffset)-70, 40);
 
             PowerUpIcon pup = go.GetComponent<PowerUpIcon>();
-            pup.SetSprite(powerup.icon);
-            pup.SetCount($"x{powerup.count}");
+            pup.SetAll(powerup);
 
             count++;
         }

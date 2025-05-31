@@ -35,7 +35,7 @@ public class PowerupDebug : MonoBehaviour
             TMPro.TextMeshProUGUI tmpText = newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (tmpText != null)
             {
-                tmpText.text = "DEBUG " + powerups[i].name;
+                tmpText.text = "DEBUG " + powerups[i].powerupName;
             }
 
             // Add click listener
@@ -57,17 +57,17 @@ public class PowerupDebug : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Giving the player {powerups[index].name}");
+        Debug.Log($"Giving the player {powerups[index].powerupName}");
         PowerupData copy = Instantiate(powerups[index]);
         Player.Instance.AddPowerup(copy);
     }
 
     public void GrantPowerupByName(string powerupName)
     {
-        PowerupData powerup = powerups.Find(p => p.name == powerupName);
+        PowerupData powerup = powerups.Find(p => p.powerupName == powerupName);
         if (powerup != null)
         {
-            Debug.Log($"Giving the player {powerup.name}");
+            Debug.Log($"Giving the player {powerup.powerupName}");
             PowerupData copy = Instantiate(powerup);
             Player.Instance.AddPowerup(copy);
         }
@@ -79,6 +79,6 @@ public class PowerupDebug : MonoBehaviour
 
     public string[] GetPowerupNames()
     {
-        return powerups.Select(p => p.name).ToArray();
+        return powerups.Select(p => p.powerupName).ToArray();
     }
 }
