@@ -13,7 +13,7 @@ public class PowerUpIcon : MonoBehaviour
     {
         if (_sprite == null)
         {
-            Debug.LogError($"PowerUpIcon on '{gameObject.name}': _sprite (Image) is not assigned. Cannot set sprite.", gameObject);
+            Debug.Log($"PowerUpIcon on '{gameObject.name}': _sprite (Image) is not assigned. Cannot set sprite.", gameObject);
             return;
         }
         Debug.Log($"Setting sprite on '{gameObject.name}' to: {(sprite != null ? sprite.name : "null")}");
@@ -33,7 +33,7 @@ public class PowerUpIcon : MonoBehaviour
     {
         if (_count == null)
         {
-            Debug.LogError($"PowerUpIcon on '{gameObject.name}': _count (TextMeshProUGUI) is not assigned. Cannot set count text.", gameObject);
+            Debug.Log($"PowerUpIcon on '{gameObject.name}': _count (TextMeshProUGUI) is not assigned. Cannot set count text.", gameObject);
             return;
         }
         _count.text = text;
@@ -43,7 +43,7 @@ public class PowerUpIcon : MonoBehaviour
     {
         if (_title == null)
         {
-            Debug.LogError($"PowerUpIcon on '{gameObject.name}': _title (TextMeshProUGUI) is not assigned. Cannot set title text.", gameObject);
+            Debug.Log($"PowerUpIcon on '{gameObject.name}': _title (TextMeshProUGUI) is not assigned. Cannot set title text.", gameObject);
             return;
         }
         _title.text = text;
@@ -53,7 +53,7 @@ public class PowerUpIcon : MonoBehaviour
     {
         if (_desc == null)
         {
-            Debug.LogError($"PowerUpIcon on '{gameObject.name}': _desc (TextMeshProUGUI) is not assigned. Cannot set description text.", gameObject);
+            Debug.Log($"PowerUpIcon on '{gameObject.name}': _desc (TextMeshProUGUI) is not assigned. Cannot set description text.", gameObject);
             return;
         }
         _desc.text = text;

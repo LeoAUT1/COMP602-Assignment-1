@@ -26,6 +26,7 @@ public class GenericNonCombatEncounter : MonoBehaviour
 
         // Re-enable board buttons and destroy this component
         board.EnableBoardButtons();
+        board.UpdatePlayerStatsUi();
         Destroy(gameObject);
     }
 }
