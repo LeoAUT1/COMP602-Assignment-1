@@ -13,8 +13,7 @@ public class EncounterData : ScriptableObject
     public bool isFinalBoss; // True if you want beating this encounter to win the game
 
     public EncounterType encounterType;
-
-
+    
     [Header("Board Model")]
     public GameObject boardVisual;
 
@@ -25,5 +24,6 @@ public class EncounterData : ScriptableObject
     public Enemy[] enemies;
 
     [Header("Rewards")]
+    public int grantedCoins;
     public int grantedExperience;
 }
