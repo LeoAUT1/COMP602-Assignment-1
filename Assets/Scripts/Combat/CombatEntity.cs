@@ -182,4 +182,9 @@ public abstract class CombatEntity : MonoBehaviour
     {
         Abilities.Remove(ability);
     }
+
+    public void Heal(int amount)
+    {
+     health = Mathf.Min(health + amount, maxHealth);
+    }
 }
