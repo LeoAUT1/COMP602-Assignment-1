@@ -22,6 +22,8 @@ public class Board : MonoBehaviour
 
     [SerializeField] private float diceSpawnDistanceFromCam = 0.5f;
 
+    [SerializeField] private PlayerInfoUI playerInfoUI;
+
     private void Start()
     {
 
@@ -71,6 +73,8 @@ public class Board : MonoBehaviour
         {
             Debug.LogError("Cannot determine initial player tile for placement even after attempting setup.");
         }
+
+        playerInfoUI.UpdateAll();
     }
 
     public void UpdatePlayerStatsUi()
@@ -83,6 +87,8 @@ public class Board : MonoBehaviour
         {
             Debug.LogWarning("PlayerStats UI or Player reference is missing.");
         }
+
+        playerInfoUI.UpdateAll();
     }
 
     public void OnRollButtonClicked()
@@ -236,6 +242,9 @@ public class Board : MonoBehaviour
                 // Instantiate and setup the non-combat encounter
                 GameObject encounterInstance = Instantiate(encounter.prefab);
                 GenericNonCombatEncounter encounterScript = encounterInstance.GetComponent<GenericNonCombatEncounter>();
+
+                //Set the exp to be granted by the NCE from the SO
+                encounterScript.SetExperienceGranted(encounter.grantedExperience);
 
                 if (encounterScript != null)
                 {

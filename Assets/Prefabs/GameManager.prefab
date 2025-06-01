@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentEncounter: {fileID: 0}
   combatManager: {fileID: 0}
-  encounterManager: {fileID: 0}
+  encounterManager: {fileID: 5476262420098406704}
   encounters: []
 --- !u!114 &5476262420098406704
 MonoBehaviour:

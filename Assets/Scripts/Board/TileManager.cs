@@ -10,6 +10,10 @@ public class TileManager : MonoBehaviour
 
     void Start()
     {
+        //Abort early if the Game manager has encounte randomisation disabled
+        if (!GameManager.Instance.enableEncounterRandomisation) { return; }
+
+
         tiles = GetComponentsInChildren<BoardTile>();
 
         if (tiles == null || tiles.Length == 0)
