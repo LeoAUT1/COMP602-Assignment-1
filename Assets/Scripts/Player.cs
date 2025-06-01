@@ -42,6 +42,11 @@ public class Player : Singleton<Player>
         return false;
     }
 
+    public int GetExpToLevel()
+    {
+        return (int)(baseExp * Mathf.Pow(playerLevel, powerCurve)) - experience;
+    }
+
     public void AddExperience(int amount)
     {
         experience += amount;
@@ -65,6 +70,40 @@ public class Player : Singleton<Player>
         {
             board.UpdatePlayerStatsUi();
         }
+    }
+
+    private float GetTotalXpRequiredToReachLevel(int level)
+    {
+        if (level <= 1)
+        {
+            return 0f;
+        }
+        return baseExp * Mathf.Pow(level - 1, powerCurve);
+    }
+
+    //There is a good argument for moving this logic elsewhere... but eh
+    public float GetNormalizedExperienceProgress()
+    {
+        float xpAtStartOfCurrentLevel = GetTotalXpRequiredToReachLevel(playerLevel);
+        float xpAtStartOfNextLevel = GetTotalXpRequiredToReachLevel(playerLevel + 1);
+
+        float totalXpForThisLevelBand = xpAtStartOfNextLevel - xpAtStartOfCurrentLevel;
+
+        if (totalXpForThisLevelBand <= 0)
+        {
+
+            if (GetExperience() >= xpAtStartOfCurrentLevel)
+            {
+                return 1.0f;
+            }
+            return 0.0f;
+        }
+
+        float xpGainedInCurrentLevelBand = GetExperience() - xpAtStartOfCurrentLevel;
+
+        float normalizedProgress = xpGainedInCurrentLevelBand / totalXpForThisLevelBand;
+
+        return Mathf.Clamp01(normalizedProgress);
     }
 
     public int GetExperience()

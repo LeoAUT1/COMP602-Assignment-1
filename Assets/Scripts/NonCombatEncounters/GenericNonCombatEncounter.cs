@@ -6,6 +6,7 @@ public class GenericNonCombatEncounter : MonoBehaviour
 {
     protected Board board;
     public float delayBeforeDestroy = 1f; // Configurable delay in seconds
+    private int experienceGranted = 0;
 
     public void SetBoard(Board b)
     {
@@ -20,7 +21,10 @@ public class GenericNonCombatEncounter : MonoBehaviour
 
         if (success) {
 
+            Debug.Log($"Granting the player {experienceGranted}xp");
+
             Player.Instance.GrantRandomPowerup();
+            Player.Instance.AddExperience(experienceGranted);
         }
 
 
@@ -28,5 +32,10 @@ public class GenericNonCombatEncounter : MonoBehaviour
         board.EnableBoardButtons();
         board.UpdatePlayerStatsUi();
         Destroy(gameObject);
+    }
+
+    public void SetExperienceGranted(int exp)
+    {
+        experienceGranted = exp;
     }
 }

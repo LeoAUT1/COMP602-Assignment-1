@@ -62,8 +62,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Player
-  health: 100
-  maxHealth: 100
+  health: 7
+  maxHealth: 10
   strength: 1
   dexterity: 1
   intelligence: 1

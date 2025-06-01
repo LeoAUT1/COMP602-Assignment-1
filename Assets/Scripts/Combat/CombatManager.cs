@@ -57,7 +57,9 @@ public class CombatManager : MonoBehaviour
     IEnumerator SetupBattle()
     {
         enemyUnit = Instantiate(encounter.enemies[0], instantiateEnemyHere);
-        Instantiate(playerPiecePrefab, instantiatePlayerHere.position, instantiatePlayerHere.rotation);
+        GameObject playerPiece = Instantiate(playerPiecePrefab, instantiatePlayerHere.position, instantiatePlayerHere.rotation);
+
+        Player.Instance.SetPlayerPiece(playerPiece);
 
         playerUnit = Player.Instance.GetComponent<PlayerCombat>();
 

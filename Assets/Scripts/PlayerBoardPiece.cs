@@ -26,7 +26,11 @@ public class PlayerBoardPiece : MonoBehaviour
 
         foreach (GameObject playerModel in playerModels)
         {
-            playerModel.SetActive(false);
+            if (playerModel != null)
+            {
+
+                playerModel.SetActive(false);
+            }
         }
 
         int level = Player.Instance.GetLevel();

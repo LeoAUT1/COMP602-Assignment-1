@@ -243,6 +243,9 @@ public class Board : MonoBehaviour
                 GameObject encounterInstance = Instantiate(encounter.prefab);
                 GenericNonCombatEncounter encounterScript = encounterInstance.GetComponent<GenericNonCombatEncounter>();
 
+                //Set the exp to be granted by the NCE from the SO
+                encounterScript.SetExperienceGranted(encounter.grantedExperience);
+
                 if (encounterScript != null)
                 {
                     encounterScript.SetBoard(this);
