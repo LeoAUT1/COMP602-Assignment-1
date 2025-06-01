@@ -187,4 +187,17 @@ public abstract class CombatEntity : MonoBehaviour
     {
      health = Mathf.Min(health + amount, maxHealth);
     }
+
+    public virtual float DodgeChance()
+    {
+        float dodgeChance = 0.0f + (dexterity * 0.01f);
+        return Mathf.Clamp01(dodgeChance);
+    }
+
+    public virtual bool DodgeAttempt()
+    {
+        return Random.value < DodgeChance();
+    }
+
+
 }
