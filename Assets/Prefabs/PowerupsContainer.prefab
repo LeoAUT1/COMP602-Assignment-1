@@ -174,7 +174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpIcon: {fileID: 7666983378595503426, guid: d414661956a2b7f42a5ef241ccc96a70, type: 3}
   container: {fileID: 6280471359619184372}
-  titleText: {fileID: 2506963892731032405}
+  powersUpButton: {fileID: 2506963892731032405}
   iconOffset: 100
 --- !u!1 &4486314659963296618
 GameObject:

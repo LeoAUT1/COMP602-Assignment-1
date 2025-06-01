@@ -39,6 +39,13 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "GameBoard")
         {
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
+
+            if (currentEncounter != null)
+            {
+                //Grant the player the experience from completing the encounter
+                Player.Instance.AddExperience(currentEncounter.grantedExperience);
+            }
+            Debug.Log(currentEncounter);
         }
 
         if (scene.name == "Combat") //Maybe not use strings like this? im not sure
