@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 // Enum GameBoardState remains the same
 
 public class Board : MonoBehaviour
