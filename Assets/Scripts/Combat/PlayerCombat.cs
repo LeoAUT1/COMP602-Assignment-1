@@ -17,7 +17,7 @@ public class PlayerCombat : CombatEntity
 
         // Grant the player the basic ability
         AddAbility(new BasicAttackAbility());
-        AddAbility(new DoTAttack());
+        //AddAbility(new DoTAttack());
 
         foreach (PowerupData pup in powerUps.Values)
         {
@@ -51,10 +51,16 @@ public class PlayerCombat : CombatEntity
         switch (level)
         {
             case 2:
-                newAbility = new HeavyAttack();
+                newAbility = new DoubleSlash();
                 break;
             case 3:
-                newAbility = new TestAbility();
+                newAbility = new DrainLife();
+                break;
+            case 4:
+                newAbility = new BurningBlade();
+                break;
+            case 5:
+                newAbility = new HeavyAttack();
                 break;
             default:
                 Debug.Log("no new ability");

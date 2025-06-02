@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class HeavyAttack : AbilityBase
+public class DrainLife : AbilityBase
 {
-    public override string AbilityName => "Heavy Attack";
-    public override string Description => "Massive physical attack with double the damage but inflicts recoil";
+    public override string AbilityName => "Drain Life";
+    public override string Description => "Weak damage that steals life based on damage";
 
     public override int Cooldown => 2;
 
@@ -26,7 +25,7 @@ public class HeavyAttack : AbilityBase
 
         hud.QueueCombatMessage($"{caster.GetName()} uses {AbilityName} on {primaryTarget.GetName()}!");
 
-        int damage = caster.GetStrength() * 2;
+        int damage = caster.GetStrength() / 2;
 
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
         foreach (var effect in casterEffects)
@@ -38,7 +37,8 @@ public class HeavyAttack : AbilityBase
         Coroutine preDamageMessages = hud.ProcessMessageQueue();
         if (preDamageMessages != null) yield return preDamageMessages;
 
-        // Do the thing
+        // Do the thing and update
+
 
         int hitDamage = damage;
         bool isCrit = false;
@@ -56,19 +56,13 @@ public class HeavyAttack : AbilityBase
         {
             hud.QueueCombatMessage($"Critical Hit!");
         }
+
         primaryTarget.TakeDamage(hitDamage);
 
-        // Determine if target is Player or Enemy for HUD update
-        if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
-        else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
+            if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
+            else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
 
-
-        // recoil damage
-        float recoilPercent = 0.2f; // 20% of damage as recoil. change if needed
-        int recoilDamage = Mathf.RoundToInt(damage * recoilPercent);
-
-        caster.TakeDamage(recoilDamage);
-        hud.QueueCombatMessage($"you take some recoil damage");
+            caster.Heal(hitDamage);
 
         if (caster is PlayerCombat)
             hud.UpdatePlayerHud(caster as PlayerCombat);
@@ -77,4 +71,6 @@ public class HeavyAttack : AbilityBase
         Coroutine postDamageMessages = hud.ProcessMessageQueue();
         if (postDamageMessages != null) yield return postDamageMessages;
     }
+
+ 
 }

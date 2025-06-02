@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class HeavyAttack : AbilityBase
+public class BurningBlade : AbilityBase
 {
-    public override string AbilityName => "Heavy Attack";
-    public override string Description => "Massive physical attack with double the damage but inflicts recoil";
+    public override string AbilityName => "Burning Blade";
+    public override string Description => "Inflicts damage and deals burn damage equivalent to the caster's Intelligence for 3 turns";
 
     public override int Cooldown => 2;
 
@@ -15,6 +15,13 @@ public class HeavyAttack : AbilityBase
 
     public override IEnumerator Execute(CombatEntity caster, CombatEntity primaryTarget, CombatManager combatManager, CombatHud hud)
     {
+        //New DoT
+        DegenPassive dot = ScriptableObject.CreateInstance<DegenPassive>();
+
+        dot.SetEffectName("Burn");
+        dot.SetDescription("The target is burning");
+        dot.SetDuration(3);
+        dot.SetDamageAmount(caster.GetIntelligence());
 
         Debug.Log($"{caster} used {AbilityName}");
 
@@ -26,7 +33,7 @@ public class HeavyAttack : AbilityBase
 
         hud.QueueCombatMessage($"{caster.GetName()} uses {AbilityName} on {primaryTarget.GetName()}!");
 
-        int damage = caster.GetStrength() * 2;
+        int damage = caster.GetStrength();
 
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
         foreach (var effect in casterEffects)
@@ -58,20 +65,12 @@ public class HeavyAttack : AbilityBase
         }
         primaryTarget.TakeDamage(hitDamage);
 
+        // Apply to target after hit
+        primaryTarget.AddStatusEffect(dot);
+
         // Determine if target is Player or Enemy for HUD update
         if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
         else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
-
-
-        // recoil damage
-        float recoilPercent = 0.2f; // 20% of damage as recoil. change if needed
-        int recoilDamage = Mathf.RoundToInt(damage * recoilPercent);
-
-        caster.TakeDamage(recoilDamage);
-        hud.QueueCombatMessage($"you take some recoil damage");
-
-        if (caster is PlayerCombat)
-            hud.UpdatePlayerHud(caster as PlayerCombat);
 
 
         Coroutine postDamageMessages = hud.ProcessMessageQueue();

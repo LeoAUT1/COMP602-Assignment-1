@@ -216,9 +216,16 @@ public class CombatManager : MonoBehaviour
         // List<StatusEffect> enemyEffects = enemyUnit.GetActiveStatusEffects();
         // foreach(var effect in enemyEffects) { effect.OnDamageDealt(playerUnit, ref damage); }
         // ---
-
-        playerUnit.TakeDamage(damage, enemyUnit);
-        combatHud.UpdatePlayerHud(playerUnit);
+        if (playerUnit.DodgeAttempt())
+        {
+            combatHud.QueueCombatMessage("you successfully dodged the attack!");
+        }
+        else
+        {
+            playerUnit.TakeDamage(damage, enemyUnit);
+            combatHud.UpdatePlayerHud(playerUnit);
+        }
+            
 
         // Process messages from player's OnDamageTaken effects
         Coroutine playerDamagedMessages = combatHud.ProcessMessageQueue();
