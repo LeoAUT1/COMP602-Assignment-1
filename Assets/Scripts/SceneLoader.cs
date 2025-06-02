@@ -15,6 +15,11 @@ public class SceneLoader : Singleton<SceneLoader>
     {
         base.Awake(); // Call Singleton's Awake
 
+        if (Instance != this)
+        {
+            return;
+        }
+
         // Create fade canvas and image if not assigned
         if (canvas == null)
         {
