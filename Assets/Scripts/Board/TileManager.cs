@@ -45,7 +45,7 @@ public class TileManager : MonoBehaviour
     {
         foreach (BoardTile tile in tiles)
         {
-            if (tile.ToString().Contains("BossTile")) continue;
+            if (tile.isFirstorLastTile) continue;
 
             //Debug.Log($"Clearing encounter from: {tile.name}");
             tile.SetEncounterData(null);
@@ -59,7 +59,7 @@ public class TileManager : MonoBehaviour
         int count = 0;
         foreach (BoardTile tile in tiles)
         {
-            if (tile.GetEncounter() == null || tile.GetEncounter().isFinalBoss == true)
+            if (tile.isFirstorLastTile == true)
             {
                 //Pass on the first and last tile
                 continue;

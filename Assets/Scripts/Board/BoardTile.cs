@@ -15,6 +15,8 @@ public class BoardTile : MonoBehaviour
     public Transform enemyPlacement;
     public Transform pathVisualiser;
 
+    public bool isFirstorLastTile = false;
+
     // Accessor for the next tile
     public BoardTile GetNextTile()
     {
