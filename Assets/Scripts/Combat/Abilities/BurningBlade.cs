@@ -6,7 +6,7 @@ using UnityEngine;
 public class BurningBlade : AbilityBase
 {
     public override string AbilityName => "Burning Blade";
-    public override string Description => "Inflicts 5 turns of damage equivalent to the caster's Intelligence";
+    public override string Description => "Inflicts damage and deals burn damage equivalent to the caster's Intelligence for 3 turns";
 
     public override int Cooldown => 2;
 
@@ -22,9 +22,6 @@ public class BurningBlade : AbilityBase
         dot.SetDescription("The target is burning");
         dot.SetDuration(3);
         dot.SetDamageAmount(caster.GetIntelligence());
-
-        // Apply to target
-        primaryTarget.AddStatusEffect(dot);
 
         Debug.Log($"{caster} used {AbilityName}");
 
@@ -49,7 +46,27 @@ public class BurningBlade : AbilityBase
         if (preDamageMessages != null) yield return preDamageMessages;
 
         // Do the thing
-        primaryTarget.TakeDamage(damage);
+
+        int hitDamage = damage;
+        bool isCrit = false;
+
+        if (caster.CritAttempt())
+        {
+            isCrit = true;
+
+            float critMultiplier = 1.5f; //crit multiplier at 150% damage
+            hitDamage = Mathf.RoundToInt(damage * critMultiplier);
+
+        }
+
+        if (isCrit)
+        {
+            hud.QueueCombatMessage($"Critical Hit!");
+        }
+        primaryTarget.TakeDamage(hitDamage);
+
+        // Apply to target after hit
+        primaryTarget.AddStatusEffect(dot);
 
         // Determine if target is Player or Enemy for HUD update
         if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);

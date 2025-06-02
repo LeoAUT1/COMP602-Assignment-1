@@ -25,6 +25,7 @@ public class DoubleSlash : AbilityBase
 
         hud.QueueCombatMessage($"{caster.GetName()} uses {AbilityName} on {primaryTarget.GetName()}!");
 
+        //damage number
         int damage = caster.GetStrength();
 
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
@@ -41,12 +42,29 @@ public class DoubleSlash : AbilityBase
 
         for (int i = 0; i < 2; i++)
         {
-            primaryTarget.TakeDamage(damage);
+
+            int hitDamage = damage;
+            bool isCrit = false;
+
+            if (caster.CritAttempt())
+            {
+                isCrit = true;
+
+                float critMultiplier = 1.5f; //crit multiplier at 150% damage
+                hitDamage = Mathf.RoundToInt(damage *  critMultiplier);
+                
+            }
+
+            if (isCrit)
+            {
+                hud.QueueCombatMessage($"Critical Hit!");
+            }
+                primaryTarget.TakeDamage(hitDamage);
 
             if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
             else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
 
-            if (i == 0) yield return new WaitForSeconds(1f);
+            if (i == 0) yield return new WaitForSeconds(0.5f);
 
         }
        

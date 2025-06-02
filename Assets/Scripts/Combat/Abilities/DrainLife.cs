@@ -38,13 +38,31 @@ public class DrainLife : AbilityBase
         if (preDamageMessages != null) yield return preDamageMessages;
 
         // Do the thing and update
-       
-            primaryTarget.TakeDamage(damage);
+
+
+        int hitDamage = damage;
+        bool isCrit = false;
+
+        if (caster.CritAttempt())
+        {
+            isCrit = true;
+
+            float critMultiplier = 1.5f; //crit multiplier at 150% damage
+            hitDamage = Mathf.RoundToInt(damage * critMultiplier);
+
+        }
+
+        if (isCrit)
+        {
+            hud.QueueCombatMessage($"Critical Hit!");
+        }
+
+        primaryTarget.TakeDamage(hitDamage);
 
             if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);
             else if (primaryTarget is Enemy) hud.UpdateEnemyHud(primaryTarget as Enemy);
 
-            caster.Heal(damage);
+            caster.Heal(hitDamage);
 
         if (caster is PlayerCombat)
             hud.UpdatePlayerHud(caster as PlayerCombat);

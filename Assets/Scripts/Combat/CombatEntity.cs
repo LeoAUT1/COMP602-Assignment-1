@@ -183,15 +183,17 @@ public abstract class CombatEntity : MonoBehaviour
         Abilities.Remove(ability);
     }
 
+    //healing
     public void Heal(int amount)
     {
      health = Mathf.Min(health + amount, maxHealth);
     }
 
+    //dodge attack based on dex
     public virtual float DodgeChance()
     {
         float dodgeChance = 0.0f + (dexterity * 0.01f);
-        return Mathf.Clamp01(dodgeChance);
+        return Mathf.Clamp(dodgeChance,0f,0.9f); //max 90%
     }
 
     public virtual bool DodgeAttempt()
@@ -199,5 +201,16 @@ public abstract class CombatEntity : MonoBehaviour
         return Random.value < DodgeChance();
     }
 
+    //crit chance based on int
+    public virtual float CritChance()
+    {
+        float critChance = 0.0f + (intelligence * 0.01f);
+        return Mathf.Clamp(critChance, 0f, 0.5f); //max 50%
+    }
+
+    public virtual bool CritAttempt()
+    {
+        return Random.value < CritChance();
+    }
 
 }
