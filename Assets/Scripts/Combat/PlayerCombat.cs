@@ -106,4 +106,10 @@ public class PlayerCombat : CombatEntity
         int count = GetCountOfSkillPassive("Giant's Strength");
         return SkillMultiplier(strength, count);
     }
+
+    // Run this when the player starts a new game to guarantee their stats are reset
+    public void ResetPlayerCombat()
+    {
+        health = maxHealth;
+    }
 }

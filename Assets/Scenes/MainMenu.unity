@@ -581,16 +581,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Contrary to popular belief, Lorem Ipsum is not simply random text. It has
-    roots in a piece of classical Latin literature from 45 BC, making it over 2000
-    years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
-    Virginia, looked up one of the more obscure Latin words, consectetur, from a
-    Lorem Ipsum passage, and going through the cites of the word in classical literature,
-    discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and
-    1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by
-    Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very
-    popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor
-    sit amet..", comes from a line in section 1.10.32.
+  m_text: 'As a kid, you lived a very carefree life in the village of Wakefield.
+    The was about as normal as you could get, sunny skies, massive wheat fields,
+    friendly citizens everywhere you went. Until it all went awry. The Denizens of
+    The Serpentine Covenant arrived and laid waste to everything within their sight,
+    eager to satisfy their taste for destruction. You were left as the sole survivor,
+    having hidden well under a pile of wheat and debris. You vowed from that day
+    forward,you would do whatever it takes to destroy The Serpentine Covenant and
+    whatever remnants were left.
+
+    
+
+    Many years later, you managed to acquire
+    equipment that could handle your ever-growing strength, and began your treacherous
+    journey, to Slay the Serpents.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1712,7 +1716,7 @@ MonoBehaviour:
   - {fileID: 1316572149}
   fadeToBlackDuration: 1
   canvasBackground: {fileID: 1276660973}
-  timePerChar: 0.05
+  timePerChar: 0.01
   displayTextObj: {fileID: 465549858}
 --- !u!1 &1316572149
 GameObject:
@@ -2290,8 +2294,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6508123060139364006, guid: ffc1206e0ffa99040bcaef4cf0d740dc, type: 3}
+      propertyPath: health
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508123060139364006, guid: ffc1206e0ffa99040bcaef4cf0d740dc, type: 3}
       propertyPath: strength
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508123060139364006, guid: ffc1206e0ffa99040bcaef4cf0d740dc, type: 3}
+      propertyPath: maxHealth
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8671192130053172557, guid: ffc1206e0ffa99040bcaef4cf0d740dc, type: 3}
       propertyPath: m_Name

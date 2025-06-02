@@ -8,6 +8,8 @@ public class TileManager : MonoBehaviour
 
     private BoardTile[] tiles;
 
+    [SerializeField] private float tileVisualScale = 0.25f;
+
     void Start()
     {
         //Abort early if the Game manager has encounte randomisation disabled
@@ -57,7 +59,7 @@ public class TileManager : MonoBehaviour
         int count = 0;
         foreach (BoardTile tile in tiles)
         {
-            if (tile.name == "StartTile" || tile.name == "BossTile")
+            if (tile.GetEncounter() == null || tile.GetEncounter().isFinalBoss == true)
             {
                 //Pass on the first and last tile
                 continue;
@@ -98,26 +100,9 @@ public class TileManager : MonoBehaviour
             tilesProcessed++;
             EncounterData encounterBase = tile.GetEncounter();
 
-            if (encounterBase != null && encounterBase is EncounterData encounterData)
+            if (encounterBase != null && encounterBase is EncounterData encounterData && encounterData.boardVisual != null)
             {
-                if (encounterData.enemies != null && encounterData.enemies.Length > 0)
-                {
-                    foreach (Enemy enemyPrefab in encounterData.enemies)
-                    {
-                        if (enemyPrefab == null || tile.enemyPlacement == null) continue;
-
-                        Debug.Log($"Spawning {enemyPrefab.name} on tile {tile.name}");
-                        Enemy modelInstance = Instantiate(enemyPrefab, tile.enemyPlacement.position, Quaternion.identity, tile.enemyPlacement);
-                        modelInstance.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-
-                        enemiesActuallySpawned++;
-                    }
-                }
-                else if (encounterData.boardVisual != null)
-                {
-                    // Spawn priest or trap visuals etc.
-                    Instantiate(encounterData.boardVisual, tile.enemyPlacement.position, Quaternion.identity, tile.enemyPlacement);
-                }
+                Instantiate(encounterData.boardVisual, tile.enemyPlacement.position, Quaternion.identity, tile.enemyPlacement);
             }
         }
 
