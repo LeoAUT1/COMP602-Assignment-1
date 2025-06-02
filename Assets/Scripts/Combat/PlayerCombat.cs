@@ -11,13 +11,15 @@ public class PlayerCombat : CombatEntity
 
     private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
+    private void Start()
+    {
+        // Grant the player the basic ability
+        AddAbility(new BasicAttackAbility());
+    }
+
     public override void Initialise(CombatManager cm, CombatHud hud)
     {
         base.Initialise(cm, hud);
-
-        // Grant the player the basic ability
-        AddAbility(new BasicAttackAbility());
-        //AddAbility(new DoTAttack());
 
         foreach (PowerupData pup in powerUps.Values)
         {
