@@ -18,6 +18,7 @@ public class MainMenuCutscene : MonoBehaviour
     // Start is called before the first frame update
 
     private bool cutsceneStarted = false;
+    private bool isCutsceneSkipped = false;
     void Start()
     {
         // Grab the component from our object
@@ -36,9 +37,10 @@ public class MainMenuCutscene : MonoBehaviour
     void Update()
     {
         // This is not a very robust solution, but given the scope of the project it is an acceptable hack
-        if (cutsceneStarted && Input.anyKey) 
+        if (cutsceneStarted && Input.anyKey && !isCutsceneSkipped) 
         {
             SkipCutScene();
+            isCutsceneSkipped = true;
         }
     }
 

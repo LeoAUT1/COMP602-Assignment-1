@@ -65,8 +65,13 @@ public class TileManager : MonoBehaviour
                 continue;
             }
 
-            Debug.Log(tile);
-            Debug.Log($"Setting {tile} to {encounters[count].name}");
+            if (encounters[count] == null)
+            {
+                count++;
+                continue;
+            }
+
+            //Debug.Log($"Setting {tile} to {encounters[count].name}");
 
             tile.SetEncounterData(encounters[count]);
 
@@ -97,12 +102,15 @@ public class TileManager : MonoBehaviour
         Debug.Log("Spawning new visuals...");
         foreach (BoardTile tile in tiles)
         {
+            if (tile.isFirstorLastTile) continue;
+
             tilesProcessed++;
             EncounterData encounterBase = tile.GetEncounter();
 
-            if (encounterBase != null && encounterBase is EncounterData encounterData && encounterData.boardVisual != null)
+            if (encounterBase != null && encounterBase.boardVisual != null)
             {
-                Instantiate(encounterData.boardVisual, tile.enemyPlacement.position, Quaternion.identity, tile.enemyPlacement);
+                GameObject go = Instantiate(encounterBase.boardVisual, tile.enemyPlacement.position, Quaternion.identity, tile.enemyPlacement);
+                go.transform.localScale = new Vector3(tileVisualScale, tileVisualScale, tileVisualScale);
             }
         }
 

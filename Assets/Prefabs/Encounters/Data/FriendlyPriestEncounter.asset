@@ -16,7 +16,7 @@ MonoBehaviour:
   description: A wandering priest
   isFinalBoss: 0
   encounterType: 3
+  boardVisual: {fileID: 7220855672115961417, guid: 36b1582c310de9044b3a0c586f584f58, type: 3}
   prefab: {fileID: 6846774403218835944, guid: 9d2891dd6c050cb488c1b0460618835a, type: 3}
   enemies: []
-  grantedCoins: 10
   grantedExperience: 0
