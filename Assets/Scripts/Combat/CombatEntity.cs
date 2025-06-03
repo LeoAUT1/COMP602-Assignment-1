@@ -102,7 +102,8 @@ public abstract class CombatEntity : MonoBehaviour
     public virtual int GetDexterity() { return dexterity; }
     public virtual int GetIntelligence() { return intelligence; }
     public int GetLevel() { return level; }
-    public bool IsAlive() {  return isAlive; }   
+    public bool IsAlive() {  return isAlive; }
+    public void SetAlive(bool b) { isAlive = b; }
 
     public void SetStrength(int x) { strength = x; }
     public void SetDexterity(int x) { dexterity = x; }

@@ -145,6 +145,8 @@ public class PlayerCombat : CombatEntity
 
         //Clear any status effects
         ClearAllStatusEffects();
+
+        OnStatsChanged?.Invoke();
     }
 
     public void AddStrength(int amount)

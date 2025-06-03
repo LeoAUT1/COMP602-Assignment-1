@@ -13,8 +13,8 @@ public class Player : Singleton<Player>
     private int baseExp = 20; // Base exp for each level
 
     //Internal stats
-    private int experience = 0;
-    private int playerLevel = 1;
+    [SerializeField] private int experience = 0;
+    [SerializeField] private int playerLevel = 1;
 
     //Scene references
     private Board board;
@@ -45,11 +45,16 @@ public class Player : Singleton<Player>
 
     public void ResetPlayer()
     {
+        Debug.Log("Resetting player");
         playerLevel = 1;
         experience = 0;
         currentTile = null;
         tileIndex = 0;
-        playerCombat.ResetPlayerCombat();
+
+        if (playerCombat != null)
+        {
+            playerCombat.ResetPlayerCombat();
+        }
     }
 
     private bool LevelUp(int exp)
@@ -213,7 +218,7 @@ public class Player : Singleton<Player>
             Debug.LogWarning("Player stats changed, but board is null. UI not updated.");
         }
 
-        if (levelupParticleSystem != null)
+        if (levelupParticleSystem != null && playerPiece != null)
         {
             Instantiate(levelupParticleSystem, playerPiece.transform);
         }

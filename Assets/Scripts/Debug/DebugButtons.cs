@@ -5,6 +5,7 @@ public class DebugButtons : MonoBehaviour
 {
     public enum ActionType
     {
+        ExitCombatDead,
         ExitCombat,
         AddExp
     }
@@ -21,6 +22,11 @@ public class DebugButtons : MonoBehaviour
         // Call the appropriate method on the SceneLoader singleton
         switch (actionType)
         {
+            case ActionType.ExitCombatDead:
+                Player.Instance.GetPlayerCombat().SetAlive(false);
+                GameManager.Instance.ExitCombat();
+                break;
+
             case ActionType.ExitCombat:
                 GameManager.Instance.ExitCombat();
                 break;
