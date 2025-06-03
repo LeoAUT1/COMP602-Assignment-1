@@ -49,6 +49,7 @@ MonoBehaviour:
   playerName: Adventurer
   playerCombat: {fileID: 6508123060139364006}
   tileIndex: 0
+  levelUpCanvas: {fileID: 7470852946826213461, guid: 0dbba6ddf0bb43b43b1d94672c6d9ae1, type: 3}
 --- !u!114 &6508123060139364006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,11 +63,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Player
-  health: 7
-  maxHealth: 10
+  health: 1
+  maxHealth: 1
   strength: 1
   dexterity: 1
   intelligence: 1
+  initialHP: 50
+  initialStrength: 5
+  initialIntelligence: 5
+  initialDexterity: 5
 --- !u!114 &5475764370816112373
 MonoBehaviour:
   m_ObjectHideFlags: 0

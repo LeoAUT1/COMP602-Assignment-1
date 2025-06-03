@@ -1,23 +1,38 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using System;
 
 public class PlayerCombat : CombatEntity
 {
+
+    public event Action OnStatsChanged; // Event for triggering player UI to update
+
+    [Header("Player's Starting Stats")]
+    // Use these to set and reset the player's combat stats
+    [SerializeField] private int initialHP;
+    [SerializeField] private int initialStrength;
+    [SerializeField] private int initialIntelligence;
+    [SerializeField] private int initialDexterity;
 
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
 
     private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
+    public void Start()
+    {
+        ResetPlayerCombat();
+        OnStatsChanged?.Invoke();
+    }
+
     public override void Initialise(CombatManager cm, CombatHud hud)
     {
         base.Initialise(cm, hud);
 
-        // Grant the player the basic ability
+        //Set the player's stats to our starting stats
+
+        // Grant the player the basic attack ability
         AddAbility(new BasicAttackAbility());
-        //AddAbility(new DoTAttack());
 
         foreach (PowerupData pup in powerUps.Values)
         {
@@ -119,6 +134,34 @@ public class PlayerCombat : CombatEntity
     // Run this when the player starts a new game to guarantee their stats are reset
     public void ResetPlayerCombat()
     {
-        health = maxHealth;
+        SetHealth(initialHP);
+        SetMaxHealth(initialHP);
+        SetStrength(initialStrength);
+        SetDexterity(initialDexterity);
+        SetIntelligence(initialIntelligence);
+
+        //Clear all the player's powerups
+        powerUps = new Dictionary<string, PowerupData>();
+
+        //Clear any status effects
+        ClearAllStatusEffects();
+    }
+
+    public void AddStrength(int amount)
+    {
+        strength += amount;
+        OnStatsChanged?.Invoke();
+    }
+
+    public void AddDexterity(int amount)
+    {
+        dexterity += amount;
+        OnStatsChanged?.Invoke();
+    }
+
+    public void AddIntelligence(int amount)
+    {
+        intelligence += amount;
+        OnStatsChanged?.Invoke(); 
     }
 }

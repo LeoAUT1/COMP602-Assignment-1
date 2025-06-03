@@ -92,6 +92,7 @@ public abstract class CombatEntity : MonoBehaviour
     public void SetStrength(int x) { strength = x; }
     public void SetDexterity(int x) { dexterity = x; }
     public void SetIntelligence (int x) { intelligence = x; }
+    public void SetMaxHealth (int x) { maxHealth = x; }
 
     // For managing status effects
     public void AddStatusEffect(StatusEffect effectTemplate)
@@ -115,6 +116,11 @@ public abstract class CombatEntity : MonoBehaviour
     public List<StatusEffect> GetActiveStatusEffects()
     {
         return new List<StatusEffect>(statusEffects); // Return a copy
+    }
+
+    public void ClearAllStatusEffects()
+    {
+        statusEffects = new List<StatusEffect>();
     }
 
     // To trigger HUD updates after effects
@@ -212,20 +218,4 @@ public abstract class CombatEntity : MonoBehaviour
     {
         return Random.value < CritChance();
     }
-
-    public void AddStrength(int amount)
-    {
-        strength += amount;
-    }
-
-    public void AddDexterity(int amount)
-    {
-        dexterity += amount;
-    }
-
-    public void AddIntelligence(int amount)
-    {
-        intelligence += amount;
-    }
-
 }

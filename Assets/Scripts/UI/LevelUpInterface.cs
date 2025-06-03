@@ -13,6 +13,9 @@ public class LevelUpInterface : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI unlockAbilityText;
+
+    [SerializeField] private int skillLevelsPerLevel = 10; //Amount the player can allocate in str dex or int per level
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,22 +49,26 @@ public class LevelUpInterface : MonoBehaviour
             unlockAbilityText.text = "";
             return;
         }
-        unlockAbilityText.text = $"You unlocked {newAbility.AbilityName}";
+        unlockAbilityText.text = $"{newAbility.AbilityName} unlocked!";
     }
 
     public void PlayerChoosesStr()
     {
-        Player.Instance.GetPlayerCombat().AddStrength(1);
+        Debug.Log("Player choses str");
+        Player.Instance.GetPlayerCombat().AddStrength(skillLevelsPerLevel);
+        Destroy(gameObject);
     }
 
     public void PlayerChoosesDex()
     {
-        Player.Instance.GetPlayerCombat().AddDexterity(1);
+        Player.Instance.GetPlayerCombat().AddDexterity(skillLevelsPerLevel);
+        Destroy(gameObject);
 
     }
 
     public void PlayerChoosesInt()
     {
-        Player.Instance.GetPlayerCombat().AddIntelligence(1);
+        Player.Instance.GetPlayerCombat().AddIntelligence(skillLevelsPerLevel);
+        Destroy(gameObject);
     }
 }

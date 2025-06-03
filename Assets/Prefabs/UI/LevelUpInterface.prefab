@@ -120,7 +120,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6498500919440403292}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2248221376448525745}
+        m_TargetAssemblyTypeName: LevelUpInterface, GameLogic
+        m_MethodName: PlayerChoosesDex
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1373637267521005005
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,7 +168,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 160}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 80, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4928876023306558060
 CanvasRenderer:
@@ -1064,7 +1076,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2709852842271929867}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2248221376448525745}
+        m_TargetAssemblyTypeName: LevelUpInterface, GameLogic
+        m_MethodName: PlayerChoosesInt
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5899914391035881291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1319,7 +1343,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2781253532190470595}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2248221376448525745}
+        m_TargetAssemblyTypeName: LevelUpInterface, GameLogic
+        m_MethodName: PlayerChoosesStr
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6335136242992124277
 GameObject:
   m_ObjectHideFlags: 0
@@ -1712,6 +1748,7 @@ MonoBehaviour:
   increaseIntButton: {fileID: 1115613954345291687}
   titleText: {fileID: 2771616757610197503}
   unlockAbilityText: {fileID: 4883262263663052384}
+  skillLevelsPerLevel: 10
 --- !u!1 &8104878103485738139
 GameObject:
   m_ObjectHideFlags: 0

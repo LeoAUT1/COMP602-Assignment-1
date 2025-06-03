@@ -8,20 +8,39 @@ public class Player : Singleton<Player>
 {
     public string playerName = "Adventurer";
 
+    //Leveling constants
     private float powerCurve = 1.1f; //The power term for how much exp should be required for each future level.
     private int baseExp = 20; // Base exp for each level
 
-    private int experience;
+    //Internal stats
+    private int experience = 0;
     private int playerLevel = 1;
-    [SerializeField] PlayerCombat playerCombat;
-    private PlayerBoardPiece playerPiece;
 
+    //Scene references
     private Board board;
+    [SerializeField] PlayerCombat playerCombat;
 
+    //Scene references for player location
     private BoardTile currentTile;
     [SerializeField] private int tileIndex;
 
+    //Prefabs
+    private PlayerBoardPiece playerPiece;
     [SerializeField] private GameObject levelUpCanvas;
+
+    protected override void Awake() // Assuming Singleton<Player> has a virtual Awake
+    {
+        base.Awake(); // Call base Awake if it exists and does something important
+
+        if (playerCombat != null)
+        {
+            playerCombat.OnStatsChanged += HandlePlayerStatsChanged;
+        }
+        else
+        {
+            Debug.LogError("PlayerCombat is not assigned in Player.cs. UI updates on stat changes will not work.");
+        }
+    }
 
     public void ResetPlayer()
     {
@@ -29,6 +48,7 @@ public class Player : Singleton<Player>
         experience = 0;
         currentTile = null;
         tileIndex = 0;
+        playerCombat.ResetPlayerCombat();
     }
 
     private bool LevelUp(int exp)
@@ -168,5 +188,28 @@ public class Player : Singleton<Player>
         PowerupData powerup = GetComponent<PowerupDistribution>().GrantRandomPowerup();
         Debug.Log(powerup.powerupName);
         AddPowerup(powerup);
+    }
+
+    // Unsubscribe when the Player object is destroyed
+    void OnDestroy()
+    {
+        if (playerCombat != null)
+        {
+            playerCombat.OnStatsChanged -= HandlePlayerStatsChanged;
+        }
+    }
+
+    // This method will be called when PlayerCombat raises OnStatsChanged
+    private void HandlePlayerStatsChanged()
+    {
+        if (board != null)
+        {
+            Debug.Log("Player stats changed, updating UI via callback.");
+            board.UpdatePlayerStatsUi();
+        }
+        else
+        {
+            Debug.LogWarning("Player stats changed, but board is null. UI not updated.");
+        }
     }
 }
