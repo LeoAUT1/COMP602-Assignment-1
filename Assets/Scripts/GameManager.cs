@@ -39,6 +39,16 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "GameBoard")
         {
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
+
+            if (currentEncounter != null)
+            {
+                //Grant the player the experience from completing the encounter
+                //Player.Instance.AddExperience(currentEncounter.grantedExperience);
+
+                Debug.Log($" Encounter at current index{encounters[Player.Instance.GetTileIndex()-1]}");
+
+                encounters[Player.Instance.GetTileIndex()-1] = null;
+            }
         }
 
         if (scene.name == "Combat") //Maybe not use strings like this? im not sure
@@ -108,8 +118,6 @@ public class GameManager : Singleton<GameManager>
 
     public EncounterData[] GetEncounters(int count)
     {
-
-        Debug.Log(encounters);
         //Encounters have not been generated yet
         if (encounters == null || encounters.Length == 0)
         {

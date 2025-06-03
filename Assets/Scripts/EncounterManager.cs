@@ -30,6 +30,12 @@ public class EncounterManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             encounterArray[i] = shuffledEncounters[i % shuffledEncounters.Length];
+
+            //Shuffle the array now that we've reached the end
+            if (i % shuffledEncounters.Length == 0)
+            {
+                ArrayShuffleUtility.Shuffle(shuffledEncounters);
+            }
         }
 
         Debug.Log($"Returning {encounterArray.Length} encounters");

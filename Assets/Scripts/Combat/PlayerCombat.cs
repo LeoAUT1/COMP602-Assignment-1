@@ -11,13 +11,15 @@ public class PlayerCombat : CombatEntity
 
     private Dictionary<string, PowerupData> powerUps = new Dictionary<string, PowerupData>();
 
+    private void Start()
+    {
+        // Grant the player the basic ability
+        AddAbility(new BasicAttackAbility());
+    }
+
     public override void Initialise(CombatManager cm, CombatHud hud)
     {
         base.Initialise(cm, hud);
-
-        // Grant the player the basic ability
-        AddAbility(new BasicAttackAbility());
-        AddAbility(new DoTAttack());
 
         foreach (PowerupData pup in powerUps.Values)
         {
@@ -51,10 +53,16 @@ public class PlayerCombat : CombatEntity
         switch (level)
         {
             case 2:
-                newAbility = new HeavyAttack();
+                newAbility = new DoubleSlash();
                 break;
             case 3:
-                newAbility = new TestAbility();
+                newAbility = new DrainLife();
+                break;
+            case 4:
+                newAbility = new BurningBlade();
+                break;
+            case 5:
+                newAbility = new HeavyAttack();
                 break;
             default:
                 Debug.Log("no new ability");
@@ -105,5 +113,11 @@ public class PlayerCombat : CombatEntity
     {
         int count = GetCountOfSkillPassive("Giant's Strength");
         return SkillMultiplier(strength, count);
+    }
+
+    // Run this when the player starts a new game to guarantee their stats are reset
+    public void ResetPlayerCombat()
+    {
+        health = maxHealth;
     }
 }

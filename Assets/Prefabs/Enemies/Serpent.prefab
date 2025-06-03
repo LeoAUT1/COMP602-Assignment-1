@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6829974523710015116}
+  - {fileID: 7781290047078293249}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2978936711534133682
@@ -48,11 +48,11 @@ MonoBehaviour:
   entityName: The Serpent
   health: 10
   maxHealth: 10
-  strength: 10
-  dexterity: 1
-  intelligence: 1
-  experienceGranted: 100
---- !u!1001 &6431783314684207463
+  strength: 5
+  dexterity: 5
+  intelligence: 5
+  experienceGranted: 10
+--- !u!1001 &7815446776342591722
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -74,15 +74,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.548
+      value: 0.387
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalRotation.w
@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_LocalRotation.z
@@ -114,15 +114,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
       propertyPath: m_Name
-      value: Serpent
+      value: zulrah
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
---- !u!4 &6829974523710015116 stripped
+--- !u!4 &7781290047078293249 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a686389e44f4ce946a17441614e9e7c2, type: 3}
-  m_PrefabInstance: {fileID: 6431783314684207463}
+  m_PrefabInstance: {fileID: 7815446776342591722}
   m_PrefabAsset: {fileID: 0}

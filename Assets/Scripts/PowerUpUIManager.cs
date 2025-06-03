@@ -4,19 +4,26 @@ using System.Threading;
 using System.Xml;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PowerUpUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject powerUpIcon;
     [SerializeField] private Transform container; //holds all the icons
-    [SerializeField] private GameObject titleText; //"POWERUPS"
+    [SerializeField] private GameObject powersUpButton; //"POWERUPS"
 
     public int iconOffset = 80;
 
     void Awake()
     {
         RedrawPowerups();
+
+        //Quick hack to hide the button when in the combat menu
+        if (SceneManager.GetActiveScene().name == "Combat")
+        {
+            powersUpButton.SetActive(false);
+        }
     }
 
     public void RedrawPowerups()
@@ -34,7 +41,7 @@ public class PowerUpUIManager : MonoBehaviour
             Debug.Log(child);
             Destroy(child.gameObject);
         }
-        titleText.SetActive(false);
+        powersUpButton.SetActive(false);
     }
 
     private void GeneratePowerupIcons(Dictionary<string, PowerupData> powerups)
@@ -56,7 +63,7 @@ public class PowerUpUIManager : MonoBehaviour
         }
 
         if (count > 0) {
-            titleText.SetActive(true);
+            powersUpButton.SetActive(true);
         }
     }
 }
