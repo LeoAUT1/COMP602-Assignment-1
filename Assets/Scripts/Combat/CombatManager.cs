@@ -46,10 +46,6 @@ public class CombatManager : MonoBehaviour
 
     public void ExitCombat()
     {
-
-        //Grant player the reward for completing the encounter
-        Player.Instance.AddExperience(encounter.grantedExperience);
-
         //back to the Board Scene
         GameManager.Instance.ExitCombat();
     }
