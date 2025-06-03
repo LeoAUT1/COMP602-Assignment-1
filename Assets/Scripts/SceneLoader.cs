@@ -80,6 +80,7 @@ public class SceneLoader : Singleton<SceneLoader>
         Debug.Log("attempting to load main game scene");
         if (newGame)
         {
+            Debug.Log("Is newgame reset the player");
             Player.Instance.ResetPlayer();
         }
 

@@ -88,6 +88,7 @@ public class GameManager : Singleton<GameManager>
         //Do any housekeeping for leaving the combat scene
         if (playerIsAlive && currentEncounter.isFinalBoss)
         {
+            currentEncounter = null;
             isPlayerVictorious = true;
             SceneLoader.Instance.LoadGameEnd();
             return;
@@ -100,6 +101,8 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
+        // If this is not set to null the player will gain exp when restarting a game
+        currentEncounter = null;
         //Presumably the player is dead, we can end the game.
         SceneLoader.Instance.LoadGameEnd();
     }
