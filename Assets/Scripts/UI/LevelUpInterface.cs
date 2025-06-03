@@ -16,6 +16,8 @@ public class LevelUpInterface : MonoBehaviour
 
     [SerializeField] private int skillLevelsPerLevel = 10; //Amount the player can allocate in str dex or int per level
 
+    [SerializeField] private AudioClip levelUpSfx;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,12 +58,14 @@ public class LevelUpInterface : MonoBehaviour
     {
         Debug.Log("Player choses str");
         Player.Instance.GetPlayerCombat().AddStrength(skillLevelsPerLevel);
+        AudioManager.Instance.PlaySoundEffect(levelUpSfx);
         Destroy(gameObject);
     }
 
     public void PlayerChoosesDex()
     {
         Player.Instance.GetPlayerCombat().AddDexterity(skillLevelsPerLevel);
+        AudioManager.Instance.PlaySoundEffect(levelUpSfx);
         Destroy(gameObject);
 
     }
@@ -69,6 +73,7 @@ public class LevelUpInterface : MonoBehaviour
     public void PlayerChoosesInt()
     {
         Player.Instance.GetPlayerCombat().AddIntelligence(skillLevelsPerLevel);
+        AudioManager.Instance.PlaySoundEffect(levelUpSfx);
         Destroy(gameObject);
     }
 }

@@ -7,7 +7,6 @@ public class BoardTile : MonoBehaviour
     [SerializeField] private BoardTile prevTile; // Single incoming connection
 
     [SerializeField] private EncounterData encounter; // Encounter storage
-    private bool isEncounterUntriggered = true;
 
     [SerializeField] private int index;
 

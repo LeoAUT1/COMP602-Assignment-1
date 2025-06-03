@@ -1749,6 +1749,7 @@ MonoBehaviour:
   titleText: {fileID: 2771616757610197503}
   unlockAbilityText: {fileID: 4883262263663052384}
   skillLevelsPerLevel: 10
+  levelUpSfx: {fileID: 8300000, guid: 958cfde4069996b41a83a3343995702e, type: 3}
 --- !u!1 &8104878103485738139
 GameObject:
   m_ObjectHideFlags: 0
