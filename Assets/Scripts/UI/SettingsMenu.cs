@@ -9,8 +9,8 @@ public class SettingsMenu : MonoBehaviour
     void Start()
     {
         settingsPanel.SetActive(false);
-        volumeSlider.onValueChanged.AddListener(delegate { AudioManager.Instance.SetVolume(volumeSlider.value); });
-        volumeSlider.value = AudioManager.Instance.musicSource.volume;
+        volumeSlider.onValueChanged.AddListener(delegate { AudioManager.Instance.SetMusicVolume(volumeSlider.value); });
+        volumeSlider.value = AudioManager.Instance.GetMusicVolume();
     }
 
     void Update()
