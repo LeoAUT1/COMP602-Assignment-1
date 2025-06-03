@@ -27,6 +27,7 @@ public class Player : Singleton<Player>
     //Prefabs
     private PlayerBoardPiece playerPiece;
     [SerializeField] private GameObject levelUpCanvas;
+    [SerializeField] private GameObject levelupParticleSystem;
 
     protected override void Awake() // Assuming Singleton<Player> has a virtual Awake
     {
@@ -210,6 +211,11 @@ public class Player : Singleton<Player>
         else
         {
             Debug.LogWarning("Player stats changed, but board is null. UI not updated.");
+        }
+
+        if (levelupParticleSystem != null)
+        {
+            Instantiate(levelupParticleSystem, playerPiece.transform);
         }
     }
 }
