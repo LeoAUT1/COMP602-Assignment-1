@@ -16,7 +16,7 @@ MonoBehaviour:
   description: A trap encounter
   isFinalBoss: 0
   encounterType: 1
+  boardVisual: {fileID: 7220855672115961417, guid: a3e75eb1f145d0242a07a62df16ba761, type: 3}
   prefab: {fileID: 6846774403218835944, guid: a8df03529ac8afc47a1849cec655c315, type: 3}
   enemies: []
-  grantedCoins: 10
   grantedExperience: 10
