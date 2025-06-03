@@ -9,6 +9,7 @@ public abstract class CombatEntity : MonoBehaviour
     [SerializeField] protected int strength;
     [SerializeField] protected int dexterity;
     [SerializeField] protected int intelligence;
+    [SerializeField] protected int level;
     private List<StatusEffect> statusEffects = new List<StatusEffect>();
 
 
@@ -52,6 +53,19 @@ public abstract class CombatEntity : MonoBehaviour
         return health;
     }
 
+    public virtual void AutoScaleToPlayer()
+    {
+	int playerLevel = Player.Instance.GetLevel();
+	int scale = (playerLevel - 1) * 10;
+        health += scale;
+        maxHealth += scale;
+	strength += scale;
+	dexterity += scale;
+	intelligence += scale;
+
+	level = playerLevel;
+    }
+
     public void TakeDamage(int amount, CombatEntity attacker = null)
     {
         Debug.Log(attacker);
@@ -87,6 +101,7 @@ public abstract class CombatEntity : MonoBehaviour
     public virtual int GetStrength() { return strength; }
     public virtual int GetDexterity() { return dexterity; }
     public virtual int GetIntelligence() { return intelligence; }
+    public int GetLevel() { return level; }
     public bool IsAlive() {  return isAlive; }   
 
     public void SetStrength(int x) { strength = x; }
