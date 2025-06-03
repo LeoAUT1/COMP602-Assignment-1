@@ -21,6 +21,8 @@ public class Player : Singleton<Player>
     private BoardTile currentTile;
     [SerializeField] private int tileIndex;
 
+    [SerializeField] private GameObject levelUpCanvas;
+
     public void ResetPlayer()
     {
         playerLevel = 1;
@@ -54,14 +56,18 @@ public class Player : Singleton<Player>
         bool hasLeveledUp = LevelUp(experience);
         //display some messsage for leveling up, or something
         if (hasLeveledUp) {
-            Debug.Log($"Player is now level: {playerLevel}");
 
-            playerCombat.SetDexterity(playerCombat.GetDexterity() +1 );
-            playerCombat.SetIntelligence(playerCombat.GetIntelligence() + 1);
-            playerCombat.SetStrength(playerCombat.GetStrength() + 1);
+            AbilityBase newAbility = playerCombat.LearnAbility(playerLevel);
+
+            GameObject levelupCanvas = Instantiate(levelUpCanvas);
+            LevelUpInterface lvlUpInterface = levelupCanvas.GetComponent<LevelUpInterface>();
+
+            Debug.Log(playerLevel);
+
+            //Send the relevant data to the canvas
+            lvlUpInterface.SetCanvas(playerLevel,newAbility);
 
             //learn ability if available on that level
-            playerCombat.LearnAbility(playerLevel);
 
             playerPiece.SetPlayerModel();
         }

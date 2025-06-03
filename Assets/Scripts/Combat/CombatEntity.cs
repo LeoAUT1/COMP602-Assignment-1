@@ -213,4 +213,19 @@ public abstract class CombatEntity : MonoBehaviour
         return Random.value < CritChance();
     }
 
+    public void AddStrength(int amount)
+    {
+        strength += amount;
+    }
+
+    public void AddDexterity(int amount)
+    {
+        dexterity += amount;
+    }
+
+    public void AddIntelligence(int amount)
+    {
+        intelligence += amount;
+    }
+
 }

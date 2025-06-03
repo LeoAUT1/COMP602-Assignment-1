@@ -44,7 +44,7 @@ public class PlayerCombat : CombatEntity
     }
 
     //new abilites when leveling up
-    public void LearnAbility(int level)
+    public AbilityBase LearnAbility(int level)
     {
         AbilityBase newAbility = null;
 
@@ -64,7 +64,7 @@ public class PlayerCombat : CombatEntity
                 break;
             default:
                 Debug.Log("no new ability");
-                return;
+                return null;
         }
 
         if (newAbility != null)
@@ -72,6 +72,9 @@ public class PlayerCombat : CombatEntity
             AddAbility(newAbility);
             Debug.Log($"{GetName()} learned new ability: {newAbility.AbilityName}");
         }
+
+        //New ability gets returned so its details can be displayed on the levelup canvas
+        return newAbility;
 
     }
 
