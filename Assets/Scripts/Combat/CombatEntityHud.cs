@@ -7,6 +7,7 @@ public class CombatEntityHud : MonoBehaviour
 {
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI levelText;
     public Slider hpSlider;
 
     [SerializeField] private float hpAnimationDuration = 0.5f;
@@ -19,11 +20,13 @@ public class CombatEntityHud : MonoBehaviour
 
         int maxHp = entity.GetMaxHealth();
         int hp = entity.GetHealth();
+	int level = entity.GetLevel();
 
         hpSlider.maxValue = maxHp;
         hpSlider.value = hp;
 
         UpdateHealthText(hp, maxHp);
+        levelText.text = $"LV. {level}";
     }
 
     public void SetHP(int hp, int maxHp)

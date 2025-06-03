@@ -57,6 +57,7 @@ public class CombatManager : MonoBehaviour
     IEnumerator SetupBattle()
     {
         enemyUnit = Instantiate(encounter.enemies[0], instantiateEnemyHere);
+	enemyUnit.AutoScaleToPlayer();
         GameObject playerPiece = Instantiate(playerPiecePrefab, instantiatePlayerHere.position, instantiatePlayerHere.rotation);
 
         Player.Instance.SetPlayerPiece(playerPiece);
