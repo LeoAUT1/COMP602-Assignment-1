@@ -96,8 +96,7 @@ public class CombatManager : MonoBehaviour
     {
         if (state != BattleState.PLAYERTURN || playerUnit == null) return;
 
-        // --- TARGET SELECTION LOGIC ---
-        // This is a crucial part. For now, a simplified version:
+        // TARGET SELECTION LOGIC 
         CombatEntity primaryTarget = null;
         List<CombatEntity> allSelectedTargets = new List<CombatEntity>();
 
@@ -108,10 +107,8 @@ public class CombatManager : MonoBehaviour
                 allSelectedTargets.Add(playerUnit);
                 break;
             case TargetType.Enemy:
-                // In a real game, you'd enable a targeting mode here.
-                // Player clicks an enemy, that enemy becomes 'primaryTarget'.
-                // For now, assume the current 'enemyUnit' is the only/intended target.
-                if (enemyUnit != null && enemyUnit.IsAlive()) // Ensure enemyUnit is valid
+
+                if (enemyUnit != null && enemyUnit.IsAlive())
                 {
                     primaryTarget = enemyUnit;
                     allSelectedTargets.Add(enemyUnit);
@@ -133,6 +130,7 @@ public class CombatManager : MonoBehaviour
         if (ability.CanUse(playerUnit, primaryTarget, allSelectedTargets))
         {
             combatHud.ShowPlayerCombatActions(false); // Hide ability panel
+            ability.PutOnCooldown();
             StartCoroutine(ExecutePlayerAbilityCoroutine(ability, primaryTarget, allSelectedTargets));
         }
         else
@@ -275,6 +273,12 @@ public class CombatManager : MonoBehaviour
     {
         playerUnit.ProcessTurnStartEffects();
         combatHud.UpdatePlayerHud(playerUnit);
+
+        //Decrement all cooldowns
+        foreach (AbilityBase ability in playerUnit.Abilities)
+        {
+            ability.DecrementCooldown();
+        }
 
         Coroutine turnStartMessages = combatHud.ProcessMessageQueue();
         if (turnStartMessages != null) yield return turnStartMessages;

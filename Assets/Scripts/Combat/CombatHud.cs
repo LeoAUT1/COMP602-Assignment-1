@@ -86,6 +86,21 @@ public class CombatHud : MonoBehaviour
 
             if (buttonText != null) buttonText.text = ability.AbilityName;
 
+            Debug.Log(ability.CurrentCooldown);
+
+            if (ability.CurrentCooldown > 0)
+            {
+                Debug.Log($"{ability} on cooldown");
+                // Make it non-pressable
+                button.interactable = false;
+                //Grey out the button
+                ColorBlock colors = button.colors;
+                colors.normalColor = new Color(0.5f, 0.5f, 0.5f);
+                button.colors = colors;
+
+                buttonText.text = $"Recharging ({ability.CurrentCooldown})";
+            }
+
             // Capture the 'ability' variable correctly for the closure
             AbilityBase currentAbility = ability;
             button.onClick.RemoveAllListeners(); // Clear previous listeners
