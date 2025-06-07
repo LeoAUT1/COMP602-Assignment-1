@@ -28,6 +28,7 @@ public class Player : Singleton<Player>
     private PlayerBoardPiece playerPiece;
     [SerializeField] private GameObject levelUpCanvas;
     [SerializeField] private GameObject levelupParticleSystem;
+    [SerializeField] private GameObject grantedPowerupParticleSystem;
 
     protected override void Awake() // Assuming Singleton<Player> has a virtual Awake
     {
@@ -179,6 +180,13 @@ public class Player : Singleton<Player>
     public void AddPowerup(PowerupData powerup)
     {
         playerCombat.AddPowerup(powerup.name, powerup);
+        if (grantedPowerupParticleSystem != null)
+        { 
+
+            GameObject go = Instantiate(grantedPowerupParticleSystem, playerPiece.transform);
+
+            go.transform.localPosition = new Vector3(0f, 1f, 0f);
+        }
 
         //This is not great
         if (board != null)
@@ -225,7 +233,10 @@ public class Player : Singleton<Player>
 
         if (levelupParticleSystem != null && playerPiece != null)
         {
-            Instantiate(levelupParticleSystem, playerPiece.transform);
+            GameObject go = Instantiate(levelupParticleSystem, playerPiece.transform);
+            //offset upwards
+            go.transform.localPosition = new Vector3(0f, 1f, 0f);
+
         }
     }
 }
