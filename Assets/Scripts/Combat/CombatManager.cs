@@ -147,11 +147,8 @@ public class CombatManager : MonoBehaviour
         // Call the ability's own execution logic
         yield return StartCoroutine(ability.Execute(playerUnit, primaryTarget, this, combatHud));
 
-        // --- Post-Ability Common Logic ---
-        // Update HUDs (the ability itself might have done some, but a general refresh can be good)
         combatHud.UpdatePlayerHud(playerUnit);
-        if (enemyUnit != null) combatHud.UpdateEnemyHud(enemyUnit); // Update main enemy HUD
-                                                                    // If 'allSelectedTargets' could contain other entities, update their HUDs too.
+        if (enemyUnit != null) combatHud.UpdateEnemyHud(enemyUnit);
 
         // Check for enemy death (simplified for one enemy)
         if (enemyUnit != null && !enemyUnit.IsAlive())
@@ -160,7 +157,7 @@ public class CombatManager : MonoBehaviour
             StartCoroutine(EndBattle());
             yield break; // Stop further processing this turn
         }
-        // If multiple enemies, you'd check if ALL are dead.
+
 
         // Player Turn End Effects
         playerUnit.ProcessTurnEndEffects();

@@ -46,7 +46,7 @@ public class StatusEffect : ScriptableObject
     public virtual void OnDamageTaken(CombatEntity source, ref int damageAmount, CombatHud hud) { }
 
     // Called when the target deals damage
-    public virtual void OnDamageDealt(CombatEntity victim, ref int damageAmount, CombatHud hud) { }
+    public virtual void OnDamageDealt(CombatEntity caster, CombatEntity victim, ref int damageAmount, CombatHud hud) { }
 
     // Called to decrement duration and check for expiration
     // Returns true if the effect expired and should be removed

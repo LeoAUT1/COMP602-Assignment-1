@@ -31,7 +31,7 @@ public class HeavyAttack : AbilityBase
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
         foreach (var effect in casterEffects)
         {
-            effect.OnDamageDealt(primaryTarget, ref damage, hud);
+            effect.OnDamageDealt(caster, primaryTarget, ref damage, hud);
         }
 
         // Process messages queued by OnDamageDealt or the announcement
