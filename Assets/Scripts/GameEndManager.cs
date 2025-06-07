@@ -8,9 +8,6 @@ public class GameEndManager : MonoBehaviour
 {
     public TextMeshProUGUI endingText;
 
-    public GameObject gameOverJingle;
-    public GameObject gameVictoryJingle;
-
     private void Awake()
     {
         if (GameManager.Instance.GetIsVictorious())
@@ -27,8 +24,6 @@ public class GameEndManager : MonoBehaviour
     private void PlayerVictorious()
     {
         endingText.text = "The Serpent is Slain!";
-        gameOverJingle.SetActive(false);
-        gameVictoryJingle.SetActive(true);
         AudioManager.Instance.PlayVictoryTheme();
     }
 }
