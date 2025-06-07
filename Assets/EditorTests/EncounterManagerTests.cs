@@ -13,7 +13,7 @@ namespace EditorTests
             var go = new GameObject("EncounterManagerGO");
             encounterManager = go.AddComponent<EncounterManager>();
 
-            // Create mock encounters
+            // create mock encounter
             EncounterData[] mockEncounters = new EncounterData[3];
             for (int i = 0; i < mockEncounters.Length; i++)
             {
@@ -23,7 +23,7 @@ namespace EditorTests
                 mockEncounters[i] = data;
             }
 
-            // Use reflection to assign the private field
+            // use reflection to assign the private field
             typeof(EncounterManager)
                 .GetField("encounters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 ?.SetValue(encounterManager, mockEncounters);
@@ -53,7 +53,6 @@ namespace EditorTests
             var result1 = encounterManager.GetRandomEncounters(3);
             var result2 = encounterManager.GetRandomEncounters(3);
 
-            // Not a guaranteed test, but likely to catch shuffling
             Assert.AreNotEqual(result1[0], result2[0], "Shuffled encounters should differ between calls");
         }
 
