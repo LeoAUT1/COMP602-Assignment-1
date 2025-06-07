@@ -38,6 +38,8 @@ public class GameManager : Singleton<GameManager>
 
         if (scene.name == "GameBoard")
         {
+            AudioManager.Instance.PlayMainTheme();
+
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
 
             if (currentEncounter != null)
@@ -57,6 +59,20 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "Combat") //Maybe not use strings like this? im not sure
         {
             InitialiseCombat();
+            if (currentEncounter.isFinalBoss == true)
+            {
+                AudioManager.Instance.PlayFinalBossTheme();
+            } 
+            else
+            {
+                AudioManager.Instance.PlayCombatTheme();
+            }
+        }
+
+        if (scene.name == "MainMenu")
+        {
+
+            AudioManager.Instance.PlayMenuTheme();
         }
     }
 

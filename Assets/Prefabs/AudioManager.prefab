@@ -45,11 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 257bb4355cec6c341bb19d3208ee8cf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicVolume: 0.25
   musicSource: {fileID: 8043077509766688078}
-  mainTheme: {fileID: 8300000, guid: 912a9cf1f6dc8724d86818d1acb2d0d4, type: 3}
-  combatTheme: {fileID: 0}
-  victoryTheme: {fileID: 0}
-  defeatTheme: {fileID: 0}
+  menuTheme: {fileID: 8300000, guid: 5ebf4b81cdd7bd84f8566d9b7f8b9630, type: 3}
+  mainTheme: {fileID: 8300000, guid: f2776f5ecfdfc53478d48efa2a145ce8, type: 3}
+  combatTheme: {fileID: 8300000, guid: 8ad1fdc6024a4714aa580855fc94a13c, type: 3}
+  finalBossTheme: {fileID: 8300000, guid: 7de5fd19ad519e94cb89393bfdb998eb, type: 3}
+  victoryTheme: {fileID: 8300000, guid: 01225b59d427e8547b7beae71b94de95, type: 3}
+  defeatTheme: {fileID: 8300000, guid: b493cb9d86448144390eac76a88712ba, type: 3}
   soundEffectsVolume: 1
   soundEffectPrefab: {fileID: 4592215993547843547, guid: a594f2b10ee36a34bb31ad5164527383, type: 3}
 --- !u!82 &8043077509766688078

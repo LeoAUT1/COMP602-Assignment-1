@@ -45,6 +45,9 @@ public class SceneLoader : Singleton<SceneLoader>
 
     private IEnumerator FadeAndLoadScene(string sceneName)
     {
+        //Fade out our music
+        AudioManager.Instance.FadeOutMusic(fadeDuration);
+
         // Fade to black
         float elapsedTime = 0;
         while (elapsedTime < fadeDuration)
@@ -99,6 +102,7 @@ public class SceneLoader : Singleton<SceneLoader>
 
     public void LoadGameEnd()
     {
-        SceneManager.LoadScene("GameEnd");
+
+        StartCoroutine(FadeAndLoadScene("GameEnd"));
     }
 }

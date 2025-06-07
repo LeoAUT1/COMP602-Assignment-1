@@ -17,6 +17,10 @@ public class GameEndManager : MonoBehaviour
         {
             PlayerVictorious();
         }
+        else
+        {
+            AudioManager.Instance.PlayDefeatTheme();
+        }
     }
 
     //The player has won the game, so disable and enable appropriate scene elements
@@ -25,5 +29,6 @@ public class GameEndManager : MonoBehaviour
         endingText.text = "The Serpent is Slain!";
         gameOverJingle.SetActive(false);
         gameVictoryJingle.SetActive(true);
+        AudioManager.Instance.PlayVictoryTheme();
     }
 }
