@@ -4,16 +4,16 @@ using UnityEngine;
 public class Thorns : StatusEffect
 {
     public float reflectMultiplier = 0.25f;
-    public override void OnDamageDealt(CombatEntity caster, CombatEntity victim, ref int damageAmount, CombatHud hud)
+    public override void OnDamageTaken(CombatEntity source, ref int damageAmount, CombatHud hud)
     {
-        base.OnDamageDealt(caster, victim, ref damageAmount, hud);
+        base.OnDamageTaken(source, ref damageAmount, hud);
 
-        int reflectAmount = (int) ((float) damageAmount / reflectMultiplier);
+        int reflectAmount = (int) ((float) damageAmount * reflectMultiplier);
 
         Debug.Log("Thorns OnDamageDealt triggered");
         hud.QueueCombatMessage($"{Target.GetName()} reflected {reflectAmount} damage!");
 
-        victim.TakeDamage(reflectAmount);
+        source.TakeDamage(reflectAmount);
     }
 
     // Optional: Override the Initialize method if you need to do any setup

@@ -231,6 +231,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 087236e5c2bb83645b0ca2dbd157da35, type: 2}
   - {fileID: 11400000, guid: 3e910a597d528664a9437e4c22ed76e0, type: 2}
   - {fileID: 11400000, guid: 100c017b1400f6849bd5f66bcbd2cf27, type: 2}
+  - {fileID: 11400000, guid: 4985ede605c41504d97f956cca126887, type: 2}
   buttonContainer: {fileID: 4755302693365514688}
   buttonPrefab: {fileID: 3308792561463990283, guid: 898f27ba7007d34429d8c23203704cdc, type: 3}
 --- !u!1 &4559196107270212300

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 848e54bba1eaad04db7ac01f94b3e0a9, type: 3}
   m_Name: ThornsEffect
   m_EditorClassIdentifier: 
-  effectName: 
-  description: 
+  effectName: Thorns
+  description: Reflect damage to attacker
   durationTurns: 1
-  isHarmful: 0
+  isHarmful: 1
   reflectMultiplier: 0.25
