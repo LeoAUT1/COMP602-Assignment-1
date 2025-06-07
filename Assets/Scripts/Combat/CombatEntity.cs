@@ -116,7 +116,7 @@ public abstract class CombatEntity : MonoBehaviour
 
         if (effectTemplate == null)
         {
-            Debug.LogWarning("Effect is null");
+            Debug.LogWarning($"Effect {effectTemplate}is null");
             return;
         }
 
