@@ -16,9 +16,9 @@ namespace EditorTests
             var go = new GameObject("EncounterManagerGO");
             encounterManager = go.AddComponent<EncounterManager>();
 
-            // Create mock encounters as ScriptableObjects
-            createdMockEncounters = new EncounterData[3];
-            for (int i = 0; i < createdMockEncounters.Length; i++)
+            // create mock encounter
+            EncounterData[] mockEncounters = new EncounterData[3];
+            for (int i = 0; i < mockEncounters.Length; i++)
             {
                 // No GameObject needed for ScriptableObject instantiation
                 var data = ScriptableObject.CreateInstance<EncounterData>();
@@ -28,18 +28,10 @@ namespace EditorTests
                 createdMockEncounters[i] = data;
             }
 
-            // Use reflection to assign the private field in EncounterManager
-            FieldInfo encountersField = typeof(EncounterManager)
-                .GetField("encounters", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (encountersField != null)
-            {
-                encountersField.SetValue(encounterManager, createdMockEncounters);
-            }
-            else
-            {
-                Assert.Fail("Could not find the private 'encounters' field in EncounterManager via reflection. Check the field name and binding flags.");
-            }
+            // use reflection to assign the private field
+            typeof(EncounterManager)
+                .GetField("encounters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.SetValue(encounterManager, mockEncounters);
         }
 
         [Test]
@@ -63,36 +55,10 @@ namespace EditorTests
         [Test]
         public void GetRandomEncounters_ShufflesContent()
         {
-            // Ensure we have enough unique items to make shuffling meaningful
-            // If createdMockEncounters.Length is less than 3, this test might be flaky.
-            // For this test, we'll assume the pool size (3) is sufficient.
-            if (createdMockEncounters.Length < 2)
-            {
-                Assert.Ignore("Skipping shuffle test: not enough mock encounters to reliably test shuffling.");
-                return;
-            }
+            var result1 = encounterManager.GetRandomEncounters(3);
+            var result2 = encounterManager.GetRandomEncounters(3);
 
-            var result1 = encounterManager.GetRandomEncounters(createdMockEncounters.Length);
-            var result2 = encounterManager.GetRandomEncounters(createdMockEncounters.Length);
-
-            // This test is probabilistic. For a small set, it might occasionally pass even if not shuffled,
-            // or fail if the "shuffle" coincidentally results in the same order for the first element.
-            // A more robust test would compare the entire arrays or run multiple times.
-            // However, for simplicity and common practice:
-            bool areDifferent = false;
-            for (int i = 0; i < result1.Length; i++)
-            {
-                if (result1[i] != result2[i])
-                {
-                    areDifferent = true;
-                    break;
-                }
-            }
-            // If the pool size is small (e.g., 3), and we request all 3,
-            // the chance of getting the exact same order after shuffling is 1/3! = 1/6.
-            // If the shuffle is truly random, this test will occasionally fail.
-            // A better assertion might be to check that the sequence of names is different.
-            Assert.IsTrue(areDifferent, "Shuffled encounters should likely differ between calls. If this fails sporadically, the shuffle might be weak or the pool too small.");
+            Assert.AreNotEqual(result1[0], result2[0], "Shuffled encounters should differ between calls");
         }
 
         [TearDown]
