@@ -12,7 +12,11 @@ public class LevelUpInterface : MonoBehaviour
     [SerializeField] private Button increaseIntButton;
 
     [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI unlockAbilityText;
+
+
+    [SerializeField] private GameObject newAbilityContainer;
+    [SerializeField] private TextMeshProUGUI unlockedAbiliyName;
+    [SerializeField] private TextMeshProUGUI unlockedAbiliyDesc;
 
     [SerializeField] private int skillLevelsPerLevel = 10; //Amount the player can allocate in str dex or int per level
 
@@ -36,7 +40,14 @@ public class LevelUpInterface : MonoBehaviour
         SetLevelUpMessage(currentLevel);
 
         // THe player has unlocked a new ability, we want to display some relevant information
-        SetAbilityText(newAbility);
+
+        if (newAbility != null)
+        {
+            SetAbilityText(newAbility);
+        } else
+        {
+            newAbilityContainer.SetActive(false);
+        }
     }
 
     public void SetLevelUpMessage(int currentLevel)
@@ -46,12 +57,8 @@ public class LevelUpInterface : MonoBehaviour
 
     public void SetAbilityText(AbilityBase newAbility)
     {
-        if (newAbility == null)
-        {
-            unlockAbilityText.text = "";
-            return;
-        }
-        unlockAbilityText.text = $"{newAbility.AbilityName} unlocked!";
+        unlockedAbiliyName.text = newAbility.AbilityName;
+        unlockedAbiliyDesc.text = newAbility.Description;
     }
 
     public void PlayerChoosesStr()
