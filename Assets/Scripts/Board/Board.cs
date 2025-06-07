@@ -1,3 +1,4 @@
+using Codice.CM.Client.Differences;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,8 +39,12 @@ public class Board : MonoBehaviour
         }
 
         PlayerSetup();
-
         UpdatePlayerStatsUi();
+
+        //This is not great but we are short on time
+
+        PowerUpUIManager manager = this.GetComponentInChildren<PowerUpUIManager>();
+        manager.RedrawPowerups();
     }
 
     private void PlayerSetup()

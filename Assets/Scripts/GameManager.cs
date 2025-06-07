@@ -46,6 +46,7 @@ public class GameManager : Singleton<GameManager>
             {
                 //Grant the player the experience from completing the encounter
                 Player.Instance.AddExperience(currentEncounter.grantedExperience);
+                Player.Instance.GrantRandomPowerup();
 
                 Debug.Log($" Encounter at current index{encounters[Player.Instance.GetTileIndex()-1]}");
 

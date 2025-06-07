@@ -75,7 +75,7 @@ public class Player : Singleton<Player>
         return (int)(baseExp * Mathf.Pow(playerLevel, powerCurve)) - experience;
     }
 
-    public void AddExperience(int amount)
+    public bool AddExperience(int amount)
     {
         experience += amount;
 
@@ -102,6 +102,8 @@ public class Player : Singleton<Player>
         {
             board.UpdatePlayerStatsUi();
         }
+
+        return hasLeveledUp;
     }
 
     private float GetTotalXpRequiredToReachLevel(int level)
@@ -179,8 +181,11 @@ public class Player : Singleton<Player>
         playerCombat.AddPowerup(powerup.name, powerup);
 
         //This is not great
-        PowerUpUIManager manager = board.GetComponentInChildren<PowerUpUIManager>();
-        manager.RedrawPowerups();
+        if (board != null)
+        {
+            PowerUpUIManager manager = board.GetComponentInChildren<PowerUpUIManager>();
+            manager.RedrawPowerups();
+        }
     }
 
     public void SetPlayerPiece(GameObject piece) // Set the player's model, we need this so that we can update the model when the player levels up

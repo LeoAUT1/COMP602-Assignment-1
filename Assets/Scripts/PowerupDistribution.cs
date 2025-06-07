@@ -13,12 +13,9 @@ public class PowerupDistribution : MonoBehaviour
 
         Debug.Log($"Player got random power up {instancedPup.powerupName}");
 
-        GameObject instancedModal = Instantiate(powerupModal);
-        PowerUpIcon icon = instancedModal.GetComponent<PowerUpIcon>();
-        Debug.Log(powerupModal);
-        Debug.Log(powerupModal.name);
-        Debug.Log(icon);
-        icon.SetAll(instancedPup);
+        //GameObject instancedModal = Instantiate(powerupModal);
+        //PowerUpIcon icon = instancedModal.GetComponent<PowerUpIcon>();
+        //icon.SetAll(instancedPup);
 
         return instancedPup;
     }

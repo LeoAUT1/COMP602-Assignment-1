@@ -24,7 +24,7 @@ public class GenericNonCombatEncounter : MonoBehaviour
             Debug.Log($"Granting the player {experienceGranted}xp");
 
             Player.Instance.GrantRandomPowerup();
-            Player.Instance.AddExperience(experienceGranted);
+            bool hasLeveledUp = Player.Instance.AddExperience(experienceGranted);
         }
 
 
