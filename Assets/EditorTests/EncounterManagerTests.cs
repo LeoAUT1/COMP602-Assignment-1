@@ -1,15 +1,18 @@
 using NUnit.Framework;
 using UnityEngine;
+using System.Reflection; // Added for BindingFlags clarity
 
 namespace EditorTests
 {
     public class EncounterManagerTests
     {
         private EncounterManager encounterManager;
+        private EncounterData[] createdMockEncounters; // To keep track for cleanup
 
         [SetUp]
         public void Setup()
         {
+            // Setup EncounterManager (assuming it's still a MonoBehaviour)
             var go = new GameObject("EncounterManagerGO");
             encounterManager = go.AddComponent<EncounterManager>();
 
@@ -17,10 +20,12 @@ namespace EditorTests
             EncounterData[] mockEncounters = new EncounterData[3];
             for (int i = 0; i < mockEncounters.Length; i++)
             {
-                GameObject obj = new GameObject($"Encounter_{i}");
-                var data = obj.AddComponent<EncounterData>();
+                // No GameObject needed for ScriptableObject instantiation
+                var data = ScriptableObject.CreateInstance<EncounterData>();
                 data.encounterName = $"Test {i}";
-                mockEncounters[i] = data;
+                // Optionally, ScriptableObjects also have a 'name' property you might want to set for debugging:
+                // data.name = $"TestEncounterSO_{i}";
+                createdMockEncounters[i] = data;
             }
 
             // use reflection to assign the private field
@@ -59,7 +64,24 @@ namespace EditorTests
         [TearDown]
         public void Cleanup()
         {
-            Object.DestroyImmediate(encounterManager.gameObject);
+            // Destroy the GameObject for EncounterManager
+            if (encounterManager != null && encounterManager.gameObject != null)
+            {
+                Object.DestroyImmediate(encounterManager.gameObject);
+            }
+
+            // Destroy the created ScriptableObject instances
+            if (createdMockEncounters != null)
+            {
+                for (int i = 0; i < createdMockEncounters.Length; i++)
+                {
+                    if (createdMockEncounters[i] != null)
+                    {
+                        Object.DestroyImmediate(createdMockEncounters[i]);
+                    }
+                }
+                createdMockEncounters = null; // Clear the reference
+            }
         }
     }
 }
