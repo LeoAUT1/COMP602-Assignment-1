@@ -109,7 +109,6 @@ public class Board : MonoBehaviour
             Debug.Log("Cant find our player");
         }
 
-
         // We want to spawn our die halfway between the player and the camera, or thereabouts.
         Vector3 spawnPos = Vector3.Lerp(Camera.main.transform.position, playerPiece.transform.position, diceSpawnDistanceFromCam);
 
