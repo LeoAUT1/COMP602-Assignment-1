@@ -200,6 +200,12 @@ public abstract class CombatEntity : MonoBehaviour
         Abilities.Remove(ability);
     }
 
+    public virtual void ResetAllAbilities()
+    {
+        Abilities = new List<AbilityBase>();
+        Abilities.Add(new BasicAttackAbility());
+    }
+
     //healing
     public void Heal(int amount)
     {

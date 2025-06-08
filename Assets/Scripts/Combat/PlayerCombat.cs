@@ -14,9 +14,6 @@ public class PlayerCombat : CombatEntity
     [SerializeField] private int initialIntelligence;
     [SerializeField] private int initialDexterity;
 
-
-
-
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
 
@@ -149,6 +146,9 @@ public class PlayerCombat : CombatEntity
 
         //Clear all the player's powerups
         powerUps = new Dictionary<string, PowerupData>();
+
+        //Clear ability list
+        ResetAllAbilities();
 
         //Clear any status effects
         ClearAllStatusEffects();
