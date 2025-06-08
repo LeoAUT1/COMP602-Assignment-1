@@ -87,6 +87,12 @@ public class TileManager : MonoBehaviour
         Debug.Log("Clearing existing enemy visuals...");
         foreach (BoardTile tile in tiles)
         {
+            if (tile.isFirstorLastTile == true)
+            {
+                //Pass on the first and last tile
+                continue;
+            }
+
             if (tile.enemyPlacement == null)
             {
                 Debug.LogWarning($"Tile {tile.name} has no enemyPlacement.");
