@@ -1873,8 +1873,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Go Back >
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 528cc7af134a37f4f86020778d961cda, type: 2}
-  m_sharedMaterial: {fileID: 6911015928002828345, guid: 528cc7af134a37f4f86020778d961cda, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cff231f5987f0fc44ad5a38b9a7b240e, type: 2}
+  m_sharedMaterial: {fileID: -5126313520778690247, guid: cff231f5987f0fc44ad5a38b9a7b240e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3271,7 +3271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -111.9}
+  m_AnchoredPosition: {x: 0, y: -120}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4907995710265522261
@@ -3304,8 +3304,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Press Esc to leave menu
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d6a5cd777a33cab458a2210accd01af3, type: 2}
+  m_sharedMaterial: {fileID: -2119606896371967656, guid: d6a5cd777a33cab458a2210accd01af3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

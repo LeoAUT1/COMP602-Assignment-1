@@ -27,6 +27,12 @@ public class GenericNonCombatEncounter : MonoBehaviour
             bool hasLeveledUp = Player.Instance.AddExperience(experienceGranted);
         }
 
+        PlayerCombat playerCombat = Player.Instance.GetPlayerCombat();
+
+        if (playerCombat.IsAlive() == false)
+        {
+            SceneLoader.Instance.LoadGameEnd();
+        }
 
         // Re-enable board buttons and destroy this component
         board.EnableBoardButtons();
