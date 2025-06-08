@@ -45,10 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab323d2a2b7a9954aa884adc4e96fae8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHud: {fileID: 0}
-  EnemyHud: {fileID: 0}
-  buttonContainer: {fileID: 0}
   combatHud: {fileID: 7215823061292493310}
+  instantiatePlayerHere: {fileID: 0}
+  instantiateEnemyHere: {fileID: 0}
+  playerPiecePrefab: {fileID: 0}
+  attackSfx: {fileID: 8300000, guid: 73089887c37301c44b52917efe0d1dfe, type: 3}
+  bloodParticles: {fileID: 9001477088083710690, guid: 737b6eec29783e44b8675f08db6a1115, type: 3}
   state: 0
 --- !u!114 &7215823061292493310
 MonoBehaviour:
@@ -62,3 +64,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b94d81a2ab668439800ca756b3b575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerHud: {fileID: 0}
+  enemyHud: {fileID: 0}
+  buttonContainer: {fileID: 0}
+  combatMessage: {fileID: 0}
+  messageDisplayTime: 0.75
+  abilityButtonPrefab: {fileID: 0}
+  abilityButtonContainer: {fileID: 0}
+  playerActionsPanel: {fileID: 0}

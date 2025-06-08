@@ -21,6 +21,10 @@ public class CombatManager : MonoBehaviour
     [SerializeField] private Transform instantiateEnemyHere; // When the scene loads put the enemy model on this transform
 
     [SerializeField] private GameObject playerPiecePrefab; //player's model
+    private GameObject playerPiece; //player's model
+
+    [SerializeField] private AudioClip attackSfx;
+    [SerializeField] private GameObject bloodParticles; //Spawn these when someone takes damage
 
     public BattleState state;
 
@@ -53,8 +57,8 @@ public class CombatManager : MonoBehaviour
     IEnumerator SetupBattle()
     {
         enemyUnit = Instantiate(encounter.enemies[0], instantiateEnemyHere);
-	enemyUnit.AutoScaleToPlayer();
-        GameObject playerPiece = Instantiate(playerPiecePrefab, instantiatePlayerHere.position, instantiatePlayerHere.rotation);
+	    enemyUnit.AutoScaleToPlayer();
+        playerPiece = Instantiate(playerPiecePrefab, instantiatePlayerHere.position, instantiatePlayerHere.rotation);
 
         Player.Instance.SetPlayerPiece(playerPiece);
 
@@ -144,8 +148,13 @@ public class CombatManager : MonoBehaviour
 
     IEnumerator ExecutePlayerAbilityCoroutine(AbilityBase ability, CombatEntity primaryTarget, List<CombatEntity> allSelectedTargets)
     {
+
+        AudioManager.Instance.PlaySoundEffect(attackSfx);
+
         // Call the ability's own execution logic
         yield return StartCoroutine(ability.Execute(playerUnit, primaryTarget, this, combatHud));
+
+        Instantiate(bloodParticles, primaryTarget.transform);
 
         combatHud.UpdatePlayerHud(playerUnit);
         if (enemyUnit != null) combatHud.UpdateEnemyHud(enemyUnit);
@@ -196,7 +205,6 @@ public class CombatManager : MonoBehaviour
             StartCoroutine(EndBattle());
             yield break;
         }
-        // ---
 
         combatHud.QueueCombatMessage($"{enemyUnit.GetName()} attacks!");
         Coroutine attackAnnounceMessages = combatHud.ProcessMessageQueue();
@@ -204,10 +212,7 @@ public class CombatManager : MonoBehaviour
 
         int damage = ((Enemy)enemyUnit).GetStrength();
 
-        // --- Example of OnDamageDealt hook for enemy ---
-        // List<StatusEffect> enemyEffects = enemyUnit.GetActiveStatusEffects();
-        // foreach(var effect in enemyEffects) { effect.OnDamageDealt(playerUnit, ref damage); }
-        // ---
+        AudioManager.Instance.PlaySoundEffect(attackSfx);
         if (playerUnit.DodgeAttempt())
         {
             combatHud.QueueCombatMessage("you successfully dodged the attack!");
@@ -216,6 +221,8 @@ public class CombatManager : MonoBehaviour
         {
             playerUnit.TakeDamage(damage, enemyUnit);
             combatHud.UpdatePlayerHud(playerUnit);
+            //Spawn some blood particles on the player
+            Instantiate(bloodParticles, playerPiece.transform);
         }
             
 

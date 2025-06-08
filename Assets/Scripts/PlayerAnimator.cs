@@ -8,6 +8,8 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private float moveDurationPerTile = 0.5f;
     [SerializeField] private float hopHeight = 1.0f;
 
+    [SerializeField] private AudioClip jumpSfx;
+
     private GameObject playerPiece;
     private bool isAnimating = false; // Renamed from isMoving for clarity
 
@@ -60,6 +62,8 @@ public class PlayerAnimator : MonoBehaviour
 
         for (int i = 0; i < path.Count - 1; i++)
         {
+            AudioManager.Instance.PlaySoundEffect(jumpSfx);
+
             BoardTile segmentStartTile = path[i];
             BoardTile targetTile = path[i + 1];
 
