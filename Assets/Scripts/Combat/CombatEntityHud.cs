@@ -43,6 +43,7 @@ public class CombatEntityHud : MonoBehaviour
 
     private IEnumerator AnimateHPSlider(int targetHp, int maxHp)
     {
+        Debug.Log("animating HP");
         float startValue = hpSlider.value;
         float elapsedTime = 0f;
 

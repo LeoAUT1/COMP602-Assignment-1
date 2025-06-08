@@ -3439,6 +3439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDurationPerTile: 0.5
   hopHeight: 1
+  jumpSfx: {fileID: 8300000, guid: b4514dac03e437e40b6c25b45e48fa71, type: 3}
 --- !u!1 &8206293736113419136
 GameObject:
   m_ObjectHideFlags: 0
