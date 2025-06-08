@@ -55,15 +55,16 @@ public abstract class CombatEntity : MonoBehaviour
 
     public virtual void AutoScaleToPlayer()
     {
-	int playerLevel = Player.Instance.GetLevel();
-	int scale = (playerLevel - 1) * 10;
+	    int playerLevel = Player.Instance.GetLevel();
+	    int scale = (playerLevel - 1) * 10;
+
         health += scale;
         maxHealth += scale;
-	strength += scale;
-	dexterity += scale;
-	intelligence += scale;
+	    strength += scale;
+	    dexterity += scale;
+	    intelligence += scale;
 
-	level = playerLevel;
+	    level = playerLevel;
     }
 
     public void TakeDamage(int amount, CombatEntity attacker = null)
@@ -72,26 +73,20 @@ public abstract class CombatEntity : MonoBehaviour
 
         Debug.Log($"{entityName} Taking {amount} damage");
 
-        // 1. Process OnDamageTaken effects (they might modify the damage)
-        // Iterate backwards if effects can remove themselves
         for (int i = statusEffects.Count - 1; i >= 0; i--)
         {
             statusEffects[i].OnDamageTaken(attacker, ref amount, combatHud);
         }
 
-        // 2. Apply actual damage
-        if (amount > 0) // Don't "heal" from negative damage unless intended
+        if (amount > 0)
         {
             SubtractHealth(amount);
         }
 
-        // 3. Update HUD (or CombatManager does this after all effects)
-        // UpdateHud(); // Let CombatManager handle HUD updates after a sequence of events
 
-        // 4. Check for death (CombatManager might do this)
         if (!IsAlive())
         {
-            // combatManagerInstance.HandleDeath(this);
+
         }
     }
 

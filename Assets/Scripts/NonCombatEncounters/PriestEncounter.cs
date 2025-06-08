@@ -14,7 +14,7 @@ public class PriestEncounter : GenericNonCombatEncounter
 
     public void AcceptBlessing()
     {
-        text.SetText("You feel reinvigorated");
+        text.SetText("The priest restores you to full health");
         PlayerCombat p = Player.Instance.GetPlayerCombat();
         p.SetHealth(p.GetMaxHealth());
         StartCoroutine(FinishEncounter());
@@ -22,7 +22,11 @@ public class PriestEncounter : GenericNonCombatEncounter
 
     public void RejectBlessing()
     {
-        text.SetText("You decline the priest's offer");
+        text.SetText("You tough it out, increasing your maximum health.");
+        PlayerCombat p = Player.Instance.GetPlayerCombat();
+
+        //Increase the player's max health by 10
+        p.SetMaxHealth(p.GetMaxHealth()+10);
         StartCoroutine(FinishEncounter());
     }
 }

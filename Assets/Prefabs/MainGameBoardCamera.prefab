@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3577657494988417341}
   m_Layer: 0
   m_Name: MainGameBoardCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,3 +109,6 @@ MonoBehaviour:
   rotationalCenter: {fileID: 0}
   smoothSpeed: 0.05
   offset: {x: 0, y: 3, z: 1}
+  zoomSpeed: 1000
+  maxZoomDistance: 7
+  minZoomDistance: 1

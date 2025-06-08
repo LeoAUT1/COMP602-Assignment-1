@@ -26,7 +26,13 @@ public class TrapEncounter : GenericNonCombatEncounter
     public void FailTrap(int roll, int level)
     {
         text.SetText($"You fail to dodge the trap, and take {trapDamage} damage.");
-        playerCombat.SubtractHealth(trapDamage);
+        playerCombat.TakeDamage(trapDamage);
+        StartCoroutine(FinishEncounter(false));
+    }
+
+    public void IgnoreTrap()
+    {
+        text.SetText($"You choose the path of caution.");
         StartCoroutine(FinishEncounter(false));
     }
 
