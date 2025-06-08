@@ -46,11 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: The Serpent
-  health: 10
-  maxHealth: 10
+  health: 200
+  maxHealth: 200
   strength: 5
   dexterity: 5
   intelligence: 5
+  level: 0
   experienceGranted: 10
 --- !u!1001 &7815446776342591722
 PrefabInstance:

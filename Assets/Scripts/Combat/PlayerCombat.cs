@@ -14,6 +14,9 @@ public class PlayerCombat : CombatEntity
     [SerializeField] private int initialIntelligence;
     [SerializeField] private int initialDexterity;
 
+
+
+
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
 
@@ -23,6 +26,9 @@ public class PlayerCombat : CombatEntity
     {
         ResetPlayerCombat();
         OnStatsChanged?.Invoke();
+
+        // Grant the player the basic attack ability
+        AddAbility(new BasicAttackAbility());
     }
 
     public override void Initialise(CombatManager cm, CombatHud hud)
@@ -31,8 +37,6 @@ public class PlayerCombat : CombatEntity
 
         //Set the player's stats to our starting stats
 
-        // Grant the player the basic attack ability
-        AddAbility(new BasicAttackAbility());
 
         foreach (PowerupData pup in powerUps.Values)
         {
@@ -139,6 +143,9 @@ public class PlayerCombat : CombatEntity
         SetStrength(initialStrength);
         SetDexterity(initialDexterity);
         SetIntelligence(initialIntelligence);
+
+        //player is alive when hp is above 0
+        SetAlive(true);
 
         //Clear all the player's powerups
         powerUps = new Dictionary<string, PowerupData>();
