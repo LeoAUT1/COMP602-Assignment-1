@@ -46,11 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Jogre
-  health: 10
-  maxHealth: 10
-  strength: 5
-  dexterity: 1
+  health: 70
+  maxHealth: 70
+  strength: 13
+  dexterity: 10
   intelligence: 5
+  level: 0
   experienceGranted: 100
 --- !u!1001 &3116160834234379929
 PrefabInstance:

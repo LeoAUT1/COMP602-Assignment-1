@@ -63,7 +63,7 @@ public class LevelUpInterface : MonoBehaviour
 
     public void PlayerChoosesStr()
     {
-        Debug.Log("Player choses str");
+        Debug.Log("Player chooses str");
         Player.Instance.GetPlayerCombat().AddStrength(skillLevelsPerLevel);
         AudioManager.Instance.PlaySoundEffect(levelUpSfx);
         Destroy(gameObject);

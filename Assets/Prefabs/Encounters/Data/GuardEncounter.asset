@@ -20,4 +20,4 @@ MonoBehaviour:
   prefab: {fileID: 0}
   enemies:
   - {fileID: 6321431687357841294, guid: 28eec354711b329449d83963d17d2de4, type: 3}
-  grantedExperience: 10
+  grantedExperience: 15

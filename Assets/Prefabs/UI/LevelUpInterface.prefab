@@ -1524,7 +1524,7 @@ MonoBehaviour:
   newAbilityContainer: {fileID: 435358546710037997}
   unlockedAbiliyName: {fileID: 8991610686344857514}
   unlockedAbiliyDesc: {fileID: 7223126296506579419}
-  skillLevelsPerLevel: 10
+  skillLevelsPerLevel: 4
   levelUpSfx: {fileID: 8300000, guid: 958cfde4069996b41a83a3343995702e, type: 3}
 --- !u!1 &8300683665543156695
 GameObject:

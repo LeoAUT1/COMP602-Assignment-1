@@ -48,11 +48,11 @@ MonoBehaviour:
   entityName: Guard
   health: 50
   maxHealth: 50
-  strength: 100
-  dexterity: 3
-  intelligence: 3
+  strength: 12
+  dexterity: 10
+  intelligence: 10
   level: 0
-  experienceGranted: 15
+  experienceGranted: 10
 --- !u!1001 &7670952375374839084
 PrefabInstance:
   m_ObjectHideFlags: 0

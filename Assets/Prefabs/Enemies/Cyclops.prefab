@@ -46,12 +46,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Suqah
-  health: 10
-  maxHealth: 10
-  strength: 5
-  dexterity: 1
-  intelligence: 5
-  experienceGranted: 100
+  health: 100
+  maxHealth: 100
+  strength: 17
+  dexterity: 10
+  intelligence: 10
+  level: 0
+  experienceGranted: 20
 --- !u!1001 &569474166020267458
 PrefabInstance:
   m_ObjectHideFlags: 0
