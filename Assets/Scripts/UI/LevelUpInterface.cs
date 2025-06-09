@@ -18,7 +18,7 @@ public class LevelUpInterface : MonoBehaviour
     [SerializeField] private TextMeshProUGUI unlockedAbiliyName;
     [SerializeField] private TextMeshProUGUI unlockedAbiliyDesc;
 
-    [SerializeField] private int skillLevelsPerLevel = 4; //Amount the player can allocate in str dex or int per level
+    [SerializeField] private int skillLevelsPerLevel = 10; //Amount the player can allocate in str dex or int per level
 
     [SerializeField] private AudioClip levelUpSfx;
 
@@ -63,7 +63,7 @@ public class LevelUpInterface : MonoBehaviour
 
     public void PlayerChoosesStr()
     {
-        Debug.Log("Player chooses str");
+        Debug.Log("Player choses str");
         Player.Instance.GetPlayerCombat().AddStrength(skillLevelsPerLevel);
         AudioManager.Instance.PlaySoundEffect(levelUpSfx);
         Destroy(gameObject);
