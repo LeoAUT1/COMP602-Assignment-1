@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityName: Golden Boar
-  health: 50
-  maxHealth: 50
-  strength: 10
-  dexterity: 8
+  health: 40
+  maxHealth: 40
+  strength: 7
+  dexterity: 5
   intelligence: 5
   level: 0
   experienceGranted: 15

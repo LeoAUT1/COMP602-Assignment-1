@@ -722,7 +722,7 @@ PrefabInstance:
     - target: {fileID: 2969372107475744018, guid: 7047329931822a444b64f7ef0b66a558, type: 3}
       propertyPath: currentEncounter
       value: 
-      objectReference: {fileID: 11400000, guid: 4b4b0d09f23e9c345a4f9dbbd98c5a2d, type: 2}
+      objectReference: {fileID: 11400000, guid: a6626bf637324974db16b4e99275a7c8, type: 2}
     - target: {fileID: 7470513693651028908, guid: 7047329931822a444b64f7ef0b66a558, type: 3}
       propertyPath: m_Name
       value: GameManager
