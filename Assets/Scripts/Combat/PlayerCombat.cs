@@ -13,6 +13,7 @@ public class PlayerCombat : CombatEntity
     [SerializeField] private int initialStrength;
     [SerializeField] private int initialIntelligence;
     [SerializeField] private int initialDexterity;
+    [SerializeField] private int healthPerLevel = 10;
 
     // Example properties for ICombatUnit
     public string GetUnitName() { return Player.Instance.playerName; } // Or some other name field
@@ -158,18 +159,24 @@ public class PlayerCombat : CombatEntity
 
     public void AddStrength(int amount)
     {
+        SetMaxHealth(GetMaxHealth() + healthPerLevel);
+        AddHealth(healthPerLevel);
         strength += amount;
         OnStatsChanged?.Invoke();
     }
 
     public void AddDexterity(int amount)
     {
+        SetMaxHealth(GetMaxHealth() + healthPerLevel);
+        AddHealth(healthPerLevel);
         dexterity += amount;
         OnStatsChanged?.Invoke();
     }
 
     public void AddIntelligence(int amount)
     {
+        SetMaxHealth(GetMaxHealth() + healthPerLevel);
+        AddHealth(healthPerLevel);
         intelligence += amount;
         OnStatsChanged?.Invoke(); 
     }
