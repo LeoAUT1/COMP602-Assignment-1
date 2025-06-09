@@ -53,6 +53,7 @@ MonoBehaviour:
   tileIndex: 0
   levelUpCanvas: {fileID: 7470852946826213461, guid: 0dbba6ddf0bb43b43b1d94672c6d9ae1, type: 3}
   levelupParticleSystem: {fileID: 0}
+  grantedPowerupParticleSystem: {fileID: 0}
 --- !u!114 &6508123060139364006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,10 +73,11 @@ MonoBehaviour:
   dexterity: 1
   intelligence: 1
   level: 0
-  initialHP: 50
+  initialHP: 60
   initialStrength: 10
   initialIntelligence: 10
   initialDexterity: 10
+  healthPerLevel: 15
 --- !u!114 &5475764370816112373
 MonoBehaviour:
   m_ObjectHideFlags: 0

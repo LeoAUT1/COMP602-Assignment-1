@@ -48,7 +48,7 @@ MonoBehaviour:
   entityName: The Serpent
   health: 200
   maxHealth: 200
-  strength: 25
+  strength: 22
   dexterity: 15
   intelligence: 18
   level: 0
