@@ -22,4 +22,10 @@ public class Thorns : StatusEffect
         base.Initialize();
         // Any additional initialization
     }
+
+    public void SetReflectMultiplier(float multi)
+    {
+        reflectMultiplier = multi;
+    }
+
 }
