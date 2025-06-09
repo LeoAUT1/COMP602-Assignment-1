@@ -25,7 +25,7 @@ public class PlayerCombat : CombatEntity
         OnStatsChanged?.Invoke();
 
         // Grant the player the basic attack ability
-        AddAbility(new BasicAttackAbility());
+        //AddAbility(new BasicAttackAbility());
     }
 
     public override void Initialise(CombatManager cm, CombatHud hud)
@@ -33,7 +33,7 @@ public class PlayerCombat : CombatEntity
         base.Initialise(cm, hud);
 
         //Set the player's stats to our starting stats
-
+        ClearAllStatusEffects();
 
         foreach (PowerupData pup in powerUps.Values)
         {

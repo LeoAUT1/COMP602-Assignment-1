@@ -129,6 +129,11 @@ public class GameManager : Singleton<GameManager>
         return currentEncounter;
     }
 
+    public void ClearEncounters()
+    {
+        encounters = null;
+    }
+
     public void SetCurrentEncounter(EncounterData data)
     {
         currentEncounter = data;
