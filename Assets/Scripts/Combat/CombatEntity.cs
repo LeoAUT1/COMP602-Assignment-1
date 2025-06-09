@@ -56,13 +56,14 @@ public abstract class CombatEntity : MonoBehaviour
     public virtual void AutoScaleToPlayer()
     {
 	    int playerLevel = Player.Instance.GetLevel();
-	    int scale = (playerLevel - 1) * 10;
+        int hpScale = (playerLevel - 1) * 20;
+	    int statScale = (playerLevel - 1) * 4;
 
-        health += scale;
-        maxHealth += scale;
-	    strength += scale;
-	    dexterity += scale;
-	    intelligence += scale;
+        health += hpScale;
+        maxHealth += hpScale;
+	    strength += statScale;
+	    dexterity += statScale;
+	    intelligence += statScale;
 
 	    level = playerLevel;
     }
