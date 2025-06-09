@@ -175,6 +175,9 @@ public class CombatManager : MonoBehaviour
         Coroutine turnEndMessages = combatHud.ProcessMessageQueue();
         if (turnEndMessages != null) yield return turnEndMessages;
 
+        yield return new WaitForSeconds(0.5f);
+
+
         if (!playerUnit.IsAlive()) // Check if player died from turn-end effects
         {
             state = BattleState.LOSE;
