@@ -20,7 +20,7 @@ public abstract class CombatEntity : MonoBehaviour
 
     private bool isAlive = true;
 
-    public virtual void Initialise(CombatManager cm, CombatHud hud) // Call this from CombatManager.SetupBattle
+    public virtual void Initialise(CombatManager cm, CombatHud hud, CombatEntity enemy) // Call this from CombatManager.SetupBattle
     {
         this.combatManagerInstance = cm;
         this.combatHud = hud; // Or get it from cm
@@ -76,6 +76,7 @@ public abstract class CombatEntity : MonoBehaviour
 
         for (int i = statusEffects.Count - 1; i >= 0; i--)
         {
+            Debug.Log(statusEffects[i]);
             statusEffects[i].OnDamageTaken(attacker, ref amount, combatHud);
         }
 
@@ -107,19 +108,25 @@ public abstract class CombatEntity : MonoBehaviour
     public void SetMaxHealth (int x) { maxHealth = x; }
 
     // For managing status effects
-    public void AddStatusEffect(StatusEffect effectTemplate)
+    public void AddStatusEffect(StatusEffect effectTemplate, int count, CombatEntity enemy = null)
     {
+        Debug.Log($"Adding status effect {effectTemplate}");
 
         if (effectTemplate == null)
         {
-            Debug.LogWarning($"Effect {effectTemplate}is null");
+            Debug.LogWarning($"StatusEffect {effectTemplate} is missing from the powerup");
             return;
         }
+
+        effectTemplate.count = count;
+
+        //Effects that are harmful are applied too the enemy not the player
+        CombatEntity target = effectTemplate.IsHarmful ? enemy : this;
 
         // Create a runtime instance of the status effect
         StatusEffect effect = Instantiate(effectTemplate);
         statusEffects.Add(effect);
-        effect.OnApply(this, combatManagerInstance, combatHud);
+        effect.OnApply(target, combatManagerInstance, combatHud);
     }
     void RemoveStatusEffect(StatusEffect effect)
     {

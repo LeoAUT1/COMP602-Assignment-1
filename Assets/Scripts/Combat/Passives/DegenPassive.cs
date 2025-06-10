@@ -9,10 +9,12 @@ public class DegenPassive : StatusEffect
     {
         base.OnTurnStart(hud);
 
+        int dmgAm = damageAmount * count;
+
         if (Target != null && Target.IsAlive())
         {
-            Target.TakeDamage(damageAmount);
-            hud.QueueCombatMessage($"{Target.GetName()} takes {damageAmount} damage from {EffectName}!");
+            Target.TakeDamage(dmgAm);
+            hud.QueueCombatMessage($"{Target.GetName()} takes {dmgAm} damage from {EffectName}!");
         }
     }
 

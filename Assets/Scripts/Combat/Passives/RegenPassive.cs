@@ -11,8 +11,9 @@ public class RegenPassive : StatusEffect
 
         if (Target != null && Target.IsAlive())
         {
-            Target.AddHealth(healAmount);
-            hud.QueueCombatMessage($"{Target.GetName()} regenerates {healAmount} HP from {EffectName}!");
+            int healAm = healAmount * count;
+            Target.AddHealth(healAm);
+            hud.QueueCombatMessage($"{Target.GetName()} regenerates {healAm} HP from {EffectName}!");
         }
     }
 

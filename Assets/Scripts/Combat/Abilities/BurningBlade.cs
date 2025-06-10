@@ -66,7 +66,7 @@ public class BurningBlade : AbilityBase
         primaryTarget.TakeDamage(hitDamage);
 
         // Apply to target after hit
-        primaryTarget.AddStatusEffect(dot);
+        primaryTarget.AddStatusEffect(dot, 1);
 
         // Determine if target is Player or Enemy for HUD update
         if (primaryTarget is PlayerCombat) hud.UpdatePlayerHud(primaryTarget as PlayerCombat);

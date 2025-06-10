@@ -28,6 +28,7 @@ public class BasicAttackAbility : AbilityBase
         List<StatusEffect> casterEffects = caster.GetActiveStatusEffects();
         foreach (var effect in casterEffects)
         {
+            Debug.Log(effect);
             effect.OnDamageDealt(caster, primaryTarget, ref damage, hud);
         }
 

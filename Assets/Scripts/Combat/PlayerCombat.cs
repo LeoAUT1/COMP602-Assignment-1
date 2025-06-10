@@ -29,16 +29,19 @@ public class PlayerCombat : CombatEntity
         //AddAbility(new BasicAttackAbility());
     }
 
-    public override void Initialise(CombatManager cm, CombatHud hud)
+    public override void Initialise(CombatManager cm, CombatHud hud, CombatEntity enemy)
     {
-        base.Initialise(cm, hud);
+        base.Initialise(cm, hud, enemy);
 
         //Set the player's stats to our starting stats
         ClearAllStatusEffects();
 
         foreach (PowerupData pup in powerUps.Values)
         {
-            AddStatusEffect(pup.statusEffect);
+            Debug.Log(pup.count);
+            Debug.Log(pup.name);
+            Debug.Log(pup.statusEffect);
+            AddStatusEffect(pup.statusEffect, pup.count, enemy);
         }
     }
 

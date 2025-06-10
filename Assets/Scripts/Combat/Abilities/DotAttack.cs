@@ -24,7 +24,7 @@ public class DoTAttack : AbilityBase
         dot.SetDamageAmount(caster.GetIntelligence());
 
         // Apply to target
-        primaryTarget.AddStatusEffect(dot);
+        primaryTarget.AddStatusEffect(dot, dot.count);
 
         Debug.Log($"{caster} used {AbilityName}");
 

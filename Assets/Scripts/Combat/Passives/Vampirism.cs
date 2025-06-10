@@ -8,7 +8,7 @@ public class Vampirism : StatusEffect
     {
         base.OnDamageDealt(caster, victim, ref damageAmount, hud);
 
-        int recoveryAmount = damageAmount / 2;
+        int recoveryAmount = damageAmount / 2 * count;
 
         Debug.Log("Vampirism OnDamageDealt triggered");
         hud.QueueCombatMessage($"{Target.GetName()} drained {recoveryAmount} HP from {victim.GetName()}!");

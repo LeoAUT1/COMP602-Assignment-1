@@ -55,15 +55,15 @@ public class Enemy : CombatEntity
                 //No passive, do nothing
                 break;
             case EnemyPassive.Thorns:
-                AddStatusEffect(thorns);
+                AddStatusEffect(thorns,1);
                 break;
 
             case EnemyPassive.Regen:
-                AddStatusEffect(regen);
+                AddStatusEffect(regen,1);
                 break;
 
             case EnemyPassive.Decay:
-                AddStatusEffect(dot);
+                AddStatusEffect(dot,1);
 
                 break;
 
