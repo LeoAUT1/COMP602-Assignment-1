@@ -87,10 +87,6 @@ public class CombatManager : MonoBehaviour
         //Wait a sec before starting player's turn
         yield return new WaitForSeconds(1f);
 
-        foreach (StatusEffect ef in playerUnit.GetActiveStatusEffects()) {
-            Debug.Log(ef.count);
-        }
-
         state = BattleState.PLAYERTURN;
         StartCoroutine(PlayerTurnCoroutine());
     }
@@ -293,6 +289,13 @@ public class CombatManager : MonoBehaviour
         if (!playerUnit.IsAlive())
         {
             state = BattleState.LOSE;
+            StartCoroutine(EndBattle());
+            yield break;
+        }
+
+        if (!enemyUnit.IsAlive()) // Check if died from start-of-turn effects
+        {
+            state = BattleState.WIN; // Or some other state if enemy dies on its own turn start
             StartCoroutine(EndBattle());
             yield break;
         }

@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
         if (scrollInput != 0f)
         {
-            Debug.Log(scrollInput);
+
             offset.z += (scrollInput*-1f) * zoomSpeed * Time.deltaTime;
 
             offset.z = Mathf.Clamp(offset.z,minZoomDistance, maxZoomDistance);
