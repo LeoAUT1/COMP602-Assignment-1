@@ -8,10 +8,10 @@ public class Thorns : StatusEffect
     {
         base.OnDamageTaken(source, ref damageAmount, hud);
 
-        int reflectAmount = (int) ((float) damageAmount * reflectMultiplier);
+        int reflectAmount = (int) ((float) damageAmount * reflectMultiplier * count);
 
         Debug.Log("Thorns OnDamageDealt triggered");
-        hud.QueueCombatMessage($"{Target.GetName()} reflected {reflectAmount} damage!");
+        hud.QueueCombatMessage($"Reflected {reflectAmount} damage!");
 
         source.TakeDamage(reflectAmount);
     }

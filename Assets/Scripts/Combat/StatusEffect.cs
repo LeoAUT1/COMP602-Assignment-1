@@ -7,9 +7,8 @@ public class StatusEffect : ScriptableObject
     [SerializeField] private string effectName;
     [SerializeField][TextArea(2, 4)] private string description;
     [SerializeField] private int durationTurns = 1; // -1 for permanent
-    [SerializeField] private bool isHarmful = false; // For UI or AI logic
+    [SerializeField] private bool isHarmful = false;
 
-    // Properties to maintain compatibility with existing code
     public string EffectName => effectName;
     public string Description => description;
     public int DurationTurns { get; protected set; } // Runtime duration
@@ -19,6 +18,8 @@ public class StatusEffect : ScriptableObject
     protected CombatEntity Target;
     protected CombatManager CombatManagerRef;
     protected CombatHud CombatHudRef;
+
+    public int count = 1; //Number of times this effect is applied
 
     // Initialize runtime values from serialized data
     public virtual void Initialize()

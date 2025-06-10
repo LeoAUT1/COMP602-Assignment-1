@@ -74,8 +74,8 @@ public class CombatManager : MonoBehaviour
         }
 
         // Give the player and enemy access to the manager and hud
-        enemyUnit.Initialise(this, combatHud);
-        playerUnit.Initialise(this, combatHud);
+        enemyUnit.Initialise(this, combatHud, playerUnit);
+        playerUnit.Initialise(this, combatHud, enemyUnit);
 
         // Set the start combat message and give the hud access to the player and enemy
         combatHud.SetPrimaryCombatMessage($"A {enemyUnit.GetName()} appeared.");
@@ -87,15 +87,14 @@ public class CombatManager : MonoBehaviour
         //Wait a sec before starting player's turn
         yield return new WaitForSeconds(1f);
 
+        foreach (StatusEffect ef in playerUnit.GetActiveStatusEffects()) {
+            Debug.Log(ef.count);
+        }
+
         state = BattleState.PLAYERTURN;
         StartCoroutine(PlayerTurnCoroutine());
     }
 
-    //player attack after pressing button
-    // In CombatManager.cs
-
-    // This will be called by UI buttons, passing the selected ability.
-    // It then may need to handle target selection before executing.
     public void OnPlayerAbilitySelected(AbilityBase ability)
     {
         if (state != BattleState.PLAYERTURN || playerUnit == null) return;
@@ -218,7 +217,7 @@ public class CombatManager : MonoBehaviour
         AudioManager.Instance.PlaySoundEffect(attackSfx);
         if (playerUnit.DodgeAttempt())
         {
-            combatHud.QueueCombatMessage("you successfully dodged the attack!");
+            combatHud.QueueCombatMessage($"{enemyUnit.name} successfully dodged the attack!");
         }
         else
         {
@@ -280,6 +279,7 @@ public class CombatManager : MonoBehaviour
     {
         playerUnit.ProcessTurnStartEffects();
         combatHud.UpdatePlayerHud(playerUnit);
+        combatHud.UpdateEnemyHud(enemyUnit); // Update HUD if effects changed stats
 
         //Decrement all cooldowns
         foreach (AbilityBase ability in playerUnit.Abilities)
