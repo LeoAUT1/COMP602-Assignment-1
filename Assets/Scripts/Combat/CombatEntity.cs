@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class CombatEntity : MonoBehaviour
@@ -70,14 +71,17 @@ public abstract class CombatEntity : MonoBehaviour
 
     public void TakeDamage(int amount, CombatEntity attacker = null)
     {
-        Debug.Log(attacker);
+        Debug.Log($"{entityName} Taking {amount} damage from {attacker}");
 
-        Debug.Log($"{entityName} Taking {amount} damage");
-
-        for (int i = statusEffects.Count - 1; i >= 0; i--)
+        if (!statusEffects.Any())
         {
-            Debug.Log(statusEffects[i]);
-            statusEffects[i].OnDamageTaken(attacker, ref amount, combatHud);
+            Debug.Log("List is empty");
+        }
+
+        foreach (StatusEffect effect in statusEffects)
+        {
+            Debug.Log($"Status effect in TakeDamage {effect}");
+            effect.OnDamageTaken(this, attacker, ref amount, combatHud);
         }
 
         if (amount > 0)

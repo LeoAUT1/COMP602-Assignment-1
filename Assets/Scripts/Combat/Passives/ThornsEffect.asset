@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectName: Thorns
   description: Reflect damage to attacker
-  durationTurns: 1
+  durationTurns: -1
   isHarmful: 0
-  count: 3
+  count: 1
   reflectMultiplier: 0.25
