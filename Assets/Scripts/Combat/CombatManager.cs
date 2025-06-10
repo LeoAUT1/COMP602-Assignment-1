@@ -213,7 +213,7 @@ public class CombatManager : MonoBehaviour
         AudioManager.Instance.PlaySoundEffect(attackSfx);
         if (playerUnit.DodgeAttempt())
         {
-            combatHud.QueueCombatMessage($"{enemyUnit.name} successfully dodged the attack!");
+            combatHud.QueueCombatMessage($"You successfully dodged the attack!");
         }
         else
         {
