@@ -38,9 +38,7 @@ public class PlayerCombat : CombatEntity
 
         foreach (PowerupData pup in powerUps.Values)
         {
-            Debug.Log(pup.count);
-            Debug.Log(pup.name);
-            Debug.Log(pup.statusEffect);
+            Debug.Log($"Adding Status Effect: {pup.statusEffect} with count {pup.count}");
             AddStatusEffect(pup.statusEffect, pup.count, enemy);
         }
     }

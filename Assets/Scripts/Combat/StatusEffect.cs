@@ -35,6 +35,7 @@ public class StatusEffect : ScriptableObject
         this.Target = target;
         this.CombatManagerRef = combatManager;
         this.CombatHudRef = hud;
+        Debug.Log(effectName);
     }
 
     // Called at the start of the target's turn
@@ -44,7 +45,7 @@ public class StatusEffect : ScriptableObject
     public virtual void OnTurnEnd(CombatHud hud) { }
 
     // Called when the target takes damage
-    public virtual void OnDamageTaken(CombatEntity source, ref int damageAmount, CombatHud hud) { }
+    public virtual void OnDamageTaken(CombatEntity source, CombatEntity victim, ref int damageAmount, CombatHud hud) { }
 
     // Called when the target deals damage
     public virtual void OnDamageDealt(CombatEntity caster, CombatEntity victim, ref int damageAmount, CombatHud hud) { }
