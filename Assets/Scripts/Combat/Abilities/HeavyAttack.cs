@@ -67,7 +67,8 @@ public class HeavyAttack : AbilityBase
         float recoilPercent = 0.2f; // 20% of damage as recoil. change if needed
         int recoilDamage = Mathf.RoundToInt(damage * recoilPercent);
 
-        caster.TakeDamage(recoilDamage);
+        //Dont use take damage as it breaks thorns
+        caster.SubtractHealth(recoilDamage);
         hud.QueueCombatMessage($"you take some recoil damage");
 
         if (caster is PlayerCombat)

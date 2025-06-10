@@ -9,6 +9,8 @@ public class Thorns : StatusEffect
         base.OnDamageTaken(source, victim, ref damageAmount, hud);
 
         Debug.Log("Thorns OnDamageDealt triggered");
+        Debug.Log($"Thorns targetting {victim}");
+        Debug.Log($"{victim}");
 
         int reflectAmount = (int) ((float) damageAmount * reflectMultiplier * count);
         hud.QueueCombatMessage($"Reflected {reflectAmount} damage!");
