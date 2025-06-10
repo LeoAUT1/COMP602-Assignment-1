@@ -23,5 +23,7 @@ Slay the Serpent is built on Unity 2022.3.22f1. You can find it in the [Unity do
 Load the Main Menu scene in Scenes/MainMenu.unity by double-clicking it in the project folder.
 
 ## Credits
-
-Matt S - 23190412
+Muhamad B
+Leo M
+Matt S
+Teddy X
