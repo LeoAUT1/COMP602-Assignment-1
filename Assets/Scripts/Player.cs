@@ -26,6 +26,9 @@ public class Player : Singleton<Player>
     [SerializeField] private GameObject levelupParticleSystem;
     [SerializeField] private GameObject grantedPowerupParticleSystem;
 
+    private bool powerupPending = false;
+    private int experiencePending = 0;
+
     protected override void Awake() // Assuming Singleton<Player> has a virtual Awake
     {
         base.Awake(); // Call base Awake if it exists and does something important
@@ -100,7 +103,19 @@ public class Player : Singleton<Player>
             board.UpdatePlayerStatsUi();
         }
 
+        experiencePending = 0;
+
         return hasLeveledUp;
+    }
+
+    public void ExperiencePending(int amount)
+    {
+        experiencePending = amount;
+    }
+
+    public int GetExperiencePending()
+    {
+        return experiencePending;
     }
 
     private float GetTotalXpRequiredToReachLevel(int level)
@@ -198,7 +213,18 @@ public class Player : Singleton<Player>
 
     public void SetPlayerPiece(GameObject piece) // Set the player's model, we need this so that we can update the model when the player levels up
     {
+        Debug.Log("Setting player piece");
         playerPiece = piece.GetComponent<PlayerBoardPiece>();
+    }
+
+    public void SetRandomPowerupPending()
+    {
+        powerupPending = true;
+    }
+
+    public bool GetRandomPowerupPending()
+    {
+        return powerupPending;
     }
 
     public void GrantRandomPowerup()
@@ -207,6 +233,7 @@ public class Player : Singleton<Player>
         PowerupData powerup = GetComponent<PowerupDistribution>().GrantRandomPowerup();
         Debug.Log(powerup.powerupName);
         AddPowerup(powerup);
+        powerupPending = false;
     }
 
     // Unsubscribe when the Player object is destroyed

@@ -54,6 +54,17 @@ public class Board : MonoBehaviour
 
         Player.Instance.SetPlayerPiece(playerPiece);
 
+        //If the player has a powerup pending, grant it
+        if (Player.Instance.GetRandomPowerupPending())
+        {
+            Player.Instance.GrantRandomPowerup();
+        }
+
+        if (Player.Instance.GetExperiencePending() > 0)
+        {
+            Player.Instance.AddExperience(Player.Instance.GetExperiencePending());
+        }
+
         //Shrink down the player a bit
         playerPiece.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 

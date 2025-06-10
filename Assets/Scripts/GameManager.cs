@@ -41,19 +41,24 @@ public class GameManager : Singleton<GameManager>
             AudioManager.Instance.PlayMainTheme();
 
             Debug.Log($"Player index is {Player.Instance.GetTileIndex()}");
+            Debug.Log($"Current encounter is {currentEncounter}");
+            Debug.Log("\n\n\n");
 
             if (currentEncounter != null)
             {
                 //Grant the player the experience from completing the encounter
-                Player.Instance.AddExperience(currentEncounter.grantedExperience);
-                Player.Instance.GrantRandomPowerup();
+                Player.Instance.ExperiencePending(currentEncounter.grantedExperience);
+                Player.Instance.SetRandomPowerupPending();
 
-                Debug.Log($" Encounter at current index{encounters[Player.Instance.GetTileIndex()-1]}");
+                Debug.Log($" Encounter at current index {encounters[Player.Instance.GetTileIndex()-1]}");
 
                 //Set the current encounter to null
                 //This is important so that the tile visual is not redrawn on the game board
                 //As we want to reinforce the idea that the player has completed the encounterr
                 encounters[Player.Instance.GetTileIndex()-1] = null;
+            } else
+            {
+                Debug.Log("Current encounter is null");
             }
         }
 
