@@ -105,6 +105,7 @@ public class GameManager : Singleton<GameManager>
         //Do any housekeeping for leaving the combat scene
         if (playerIsAlive && currentEncounter.isFinalBoss)
         {
+            Debug.Log("player beat the final boss");
             currentEncounter = null;
             isPlayerVictorious = true;
             SceneLoader.Instance.LoadGameEnd();
@@ -114,10 +115,12 @@ public class GameManager : Singleton<GameManager>
         //Player hasn't defeated the final boss, but is alive, go back to the game board
         if (playerIsAlive)
         {
+            Debug.Log("player finished the combat encounter");
             SceneLoader.Instance.LoadGameScene();
             return;
         }
 
+        Debug.Log("player died, game over");
         // If this is not set to null the player will gain exp when restarting a game
         currentEncounter = null;
         //Presumably the player is dead, we can end the game.
@@ -142,6 +145,11 @@ public class GameManager : Singleton<GameManager>
     public bool GetIsVictorious()
     {
         return isPlayerVictorious;
+    }
+
+    public void SetIsVictorious(bool b)
+    {
+        isPlayerVictorious = b;
     }
 
     public EncounterData[] GetEncounters(int count)

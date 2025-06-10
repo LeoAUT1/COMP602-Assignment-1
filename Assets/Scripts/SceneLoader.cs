@@ -86,6 +86,7 @@ public class SceneLoader : Singleton<SceneLoader>
             Debug.Log("Is newgame reset the player");
             Player.Instance.ResetPlayer();
             GameManager.Instance.ClearEncounters();
+            GameManager.Instance.SetIsVictorious(false);
         }
 
         StartCoroutine(FadeAndLoadScene("GameBoard"));
