@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class PowerupDebug : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class PowerupDebug : MonoBehaviour
 
     private void Start()
     {
+        //We cant use these in the combat scene anyway, so disable them
+        if (SceneManager.GetActiveScene().name == "Combat") { return; }
+
         GeneratePowerupButtons();
     }
 
