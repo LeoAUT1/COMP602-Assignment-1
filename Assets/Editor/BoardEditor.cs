@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
-using System.Linq;
 
 [CustomEditor(typeof(Board))]
 public class BoardEditor : Editor
