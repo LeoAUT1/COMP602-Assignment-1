@@ -52,8 +52,8 @@ MonoBehaviour:
   playerCombat: {fileID: 6508123060139364006}
   tileIndex: 0
   levelUpCanvas: {fileID: 7470852946826213461, guid: 0dbba6ddf0bb43b43b1d94672c6d9ae1, type: 3}
-  levelupParticleSystem: {fileID: 0}
-  grantedPowerupParticleSystem: {fileID: 0}
+  levelupParticleSystem: {fileID: 9001477088083710690, guid: e369790ac43929b439e13b9408936fe3, type: 3}
+  grantedPowerupParticleSystem: {fileID: 9001477088083710690, guid: beada8e61ed148645be33dad63e650cd, type: 3}
 --- !u!114 &6508123060139364006
 MonoBehaviour:
   m_ObjectHideFlags: 0

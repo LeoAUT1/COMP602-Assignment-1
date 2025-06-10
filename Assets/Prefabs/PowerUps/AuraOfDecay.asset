@@ -16,3 +16,4 @@ MonoBehaviour:
   description: Enemies lose HP whilst in combat
   icon: {fileID: 21300000, guid: 9414819a28a77fc4f82d8fb37930a7b2, type: 3}
   count: 1
+  statusEffect: {fileID: 11400000, guid: 9add99e06c916464a8306eafd9eccfaf, type: 2}

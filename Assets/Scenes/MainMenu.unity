@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.33452952, g: 0.44884765, b: 0.58822024, a: 1}
+  m_IndirectSpecularColor: {r: 0.33450866, g: 0.44897807, b: 0.58805734, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,17 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &986496324 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4480795615871812902, guid: 0a9a442a0f7f03346bd46f5e0a478b57, type: 3}
-  m_PrefabInstance: {fileID: 3081863259526775297}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 257bb4355cec6c341bb19d3208ee8cf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1226512142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -799,10 +788,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1818222308348496409, guid: f5c358b5ae27b2344a80530bd00d4c9e, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 986496324}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

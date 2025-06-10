@@ -181,11 +181,15 @@ public class Player : Singleton<Player>
     {
         playerCombat.AddPowerup(powerup.name, powerup);
         if (grantedPowerupParticleSystem != null)
-        { 
-
+        {
+            Debug.Log("Instantiating particles");
             GameObject go = Instantiate(grantedPowerupParticleSystem, playerPiece.transform);
 
             go.transform.localPosition = new Vector3(0f, 1f, 0f);
+        }
+        else
+        {
+            Debug.Log("Missing particles prefab");
         }
 
         //This is not great

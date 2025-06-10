@@ -101,12 +101,13 @@ public class AudioManager : Singleton<AudioManager>
 
     public void SetMusicVolume(float volume)
     {
+        musicVolume = volume;
         musicSource.volume = volume;
     }
 
     public float GetMusicVolume()
     {
-        return musicSource.volume;
+        return musicVolume;
     }
 
     public void SetSfxVolume(float volume)

@@ -15,5 +15,6 @@ MonoBehaviour:
   effectName: DoT
   description: Target takes 5 damage for 5 turns
   durationTurns: 5
-  isHarmful: 0
+  isHarmful: 1
+  count: 3
   damageAmount: 5
